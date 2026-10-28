@@ -55,8 +55,8 @@
                     Alamat Email
                 </label>
                 <div class="relative">
-                    <input type="email" id="email" name="email" value="{{ old('email', 'admin@akebono.co.id') }}" required autofocus
-                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#0084f8] focus:ring-2 focus:ring-sky-100 focus:outline-hidden transition text-slate-800 font-medium">
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="admin@akebono.co.id" required autofocus
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#0084f8] focus:ring-2 focus:ring-sky-100 focus:outline-hidden transition text-slate-800 font-medium placeholder:text-slate-400">
                 </div>
             </div>
 
@@ -68,15 +68,15 @@
                     </label>
                 </div>
                 <div class="relative">
-                    <input type="password" id="password" name="password" value="password123" required
-                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#0084f8] focus:ring-2 focus:ring-sky-100 focus:outline-hidden transition text-slate-800 font-medium">
+                    <input type="password" id="password" name="password" value="" placeholder="Masukkan kata sandi..." required
+                           class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#0084f8] focus:ring-2 focus:ring-sky-100 focus:outline-hidden transition text-slate-800 font-medium placeholder:text-slate-400">
                 </div>
             </div>
 
             <!-- Remember me -->
             <div class="flex items-center justify-between pt-1">
                 <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-600">
-                    <input type="checkbox" name="remember" class="w-4 h-4 rounded text-[#0084f8] focus:ring-[#0084f8] border-slate-300" checked>
+                    <input type="checkbox" name="remember" class="w-4 h-4 rounded text-[#0084f8] focus:ring-[#0084f8] border-slate-300">
                     <span>Ingat Saya di Perangkat Ini</span>
                 </label>
             </div>

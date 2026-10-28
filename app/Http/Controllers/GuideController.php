@@ -16,12 +16,21 @@ class GuideController extends Controller
      */
     public function index()
     {
-        $message = ManagementMessage::where('is_active', true)->first();
-        $facilities = Facility::orderBy('sort_order')->take(6)->get();
-        $featuredFacilities = Facility::where('is_featured', true)->orderBy('sort_order')->get();
-        $emergencyContacts = EmergencyContact::where('is_hotline', true)->orderBy('sort_order')->get();
-        $rulesCount = DosAndDont::count();
-        $zonesCount = OfficeZone::count();
+        try {
+            $message = ManagementMessage::where('is_active', true)->first();
+            $facilities = Facility::orderBy('sort_order')->take(6)->get();
+            $featuredFacilities = Facility::where('is_featured', true)->orderBy('sort_order')->get();
+            $emergencyContacts = EmergencyContact::where('is_hotline', true)->orderBy('sort_order')->get();
+            $rulesCount = DosAndDont::count();
+            $zonesCount = OfficeZone::count();
+        } catch (\Throwable $e) {
+            $message = null;
+            $facilities = collect();
+            $featuredFacilities = collect();
+            $emergencyContacts = collect();
+            $rulesCount = 0;
+            $zonesCount = 0;
+        }
 
         return view('guide.index', compact(
             'message',
@@ -38,7 +47,22 @@ class GuideController extends Controller
      */
     public function message()
     {
-        $message = ManagementMessage::where('is_active', true)->firstOrFail();
+        try {
+            $message = ManagementMessage::where('is_active', true)->first();
+        } catch (\Throwable $e) {
+            $message = null;
+        }
+
+        if (!$message) {
+            $message = new ManagementMessage([
+                'title' => 'A Message from Management',
+                'sender_name' => 'Management Board',
+                'sender_title' => 'PT Akebono Brake Astra Indonesia',
+                'content' => 'Selamat datang di fasilitas kantor Akebono Karawang.',
+                'summary' => 'Membangun tempat kerja yang aman, kolaboratif, dan siap menyongsong masa depan.',
+            ]);
+        }
+
         return view('guide.message', compact('message'));
     }
 
@@ -48,17 +72,25 @@ class GuideController extends Controller
      */
     public function facilities(Request $request)
     {
-        $facilities = Facility::orderBy('sort_order')->get();
+        try {
+            $facilities = Facility::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $facilities = collect();
+        }
         $matchingRules = collect();
 
         if ($request->filled('q')) {
             $searchTerm = '%' . $request->q . '%';
             $like = config('database.default') === 'pgsql' ? 'ilike' : 'like';
 
-            $matchingRules = DosAndDont::where('title', $like, $searchTerm)
-                ->orWhere('description', $like, $searchTerm)
-                ->take(6)
-                ->get();
+            try {
+                $matchingRules = DosAndDont::where('title', $like, $searchTerm)
+                    ->orWhere('description', $like, $searchTerm)
+                    ->take(6)
+                    ->get();
+            } catch (\Throwable $e) {
+                $matchingRules = collect();
+            }
         }
 
         $categories = [
@@ -81,11 +113,18 @@ class GuideController extends Controller
      */
     public function facilityDetail($slug)
     {
-        $facility = Facility::where('slug', $slug)->firstOrFail();
-        $related = Facility::where('category', $facility->category)
-            ->where('id', '!=', $facility->id)
-            ->take(3)
-            ->get();
+        try {
+            $facility = Facility::where('slug', $slug)->first();
+            if (!$facility) {
+                return redirect()->route('guide.facilities');
+            }
+            $related = Facility::where('category', $facility->category)
+                ->where('id', '!=', $facility->id)
+                ->take(3)
+                ->get();
+        } catch (\Throwable $e) {
+            return redirect()->route('guide.facilities');
+        }
 
         return view('guide.facility-detail', compact('facility', 'related'));
     }
@@ -96,8 +135,13 @@ class GuideController extends Controller
     public function map(Request $request)
     {
         $floor = $request->get('floor', 'Lantai 1');
-        $zones = OfficeZone::where('floor', $floor)->orderBy('sort_order')->get();
-        $allZones = OfficeZone::orderBy('sort_order')->get();
+        try {
+            $zones = OfficeZone::where('floor', $floor)->orderBy('sort_order')->get();
+            $allZones = OfficeZone::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $zones = collect();
+            $allZones = collect();
+        }
 
         $floors = [
             'Lantai 1' => 'Gedung Utama - Lantai 1',
@@ -114,7 +158,11 @@ class GuideController extends Controller
      */
     public function dosAndDonts(Request $request)
     {
-        $allRules = DosAndDont::orderBy('sort_order')->get();
+        try {
+            $allRules = DosAndDont::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $allRules = collect();
+        }
 
         $categories = [
             'all' => 'Semua Kategori',
@@ -148,8 +196,13 @@ class GuideController extends Controller
      */
     public function officeAndPlant()
     {
-        $facilities = Facility::orderBy('sort_order')->get();
-        $emergencyContacts = EmergencyContact::orderBy('sort_order')->get();
+        try {
+            $facilities = Facility::orderBy('sort_order')->get();
+            $emergencyContacts = EmergencyContact::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $facilities = collect();
+            $emergencyContacts = collect();
+        }
 
         return view('guide.office-and-plant', compact('facilities', 'emergencyContacts'));
     }
@@ -159,7 +212,11 @@ class GuideController extends Controller
      */
     public function emergency()
     {
-        $contacts = EmergencyContact::orderBy('sort_order')->get();
+        try {
+            $contacts = EmergencyContact::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $contacts = collect();
+        }
         return view('guide.emergency', compact('contacts'));
     }
 
