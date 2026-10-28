@@ -31,6 +31,8 @@
   ],
   "env": {
     "APP_ENV": "production",
+    "APP_URL": "https://digital-office-guide.vercel.app",
+    "ASSET_URL": "https://digital-office-guide.vercel.app",
     "APP_DEBUG": "true",
     "APP_KEY": "base64:tigzIT0KdOm/rQmFnJ94VOPQUPowd+6vgQO26MRRWTU=",
     "VERCEL": "1",

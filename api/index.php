@@ -8,6 +8,11 @@ putenv('VERCEL=1');
 $_ENV['VERCEL'] = '1';
 $_SERVER['VERCEL'] = '1';
 
+if ((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')) {
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['SERVER_PORT'] = 443;
+}
+
 // Prepare writable storage & view paths in /tmp (since Vercel root is read-only)
 $storageDirs = [
     '/tmp/storage',

@@ -203,7 +203,7 @@
             
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/akebono.png') }}" alt="Akebono" class="h-6 w-auto">
+                    <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 24px; width: auto;" class="h-6 w-auto">
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sambutan Manajemen</span>
                 </div>
                 <button @click="showMessageModal = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">

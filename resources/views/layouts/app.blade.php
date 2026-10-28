@@ -58,7 +58,7 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 md:h-18 flex items-center justify-between">
             <!-- Brand Logo & Office Label -->
             <a href="{{ route('guide.index') }}" class="flex items-center gap-3.5 group">
-                <img src="{{ asset('images/akebono.png') }}" alt="Akebono Brake" class="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105">
+                <img src="{{ asset('images/akebono.png') }}" alt="Akebono Brake" style="max-height: 36px; width: auto;" class="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105">
                 
                 <div class="h-7 w-px bg-slate-300"></div>
                 
@@ -111,7 +111,7 @@
                 <!-- Drawer Header -->
                 <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
                     <div class="flex items-center gap-2.5">
-                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" class="h-6 w-auto">
+                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 24px; width: auto;" class="h-6 w-auto">
                         <span class="text-xs font-bold text-[#0f2e54] uppercase tracking-wider">Office Guide</span>
                     </div>
                     <button @click="mobileMenuOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200/60 transition">

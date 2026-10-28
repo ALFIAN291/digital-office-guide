@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         View::composer('*', function ($view) {
             try {
                 if (Schema::hasTable('home_settings')) {

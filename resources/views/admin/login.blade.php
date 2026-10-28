@@ -23,7 +23,7 @@
         <!-- Header & Logo -->
         <div class="text-center space-y-2">
             <a href="{{ route('guide.index') }}" class="inline-block group">
-                <img src="{{ asset('images/akebono.png') }}" alt="Akebono Brake" class="h-9 mx-auto object-contain transition-transform group-hover:scale-105">
+                <img src="{{ asset('images/akebono.png') }}" alt="Akebono Brake" style="max-height: 36px; width: auto;" class="h-9 mx-auto object-contain transition-transform group-hover:scale-105">
             </a>
             
             <div class="pt-2">
