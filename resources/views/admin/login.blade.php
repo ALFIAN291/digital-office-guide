@@ -89,18 +89,6 @@
 
         </form>
 
-        <!-- Demo Credentials Helper Box -->
-        <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 text-xs text-slate-600 space-y-1">
-            <div class="font-bold text-slate-700 flex items-center gap-1.5">
-                <span>🔑</span>
-                <span>Akun Default Administrator:</span>
-            </div>
-            <div class="text-[11px] font-mono text-slate-500">
-                Email: <span class="font-bold text-slate-800">admin@akebono.co.id</span><br>
-                Password: <span class="font-bold text-slate-800">password123</span>
-            </div>
-        </div>
-
         <!-- Back to Website Link -->
         <div class="text-center pt-2">
             <a href="{{ route('guide.index') }}" class="text-xs font-semibold text-slate-500 hover:text-[#0084f8] transition">
