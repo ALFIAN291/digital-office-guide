@@ -224,13 +224,13 @@
                 </div>
 
                 <div class="text-slate-700 text-sm leading-relaxed whitespace-pre-line space-y-3 font-normal">
-                    {!! nl2br(e($message->content)) !!}
+                    {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
                 </div>
 
                 <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
                     <div>
-                        <div class="text-sm font-bold text-slate-900">{{ $message->sender_name }}</div>
-                        <div class="text-xs text-slate-500">{{ $message->sender_role }}</div>
+                        <div class="text-sm font-bold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
+                        <div class="text-xs text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
                     </div>
                     <div class="text-right">
                         <span class="text-xs font-semibold text-[#0084f8] bg-sky-50 px-3 py-1 rounded-full">Akebono Karawang 2026</span>

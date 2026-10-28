@@ -32,6 +32,17 @@ class GuideController extends Controller
             $zonesCount = 0;
         }
 
+        if (!$message) {
+            $message = new ManagementMessage([
+                'title' => 'A Message from Management',
+                'sender_name' => 'Management Board',
+                'sender_role' => 'PT Akebono Brake Astra Indonesia',
+                'content' => "Selamat datang di panduan fasilitas kantor baru Akebono Karawang.\n\nMari kita ciptakan tempat kerja yang nyaman, aman, dan produktif bersama.",
+                'summary' => 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.',
+                'image_path' => 'images/management-office.jpg',
+            ]);
+        }
+
         return view('guide.index', compact(
             'message',
             'facilities',
