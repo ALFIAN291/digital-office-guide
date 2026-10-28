@@ -1,0 +1,200 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\DosAndDont;
+use App\Models\EmergencyContact;
+use App\Models\Facility;
+use App\Models\ManagementMessage;
+use App\Models\OfficeZone;
+use Illuminate\Http\Request;
+
+class GuideController extends Controller
+{
+    /**
+     * Display the main home screen matching the design.
+     */
+    public function index()
+    {
+        $message = ManagementMessage::where('is_active', true)->first();
+        $facilities = Facility::orderBy('sort_order')->take(6)->get();
+        $featuredFacilities = Facility::where('is_featured', true)->orderBy('sort_order')->get();
+        $emergencyContacts = EmergencyContact::where('is_hotline', true)->orderBy('sort_order')->get();
+        $rulesCount = DosAndDont::count();
+        $zonesCount = OfficeZone::count();
+
+        return view('guide.index', compact(
+            'message',
+            'facilities',
+            'featuredFacilities',
+            'emergencyContacts',
+            'rulesCount',
+            'zonesCount'
+        ));
+    }
+
+    /**
+     * Display the Message from Management page.
+     */
+    public function message()
+    {
+        $message = ManagementMessage::where('is_active', true)->firstOrFail();
+        return view('guide.message', compact('message'));
+    }
+
+    /**
+     * Display the Facilities page with filters & search.
+     * All facilities are passed to view so filtering between categories and floors is instantaneous.
+     */
+    public function facilities(Request $request)
+    {
+        $facilities = Facility::orderBy('sort_order')->get();
+        $matchingRules = collect();
+
+        if ($request->filled('q')) {
+            $searchTerm = '%' . $request->q . '%';
+            $like = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+
+            $matchingRules = DosAndDont::where('title', $like, $searchTerm)
+                ->orWhere('description', $like, $searchTerm)
+                ->take(6)
+                ->get();
+        }
+
+        $categories = [
+            'all' => 'Semua Fasilitas',
+            'workspace' => 'Area Kerja',
+            'meeting' => 'Ruang Rapat',
+            'dining' => 'Kantin & Makan',
+            'wellness' => 'Kesehatan & Ibadah',
+            'service' => 'Layanan & Parkir',
+            'safety' => 'Keselamatan',
+        ];
+
+        $floors = ['all' => 'Semua Lantai', 'Lantai 1' => 'Lantai 1', 'Lantai 2' => 'Lantai 2', 'Plant Area' => 'Plant Area', 'Outdoor' => 'Outdoor'];
+
+        return view('guide.facilities', compact('facilities', 'categories', 'floors', 'matchingRules'));
+    }
+
+    /**
+     * Display single facility details.
+     */
+    public function facilityDetail($slug)
+    {
+        $facility = Facility::where('slug', $slug)->firstOrFail();
+        $related = Facility::where('category', $facility->category)
+            ->where('id', '!=', $facility->id)
+            ->take(3)
+            ->get();
+
+        return view('guide.facility-detail', compact('facility', 'related'));
+    }
+
+    /**
+     * Display the Interactive Office Map.
+     */
+    public function map(Request $request)
+    {
+        $floor = $request->get('floor', 'Lantai 1');
+        $zones = OfficeZone::where('floor', $floor)->orderBy('sort_order')->get();
+        $allZones = OfficeZone::orderBy('sort_order')->get();
+
+        $floors = [
+            'Lantai 1' => 'Gedung Utama - Lantai 1',
+            'Lantai 2' => 'Gedung Utama - Lantai 2',
+            'Ground Floor' => 'Plant 1 & Plant 2 (Pabrik)',
+        ];
+
+        return view('guide.map', compact('zones', 'floor', 'floors', 'allZones'));
+    }
+
+    /**
+     * Display the Dos and Don'ts guideline page.
+     * All rules are passed to view so filtering between categories and DO/DONT is instantaneous (zero loading).
+     */
+    public function dosAndDonts(Request $request)
+    {
+        $allRules = DosAndDont::orderBy('sort_order')->get();
+
+        $categories = [
+            'all' => 'Semua Kategori',
+            'HSE & Keselamatan' => 'HSE & Keselamatan',
+            'Etiket Kerja & Lingkungan' => 'Etiket Kerja & Lingkungan',
+            'Keamanan Informasi & TI' => 'Keamanan Informasi & TI',
+        ];
+
+        $counts = [
+            'total' => $allRules->count(),
+            'dos' => $allRules->where('type', 'do')->count(),
+            'donts' => $allRules->where('type', 'dont')->count(),
+        ];
+
+        $initialType = $request->get('type', 'all');
+        $initialCategory = $request->get('category', 'all');
+        $initialQuery = $request->get('q', '');
+
+        return view('guide.dos-and-donts', [
+            'rules' => $allRules,
+            'categories' => $categories,
+            'counts' => $counts,
+            'initialType' => $initialType,
+            'initialCategory' => $initialCategory,
+            'initialQuery' => $initialQuery,
+        ]);
+    }
+
+    /**
+     * Display the Office & Plant overview page.
+     */
+    public function officeAndPlant()
+    {
+        $facilities = Facility::orderBy('sort_order')->get();
+        $emergencyContacts = EmergencyContact::orderBy('sort_order')->get();
+
+        return view('guide.office-and-plant', compact('facilities', 'emergencyContacts'));
+    }
+
+    /**
+     * Display emergency contacts and procedures.
+     */
+    public function emergency()
+    {
+        $contacts = EmergencyContact::orderBy('sort_order')->get();
+        return view('guide.emergency', compact('contacts'));
+    }
+
+    /**
+     * Fast global search across all guide resources.
+     */
+    public function search(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+        if (strlen($q) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $like = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+        $searchTerm = '%' . $q . '%';
+
+        $facilities = Facility::where('name', $like, $searchTerm)
+            ->orWhere('description', $like, $searchTerm)
+            ->take(4)
+            ->get(['name', 'slug', 'category', 'floor', 'image_path']);
+
+        $rules = DosAndDont::where('title', $like, $searchTerm)
+            ->orWhere('description', $like, $searchTerm)
+            ->take(4)
+            ->get(['title', 'type', 'category']);
+
+        $zones = OfficeZone::where('name', $like, $searchTerm)
+            ->orWhere('code', $like, $searchTerm)
+            ->take(4)
+            ->get(['name', 'code', 'floor', 'building']);
+
+        return response()->json([
+            'facilities' => $facilities,
+            'rules' => $rules,
+            'zones' => $zones,
+        ]);
+    }
+}
