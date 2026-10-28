@@ -31,7 +31,9 @@
   ],
   "env": {
     "APP_ENV": "production",
-    "APP_DEBUG": "false",
+    "APP_DEBUG": "true",
+    "APP_KEY": "base64:tigzIT0KdOm/rQmFnJ94VOPQUPowd+6vgQO26MRRWTU=",
+    "VERCEL": "1",
     "LOG_CHANNEL": "stderr",
     "DB_CONNECTION": "pgsql",
     "CACHE_STORE": "array",
