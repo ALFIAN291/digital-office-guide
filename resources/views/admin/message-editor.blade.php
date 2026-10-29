@@ -30,7 +30,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-2">Foto Workspace / Latar Pesan Manajemen:</label>
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div class="w-full sm:w-48 h-28 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                    <img src="{{ asset($message->image_path ?: 'images/management-office.jpg') }}" alt="Preview" class="w-full h-full object-cover">
+                    <img src="{{ office_image($message->image_path, 'images/management-office.jpg') }}" alt="Preview" class="w-full h-full object-cover">
                 </div>
                 <div class="space-y-1.5">
                     <input type="file" name="image_file" accept="image/*" class="text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-[#0084f8] hover:file:bg-sky-100 cursor-pointer">

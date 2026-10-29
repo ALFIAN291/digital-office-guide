@@ -23,7 +23,7 @@
     <!-- 1. Hero Section (Compact & Sleek) -->
     <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs h-44 sm:h-52 md:h-60 flex items-end">
         <!-- Hero Background Image -->
-        <img src="{{ asset($settings->hero_image ?? 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover">
+        <img src="{{ office_image($settings->hero_image ?? null, 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover">
         
         <!-- Subtle Gradient Overlay for Text Readability -->
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/35 to-transparent"></div>
@@ -55,7 +55,7 @@
             
             <!-- Left Image (Workstation interior) -->
             <div class="relative h-44 sm:h-52 md:h-auto min-h-[170px] overflow-hidden">
-                <img src="{{ asset($message->image_path ?? 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
+                <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
             </div>
 
@@ -102,7 +102,7 @@
             <!-- Card 1: Office & Plant -->
             <a href="{{ route('guide.office-and-plant') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
                 <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
-                    <img src="{{ asset($settings->card_office_image ?? 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Office & Plant' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_office_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Office & Plant' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
                     <div class="flex items-center gap-3">
@@ -124,7 +124,7 @@
             <!-- Card 2: Facilities -->
             <a href="{{ route('guide.facilities') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
                 <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
-                    <img src="{{ asset($settings->card_facilities_image ?? 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Facilities' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_facilities_image ?? null, 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Facilities' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
                     <div class="flex items-center gap-3">
@@ -146,7 +146,7 @@
             <!-- Card 3: Office Map -->
             <a href="{{ route('guide.map') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
                 <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
-                    <img src="{{ asset($settings->card_map_image ?? 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Office Map' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_map_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Office Map' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
                     <div class="flex items-center gap-3">
@@ -169,7 +169,7 @@
             <!-- Card 4: Dos & Don'ts -->
             <a href="{{ route('guide.dos-and-donts') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
                 <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
-                    <img src="{{ asset($settings->card_rules_image ?? 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? "Dos & Don'ts" }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_rules_image ?? null, 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? "Dos & Don'ts" }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
                     <div class="flex items-center gap-3">

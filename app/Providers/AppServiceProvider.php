@@ -47,6 +47,17 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment('production') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+
+            // Auto-run pending migrations on Vercel deployment
+            try {
+                static $autoMigrated = false;
+                if (!$autoMigrated && config('database.default') === 'pgsql') {
+                    $autoMigrated = true;
+                    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                }
+            } catch (\Throwable $e) {
+                // Silently pass if database is not reachable yet
+            }
         }
 
         View::composer('*', function ($view) {

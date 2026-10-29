@@ -16,7 +16,7 @@
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
         <!-- Photo Header -->
         <div class="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-100">
-            <img src="{{ asset($facility->image_path ?: 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover">
+            <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
             
             <div class="absolute bottom-6 left-6 right-6 text-white">

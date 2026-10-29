@@ -69,7 +69,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">Foto Saat Ini & Penggantian:</label>
             @if($facility->image_path)
                 <div class="mb-2 w-32 h-20 rounded-xl overflow-hidden border">
-                    <img src="{{ asset($facility->image_path) }}" alt="" class="w-full h-full object-cover">
+                    <img src="{{ office_image($facility->image_path) }}" alt="" class="w-full h-full object-cover">
                 </div>
             @endif
             <input type="file" name="image_file" accept="image/*" class="text-xs text-slate-500">

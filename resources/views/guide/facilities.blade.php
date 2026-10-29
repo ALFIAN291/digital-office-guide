@@ -137,7 +137,7 @@
                 
                 <!-- Photo Header -->
                 <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-                    <img src="{{ asset($facility->image_path ?: 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover">
+                    <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover">
                     <div class="absolute top-3 left-3 flex items-center gap-1.5">
                         <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-700 shadow-xs">
                             {{ $facility->floor }}

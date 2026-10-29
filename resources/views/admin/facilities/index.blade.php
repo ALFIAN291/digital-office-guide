@@ -36,7 +36,7 @@
                             <td class="py-3.5 px-4 sm:px-6">
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
-                                        <img src="{{ asset($facility->image_path ?: 'images/facilities-office.jpg') }}" alt="" class="w-full h-full object-cover">
+                                        <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="" class="w-full h-full object-cover">
                                     </div>
                                     <div>
                                         <div class="font-bold text-slate-900 text-sm">{{ $facility->name }}</div>

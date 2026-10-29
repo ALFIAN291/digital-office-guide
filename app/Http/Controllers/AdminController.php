@@ -86,45 +86,25 @@ class AdminController extends Controller
             'safety_description' => ['nullable', 'string'],
         ]);
 
-        // Handle Image Uploads
-        $uploadPath = public_path('images/uploads');
-        if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
-        }
-
+        // Handle Image Uploads Safely
         if ($request->hasFile('hero_image_file')) {
-            $file = $request->file('hero_image_file');
-            $filename = 'hero_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['hero_image'] = '/images/uploads/' . $filename;
+            $validated['hero_image'] = $this->handleImageUpload($request, 'hero_image_file', 'hero', $settings->hero_image);
         }
 
         if ($request->hasFile('card_office_image_file')) {
-            $file = $request->file('card_office_image_file');
-            $filename = 'card_office_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['card_office_image'] = '/images/uploads/' . $filename;
+            $validated['card_office_image'] = $this->handleImageUpload($request, 'card_office_image_file', 'card_office', $settings->card_office_image);
         }
 
         if ($request->hasFile('card_facilities_image_file')) {
-            $file = $request->file('card_facilities_image_file');
-            $filename = 'card_fac_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['card_facilities_image'] = '/images/uploads/' . $filename;
+            $validated['card_facilities_image'] = $this->handleImageUpload($request, 'card_facilities_image_file', 'card_fac', $settings->card_facilities_image);
         }
 
         if ($request->hasFile('card_map_image_file')) {
-            $file = $request->file('card_map_image_file');
-            $filename = 'card_map_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['card_map_image'] = '/images/uploads/' . $filename;
+            $validated['card_map_image'] = $this->handleImageUpload($request, 'card_map_image_file', 'card_map', $settings->card_map_image);
         }
 
         if ($request->hasFile('card_rules_image_file')) {
-            $file = $request->file('card_rules_image_file');
-            $filename = 'card_rules_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['card_rules_image'] = '/images/uploads/' . $filename;
+            $validated['card_rules_image'] = $this->handleImageUpload($request, 'card_rules_image_file', 'card_rules', $settings->card_rules_image);
         }
 
         $settings->update($validated);
@@ -163,14 +143,10 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image_file')) {
-            $uploadPath = public_path('images/uploads');
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0755, true);
+            $imagePath = $this->handleImageUpload($request, 'image_file', 'management', $message->image_path);
+            if ($imagePath) {
+                $validated['image_path'] = $imagePath;
             }
-            $file = $request->file('image_file');
-            $filename = 'management_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['image_path'] = '/images/uploads/' . $filename;
         }
 
         $message->fill($validated);
@@ -222,18 +198,18 @@ class AdminController extends Controller
 
         if (!empty($validated['amenities_text'])) {
             $validated['amenities'] = array_values(array_filter(array_map('trim', explode(',', $validated['amenities_text']))));
+        } else {
+            $validated['amenities'] = [];
         }
 
         if ($request->hasFile('image_file')) {
-            $uploadPath = public_path('images/uploads');
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0755, true);
+            $imagePath = $this->handleImageUpload($request, 'image_file', 'facility');
+            if ($imagePath) {
+                $validated['image_path'] = $imagePath;
             }
-            $file = $request->file('image_file');
-            $filename = 'facility_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['image_path'] = '/images/uploads/' . $filename;
         }
+
+        unset($validated['amenities_text'], $validated['image_file']);
 
         Facility::create($validated);
 
@@ -275,18 +251,18 @@ class AdminController extends Controller
 
         if (!empty($validated['amenities_text'])) {
             $validated['amenities'] = array_values(array_filter(array_map('trim', explode(',', $validated['amenities_text']))));
+        } else {
+            $validated['amenities'] = [];
         }
 
         if ($request->hasFile('image_file')) {
-            $uploadPath = public_path('images/uploads');
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0755, true);
+            $imagePath = $this->handleImageUpload($request, 'image_file', 'facility', $facility->image_path);
+            if ($imagePath) {
+                $validated['image_path'] = $imagePath;
             }
-            $file = $request->file('image_file');
-            $filename = 'facility_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move($uploadPath, $filename);
-            $validated['image_path'] = '/images/uploads/' . $filename;
         }
+
+        unset($validated['amenities_text'], $validated['image_file']);
 
         $facility->update($validated);
 
@@ -444,6 +420,47 @@ class AdminController extends Controller
 
         return redirect()->route('admin.password.edit')
             ->with('success', 'Password Anda berhasil diperbarui!');
+    }
+
+    /**
+     * Safely handle image upload across both local environment and Vercel serverless.
+     * When running on Vercel (read-only filesystem), compresses/converts the image to a base64 Data URI.
+     */
+    protected function handleImageUpload(Request $request, string $fieldName, string $prefix, ?string $currentPath = null): ?string
+    {
+        if (!$request->hasFile($fieldName)) {
+            return $currentPath;
+        }
+
+        $file = $request->file($fieldName);
+        if (!$file || !$file->isValid()) {
+            return $currentPath;
+        }
+
+        $isVercel = isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL');
+
+        // On Vercel serverless, store directly as base64 Data URI into database
+        if ($isVercel) {
+            $mime = $file->getMimeType() ?: 'image/jpeg';
+            $data = base64_encode(file_get_contents($file->getRealPath()));
+            return "data:{$mime};base64,{$data}";
+        }
+
+        // On local, try saving to public/images/uploads
+        try {
+            $uploadPath = public_path('images/uploads');
+            if (!file_exists($uploadPath)) {
+                @mkdir($uploadPath, 0755, true);
+            }
+            $filename = $prefix . '_' . time() . '_' . rand(100, 999) . '.' . $file->getClientOriginalExtension();
+            $file->move($uploadPath, $filename);
+            return '/images/uploads/' . $filename;
+        } catch (\Throwable $e) {
+            // Fallback to base64 if filesystem is read-only or permission denied
+            $mime = $file->getMimeType() ?: 'image/jpeg';
+            $data = base64_encode(file_get_contents($file->getRealPath()));
+            return "data:{$mime};base64,{$data}";
+        }
     }
 }
 
