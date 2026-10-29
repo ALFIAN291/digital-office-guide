@@ -31,16 +31,16 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.log
 Route::get('/admin/setup-db', function () {
     $dbHost = config('database.connections.pgsql.host');
     $dbName = config('database.connections.pgsql.database');
-    $dbUrlSet = !empty(config('database.connections.pgsql.url'));
+    $dbUser = config('database.connections.pgsql.username');
 
     $envInfo = [
         'DB_CONNECTION' => config('database.default'),
         'PG_HOST' => $dbHost,
         'PG_DATABASE' => $dbName,
-        'HAS_DB_URL' => $dbUrlSet ? 'YES (Terkoneksi Neon)' : 'NO (Masih default 127.0.0.1)',
+        'PG_USER' => $dbUser,
     ];
 
-    if ($dbHost === '127.0.0.1' && !$dbUrlSet) {
+    if ($dbHost === '127.0.0.1' || empty($dbHost)) {
         return response()->view('admin.setup-db', [
             'status' => 'error',
             'title' => 'Database Belum Terhubung ke Vercel',
