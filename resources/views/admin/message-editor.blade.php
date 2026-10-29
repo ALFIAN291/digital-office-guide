@@ -78,6 +78,41 @@
             <p class="text-[11px] text-slate-500">Paragraf ini adalah teks yang langsung terbaca pada kartu di halaman beranda.</p>
         </div>
 
+        <!-- Ukuran / Ketebalan Kartu di Beranda -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+                <label class="block text-xs font-extrabold text-[#0f2e54]">
+                    Ukuran Ketebalan / Tinggi Kartu di Beranda:
+                </label>
+                <span class="text-[10px] text-slate-400">Pilih tinggi kartu sambutan</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'pendek' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                    <input type="radio" name="message_height" value="pendek" {{ old('message_height', $settings->message_height ?? 'pendek') === 'pendek' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-800">Pendek</div>
+                        <div class="text-[10px] text-slate-500">Ramping, teks ringkas 2 baris</div>
+                    </div>
+                </label>
+
+                <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'sedang' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                    <input type="radio" name="message_height" value="sedang" {{ old('message_height', $settings->message_height ?? 'pendek') === 'sedang' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-800">Sedang</div>
+                        <div class="text-[10px] text-slate-500">Standar proporsional</div>
+                    </div>
+                </label>
+
+                <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'besar' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                    <input type="radio" name="message_height" value="besar" {{ old('message_height', $settings->message_height ?? 'pendek') === 'besar' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-800">Besar</div>
+                        <div class="text-[10px] text-slate-500">Lega & teks lengkap</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
         <!-- Full Content -->
         <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">

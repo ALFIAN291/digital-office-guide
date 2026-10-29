@@ -101,6 +101,76 @@
                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
                 </div>
             </div>
+
+            <!-- Pilihan Ukuran / Ketebalan Hero Banner (Pendek, Sedang, Besar) -->
+            <div class="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-extrabold text-[#0b3c6d]">
+                        Ukuran Ketebalan / Tinggi Hero Banner:
+                    </label>
+                    <span class="text-[10px] bg-white px-2 py-0.5 rounded font-bold text-[#0084f8]">Tampilan Beranda</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'pendek' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="hero_height" value="pendek" {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'pendek' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Pendek</div>
+                            <div class="text-[10px] text-slate-500">Ramping & hemat tempat</div>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'sedang' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="hero_height" value="sedang" {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'sedang' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Sedang</div>
+                            <div class="text-[10px] text-slate-500">Standar proporsional</div>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'besar' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="hero_height" value="besar" {{ old('hero_height', $settings->hero_height ?? 'pendek') === 'besar' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Besar</div>
+                            <div class="text-[10px] text-slate-500">Lega & banner luas</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Pilihan Ukuran / Ketebalan Kartu Pesan Manajemen (Pendek, Sedang, Besar) -->
+            <div class="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-extrabold text-[#0b3c6d]">
+                        Ukuran Ketebalan / Tinggi Kartu "A Message from Management":
+                    </label>
+                    <span class="text-[10px] bg-white px-2 py-0.5 rounded font-bold text-[#0084f8]">Tampilan Beranda</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'pendek' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="message_height" value="pendek" {{ old('message_height', $settings->message_height ?? 'pendek') === 'pendek' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Pendek</div>
+                            <div class="text-[10px] text-slate-500">Ramping, teks ringkas 2 baris</div>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'sedang' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="message_height" value="sedang" {{ old('message_height', $settings->message_height ?? 'pendek') === 'sedang' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Sedang</div>
+                            <div class="text-[10px] text-slate-500">Standar proporsional</div>
+                        </div>
+                    </label>
+
+                    <label class="relative flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition {{ old('message_height', $settings->message_height ?? 'pendek') === 'besar' ? 'bg-white border-[#0084f8] shadow-xs ring-2 ring-[#0084f8]/20' : 'bg-white/80 border-slate-200 hover:bg-white' }}">
+                        <input type="radio" name="message_height" value="besar" {{ old('message_height', $settings->message_height ?? 'pendek') === 'besar' ? 'checked' : '' }} class="text-[#0084f8] focus:ring-[#0084f8]">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-800">Besar</div>
+                            <div class="text-[10px] text-slate-500">Lega & teks lengkap</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
         </div>
 
         <!-- 3. Explore Workplace & 4 Grid Cards -->

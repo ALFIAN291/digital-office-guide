@@ -57,6 +57,8 @@ class AdminController extends Controller
             'hero_title_line1' => ['required', 'string', 'max:100'],
             'hero_title_line2' => ['required', 'string', 'max:100'],
             'hero_tagline' => ['required', 'string', 'max:255'],
+            'hero_height' => ['nullable', 'in:pendek,sedang,besar'],
+            'message_height' => ['nullable', 'in:pendek,sedang,besar'],
             'hero_image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'explore_title' => ['required', 'string', 'max:150'],
             
@@ -119,7 +121,8 @@ class AdminController extends Controller
     public function editMessage()
     {
         $message = ManagementMessage::where('is_active', true)->first() ?? new ManagementMessage();
-        return view('admin.message-editor', compact('message'));
+        $settings = HomeSetting::current();
+        return view('admin.message-editor', compact('message', 'settings'));
     }
 
     /**
@@ -140,7 +143,12 @@ class AdminController extends Controller
             'content' => ['required', 'string'],
             'quote' => ['nullable', 'string', 'max:255'],
             'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'message_height' => ['nullable', 'in:pendek,sedang,besar'],
         ]);
+
+        if ($request->filled('message_height')) {
+            HomeSetting::current()->update(['message_height' => $request->input('message_height')]);
+        }
 
         if ($request->hasFile('image_file')) {
             $imagePath = $this->handleImageUpload($request, 'image_file', 'management', $message->image_path);

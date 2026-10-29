@@ -20,8 +20,57 @@
         </div>
     @endauth
 
-    <!-- 1. Hero Section (Compact & Sleek) -->
-    <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs h-44 sm:h-52 md:h-60 flex items-end">
+    <!-- 1. Hero Section (Dynamic Height: pendek, sedang, besar) -->
+    @php
+        $heroHeightMode = $settings->hero_height ?? 'pendek';
+        $messageHeightMode = $settings->message_height ?? 'pendek';
+
+        // 1. Hero Height Classes (default 'pendek' is slim and space-saving)
+        $heroHeightClass = match($heroHeightMode) {
+            'besar' => 'h-52 sm:h-60 md:h-68',
+            'sedang' => 'h-38 sm:h-44 md:h-48',
+            default => 'h-28 sm:h-32 md:h-36', // pendek
+        };
+        $heroPaddingClass = match($heroHeightMode) {
+            'besar' => 'p-5 sm:p-7',
+            'sedang' => 'p-4 sm:p-5',
+            default => 'p-3 sm:p-4',
+        };
+        $heroTitleClass = match($heroHeightMode) {
+            'besar' => 'text-2xl sm:text-3xl md:text-4xl',
+            'sedang' => 'text-xl sm:text-2xl md:text-3xl',
+            default => 'text-lg sm:text-xl md:text-2xl',
+        };
+
+        // 2. Message from Management Height Classes
+        $msgImgClass = match($messageHeightMode) {
+            'besar' => 'h-48 sm:h-56 md:h-auto min-h-[220px]',
+            'sedang' => 'h-36 sm:h-42 md:h-auto min-h-[160px]',
+            default => 'h-28 sm:h-32 md:h-auto min-h-[120px]', // pendek
+        };
+        $msgPaddingClass = match($messageHeightMode) {
+            'besar' => 'p-5 sm:p-7 md:p-8',
+            'sedang' => 'p-4 sm:p-5 md:p-6',
+            default => 'p-3.5 sm:p-4 md:p-4.5',
+        };
+        $msgTitleClass = match($messageHeightMode) {
+            'besar' => 'text-xl sm:text-2xl md:text-3xl',
+            'sedang' => 'text-lg sm:text-xl md:text-2xl',
+            default => 'text-base sm:text-lg md:text-xl',
+        };
+        $msgMarginClass = match($messageHeightMode) {
+            'besar' => 'mb-4',
+            'sedang' => 'mb-3',
+            default => 'mb-2 sm:mb-2.5',
+        };
+        $msgClampClass = match($messageHeightMode) {
+            'besar' => '',
+            'sedang' => 'line-clamp-3',
+            default => 'line-clamp-2',
+        };
+    @endphp
+
+    <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs {{ $heroHeightClass }} flex items-end">
         <!-- Hero Background Image -->
         <img src="{{ office_image($settings->hero_image ?? null, 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover">
         
@@ -29,24 +78,24 @@
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/35 to-transparent"></div>
 
         <!-- Hero Text -->
-        <div class="relative z-10 p-4 sm:p-6 text-white w-full">
-            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight drop-shadow-xs">
+        <div class="relative z-10 {{ $heroPaddingClass }} text-white w-full">
+            <h1 class="{{ $heroTitleClass }} font-extrabold tracking-tight leading-tight drop-shadow-xs">
                 {{ $settings->hero_title_line1 ?? 'Welcome to' }}
                 <span>{{ $settings->hero_title_line2 ?? 'Your New Workplace' }}</span>
             </h1>
             
-            <p class="text-white/90 text-xs sm:text-sm font-medium mt-1 max-w-xl drop-shadow-xs">
+            <p class="text-white/90 text-xs sm:text-sm font-medium mt-0.5 max-w-xl drop-shadow-xs line-clamp-1">
                 {{ $settings->hero_tagline ?? 'Moving Together. Working Better. Growing Stronger.' }}
             </p>
         </div>
     </div>
 
-    <!-- 2. A Message from Management Card (Compact & Proportional) -->
+    <!-- 2. A Message from Management Card (Dynamic Height: pendek, sedang, besar) -->
     <div class="bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden relative group">
         
         @auth
             <a href="{{ route('admin.message.edit') }}" title="Edit Pesan Ini" 
-               class="absolute top-3 right-3 z-20 px-2.5 py-1 bg-white/90 hover:bg-white text-[11px] font-bold text-slate-700 shadow-xs rounded-full border border-slate-200 flex items-center gap-1">
+               class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 px-2.5 py-1 bg-white/90 hover:bg-white text-[11px] font-bold text-slate-700 shadow-xs rounded-full border border-slate-200 flex items-center gap-1">
                 <span>✏️ Edit Pesan</span>
             </a>
         @endauth
@@ -54,26 +103,26 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
             
             <!-- Left Image (Workstation interior) -->
-            <div class="relative h-44 sm:h-52 md:h-auto min-h-[170px] overflow-hidden">
+            <div class="relative {{ $msgImgClass }} overflow-hidden">
                 <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
             </div>
 
             <!-- Right Message Content -->
-            <div class="p-4 sm:p-5 md:p-6 flex flex-col justify-center">
-                <h2 class="text-lg sm:text-xl md:text-2xl font-extrabold text-[#0f2e54] tracking-tight leading-snug">
+            <div class="{{ $msgPaddingClass }} flex flex-col justify-center">
+                <h2 class="{{ $msgTitleClass }} font-extrabold text-[#0f2e54] tracking-tight leading-snug">
                     {{ $message->title ?? 'A Message from Management' }}
                 </h2>
                 
-                <div class="w-10 h-0.75 bg-[#0084f8] rounded-full mt-1.5 mb-2.5"></div>
+                <div class="w-8 sm:w-10 h-0.75 bg-[#0084f8] rounded-full mt-1 mb-2"></div>
                 
-                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4 font-normal">
+                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed {{ $msgMarginClass }} {{ $msgClampClass }} font-normal">
                     {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
                 </p>
 
                 <div>
                     <button @click="showMessageModal = true" 
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
+                            class="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
                         <span>Read Message</span>
                         <span class="text-sm leading-none">→</span>
                     </button>
