@@ -36,9 +36,6 @@ foreach ($urlKeys as $key) {
                 $portPart = isset($parsed['port']) ? ':' . $parsed['port'] : '';
                 $pathPart = $parsed['path'] ?? '/neondb';
                 $queryPart = isset($parsed['query']) ? '?' . $parsed['query'] : '?sslmode=require';
-                if (!str_contains($queryPart, 'options=')) {
-                    $queryPart .= '&options=endpoint%3D' . $endpointId;
-                }
                 $val = "postgres://{$newUser}{$passPart}@{$parsed['host']}{$portPart}{$pathPart}{$queryPart}";
                 putenv("DB_USERNAME={$newUser}");
                 $_ENV['DB_USERNAME'] = $newUser;

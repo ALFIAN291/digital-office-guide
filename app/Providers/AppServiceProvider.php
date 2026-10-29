@@ -40,9 +40,6 @@ class AppServiceProvider extends ServiceProvider
                         $portPart = isset($parsed['port']) ? ':' . $parsed['port'] : '';
                         $pathPart = $parsed['path'] ?? '/neondb';
                         $queryPart = isset($parsed['query']) ? '?' . $parsed['query'] : '?sslmode=require';
-                        if (!str_contains($queryPart, 'options=')) {
-                            $queryPart .= '&options=endpoint%3D' . $endpointId;
-                        }
                         $newUrl = "postgres://{$newUser}{$passPart}@{$parsed['host']}{$portPart}{$pathPart}{$queryPart}";
                         config([
                             'database.connections.pgsql.url' => $newUrl,
@@ -52,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+        config(['database.connections.pgsql.options' => []]);
     }
 
     /**
