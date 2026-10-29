@@ -31,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
                 if ($user && !str_contains($user, '$')) {
                     $parsed['username'] = "{$user}\${$endpointId}";
                 }
+                $directHost = str_replace('-pooler.', '.', $host);
+                $parsed['host'] = "{$directHost};options='endpoint={$endpointId}'";
             }
         }
         $parsed['url'] = null;
