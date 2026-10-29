@@ -29,12 +29,13 @@
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pedoman K3 & Etiket</div>
-            <div class="text-3xl font-black text-[#0f2e54] mt-1">{{ $stats['rules_count'] }}</div>
-            <div class="text-[11px] text-slate-500 mt-1">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pedoman Dos & Don'ts</div>
+            <div class="text-3xl font-black text-[#0f2e54] mt-1">{{ $stats['rules_count'] }} <span class="text-xs font-semibold text-slate-400 font-sans">Pasang</span></div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
                 <span class="text-emerald-600 font-bold">{{ $stats['dos_count'] }} DO</span> • 
                 <span class="text-rose-600 font-bold">{{ $stats['donts_count'] }} DON'T</span>
             </div>
+            <a href="{{ route('admin.rules.index') }}" class="text-xs text-[#0084f8] font-semibold mt-2 inline-block hover:underline">Kelola Pedoman →</a>
         </div>
 
         <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">

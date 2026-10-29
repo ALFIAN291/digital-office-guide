@@ -22,11 +22,17 @@ class AdminController extends Controller
     {
         $settings = HomeSetting::current();
         $message = ManagementMessage::where('is_active', true)->first();
+        $rulesCount = DosAndDont::count();
+        $dosCount = DosAndDont::whereNotNull('do_text')->where('do_text', '!=', '')->count();
+        $dontsCount = DosAndDont::whereNotNull('dont_text')->where('dont_text', '!=', '')->count();
+        if ($dosCount === 0 && $rulesCount > 0) $dosCount = $rulesCount;
+        if ($dontsCount === 0 && $rulesCount > 0) $dontsCount = $rulesCount;
+
         $stats = [
             'facilities_count' => Facility::count(),
-            'rules_count' => DosAndDont::count(),
-            'dos_count' => DosAndDont::where('type', 'do')->count(),
-            'donts_count' => DosAndDont::where('type', 'dont')->count(),
+            'rules_count' => $rulesCount,
+            'dos_count' => $dosCount,
+            'donts_count' => $dontsCount,
             'zones_count' => OfficeZone::count(),
             'contacts_count' => EmergencyContact::count(),
         ];
