@@ -26,6 +26,26 @@ $urlKeys = [
 foreach ($urlKeys as $key) {
     $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
     if (!empty($val)) {
+        // Auto-fix Neon SNI endpoint requirement
+        $parsed = parse_url($val);
+        if (!empty($parsed['host'])) {
+            $endpointId = preg_replace('/-pooler$/', '', explode('.', $parsed['host'])[0]);
+            if (str_starts_with($endpointId, 'ep-') && !empty($parsed['user']) && !str_contains($parsed['user'], '$')) {
+                $newUser = $parsed['user'] . '$' . $endpointId;
+                $passPart = isset($parsed['pass']) ? ':' . $parsed['pass'] : '';
+                $portPart = isset($parsed['port']) ? ':' . $parsed['port'] : '';
+                $pathPart = $parsed['path'] ?? '/neondb';
+                $queryPart = isset($parsed['query']) ? '?' . $parsed['query'] : '?sslmode=require';
+                if (!str_contains($queryPart, 'options=')) {
+                    $queryPart .= '&options=endpoint%3D' . $endpointId;
+                }
+                $val = "postgres://{$newUser}{$passPart}@{$parsed['host']}{$portPart}{$pathPart}{$queryPart}";
+                putenv("DB_USERNAME={$newUser}");
+                $_ENV['DB_USERNAME'] = $newUser;
+                $_SERVER['DB_USERNAME'] = $newUser;
+            }
+        }
+
         putenv("DB_URL={$val}");
         $_ENV['DB_URL'] = $val;
         $_SERVER['DB_URL'] = $val;
@@ -35,9 +55,11 @@ foreach ($urlKeys as $key) {
 
 // Auto-detect individual Postgres credentials
 $hostKeys = ['POSTGRES_HOST', 'PGHOST', 'DB_HOST'];
+$foundHost = null;
 foreach ($hostKeys as $key) {
     $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
     if (!empty($val)) {
+        $foundHost = $val;
         putenv("DB_HOST={$val}");
         $_ENV['DB_HOST'] = $val;
         $_SERVER['DB_HOST'] = $val;
@@ -48,6 +70,19 @@ foreach ($hostKeys as $key) {
 $userKeys = ['POSTGRES_USER', 'PGUSER', 'DB_USERNAME'];
 foreach ($userKeys as $key) {
     $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        if ($foundHost && str_contains($foundHost, 'neon.tech')) {
+            $endpointId = preg_replace('/-pooler$/', '', explode('.', $foundHost)[0]);
+            if (str_starts_with($endpointId, 'ep-') && !str_contains($val, '$')) {
+                $val = "{$val}\${$endpointId}";
+            }
+        }
+        putenv("DB_USERNAME={$val}");
+        $_ENV['DB_USERNAME'] = $val;
+        $_SERVER['DB_USERNAME'] = $val;
+        break;
+    }
+}
     if (!empty($val)) {
         putenv("DB_USERNAME={$val}");
         $_ENV['DB_USERNAME'] = $val;
