@@ -54,6 +54,10 @@ Route::get('/admin/setup-db', function () {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
 
+        try {
+            \Illuminate\Support\Facades\DB::table('home_settings')->update(['message_auto_popup' => true]);
+        } catch (\Throwable $e) {}
+
         $seedOutput = '';
         if (\App\Models\User::count() === 0 || \App\Models\Facility::count() === 0) {
             \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);

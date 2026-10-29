@@ -53,7 +53,7 @@ class HomeSetting extends Model
             'hero_height' => 'pendek',
             'message_height' => 'pendek',
             'message_display_mode' => 'popup',
-            'message_auto_popup' => false,
+            'message_auto_popup' => true,
             'explore_title' => 'Explore Your Workplace',
             'card_office_title' => 'Office & Plant',
             'card_office_badge' => 'Kampus Terpadu',

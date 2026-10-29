@@ -119,7 +119,7 @@
 
             <!-- Auto-Popup Checkbox -->
             <div class="pt-3 border-t border-sky-100 flex items-center gap-3">
-                <input type="checkbox" id="message_auto_popup" name="message_auto_popup" value="1" {{ old('message_auto_popup', $settings->message_auto_popup ?? false) ? 'checked' : '' }}
+                <input type="checkbox" id="message_auto_popup" name="message_auto_popup" value="1" {{ old('message_auto_popup', $settings->message_auto_popup ?? true) ? 'checked' : '' }}
                        class="w-4 h-4 text-[#0084f8] border-slate-300 rounded focus:ring-[#0084f8] cursor-pointer">
                 <label for="message_auto_popup" class="text-xs text-slate-700 font-semibold cursor-pointer">
                     Otomatis tampilkan popup sambutan saat pengunjung pertama kali membuka web.

@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->string('message_display_mode')->default('popup'); // 'popup' or 'card'
             }
             if (!Schema::hasColumn('home_settings', 'message_auto_popup')) {
-                $table->boolean('message_auto_popup')->default(false);
+                $table->boolean('message_auto_popup')->default(true);
             }
         });
     }
@@ -36,3 +36,4 @@ return new class extends Migration
         });
     }
 };
+

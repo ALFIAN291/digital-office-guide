@@ -4,17 +4,16 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
      x-data="{ 
         showMessageModal: false,
-        autoPopup: {{ ($settings->message_auto_popup ?? false) ? 'true' : 'false' }},
+        autoPopup: {{ ($settings->message_auto_popup ?? true) ? 'true' : 'false' }},
         init() {
-            if (this.autoPopup && !sessionStorage.getItem('akebono_mgmt_popup_closed')) {
+            if (this.autoPopup) {
                 setTimeout(() => {
                     this.showMessageModal = true;
-                }, 600);
+                }, 250);
             }
         },
         closeModal() {
             this.showMessageModal = false;
-            sessionStorage.setItem('akebono_mgmt_popup_closed', 'true');
         }
      }">
 
