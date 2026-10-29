@@ -37,6 +37,15 @@
           "value": "public, max-age=86400"
         }
       ]
+    },
+    {
+      "source": "/(facilities|dos-and-donts|map|office-and-plant|emergency|message)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, s-maxage=300, stale-while-revalidate=600"
+        }
+      ]
     }
   ],
   "routes": [
