@@ -308,8 +308,25 @@
     </div>
 
     <!-- Management Message Modal (Executive Popup) -->
+    <style>
+        .custom-modal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-modal-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-modal-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .custom-modal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+
     <div x-show="showMessageModal" 
          x-cloak 
+         @keydown.escape.window="closeModal()"
          class="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-6 flex items-center justify-center" 
          role="dialog" 
          aria-modal="true"
@@ -324,7 +341,7 @@
         <div class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs transition-opacity" @click="closeModal()"></div>
 
         <!-- Modal Box -->
-        <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200/90 overflow-hidden max-h-[90vh] flex flex-col z-10"
+        <div class="relative bg-white rounded-3xl max-w-xl sm:max-w-2xl w-full shadow-2xl border border-slate-200/90 overflow-hidden max-h-[92vh] flex flex-col z-10"
              x-transition:enter="transition ease-out duration-300 transform"
              x-transition:enter-start="opacity-0 translate-y-4 scale-95"
              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -333,10 +350,10 @@
              x-transition:leave-end="opacity-0 translate-y-4 scale-95">
             
             <!-- Top Header (Clean Executive Light Header - Fixed at Top) -->
-            <div class="p-4 sm:p-5 pb-3 border-b border-slate-100 shrink-0 bg-white">
+            <div class="p-5 sm:p-6 pb-3 border-b border-slate-100/80 shrink-0 bg-white">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 20px; width: auto;" class="h-5 w-auto">
+                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
                         <div class="h-3.5 w-px bg-slate-200"></div>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-[#0084f8] border border-sky-100 shadow-2xs">
                             <span>📢</span>
@@ -350,7 +367,7 @@
                     <!-- Close Button (Clean & Highly Visible) -->
                     <button type="button" 
                             @click="closeModal()" 
-                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                            class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
                             title="Tutup Popup">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -359,20 +376,20 @@
                 </div>
 
                 <div class="mt-2.5">
-                    <h3 class="text-lg sm:text-xl font-black text-[#0f2e54] tracking-tight">
+                    <h3 class="text-xl sm:text-2xl font-black text-[#0f2e54] tracking-tight">
                         {{ $message->title ?? 'A Message from Management' }}
                     </h3>
-                    <div class="w-8 h-1 bg-[#0084f8] rounded-full mt-1"></div>
+                    <div class="w-10 h-1 bg-[#0084f8] rounded-full mt-1.5"></div>
                 </div>
             </div>
 
             <!-- Scrollable Modal Body (Teks & Nilai Utama) -->
-            <div class="p-4 sm:p-5 overflow-y-auto space-y-3.5 text-slate-700 flex-1">
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-4 text-slate-700 flex-1 custom-modal-scroll">
                 
                 <!-- Quote Box -->
-                <div class="bg-gradient-to-r from-sky-50 via-blue-50/50 to-white border-l-4 border-[#0084f8] p-3 sm:p-3.5 rounded-r-xl shadow-xs">
-                    <div class="flex items-start gap-2">
-                        <span class="text-xl text-[#0084f8] font-serif leading-none select-none">“</span>
+                <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] p-3.5 sm:p-4 rounded-r-2xl shadow-2xs">
+                    <div class="flex items-start gap-2.5">
+                        <span class="text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
                         <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic">
                             {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
                         </p>
@@ -380,7 +397,7 @@
                 </div>
 
                 <!-- Main Speech Content -->
-                <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-2 font-normal whitespace-pre-line">
+                <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-2.5 font-normal whitespace-pre-line">
                     {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
                 </div>
 
@@ -389,7 +406,7 @@
                     <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
                         Nilai Utama Lingkungan Kerja Kita:
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                         <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
                             <div class="text-sm mb-0.5">🛡️</div>
                             <div class="text-xs font-bold text-slate-900">Safety First</div>
@@ -423,16 +440,17 @@
 
             </div>
 
-            <!-- Bottom Photo Section (Docked Langsung di Bawah Popup - Tidak Perlu Scroll!) -->
-            <div class="shrink-0 border-t border-slate-200/80 bg-slate-900 relative overflow-hidden">
-                <div class="relative h-36 sm:h-44 w-full">
+            <!-- Bottom Photo Section (Framed Inside Card dengan Margin, Sudut Rounded & Caption Elegan) -->
+            <div class="px-5 pb-5 pt-1 bg-white shrink-0">
+                <div class="relative h-40 sm:h-48 w-full rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-100 group">
                     <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
                          alt="Management & Team" 
-                         class="w-full h-full object-cover object-[center_20%]">
-                    <!-- Subtle caption strip at bottom of photo -->
+                         class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
+                    
+                    <!-- Caption Strip with Pulse Dot -->
                     <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-900/40 to-transparent px-4 py-2 flex items-center justify-between text-white">
                         <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span class="text-xs font-bold text-white drop-shadow-xs">Tim Manajemen & Karyawan</span>
                         </div>
                         <span class="text-[11px] text-white/90 font-medium drop-shadow-xs">{{ $message->subtitle ?? 'Akebono Karawang 2026' }}</span>
