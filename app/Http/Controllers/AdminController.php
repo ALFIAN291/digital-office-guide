@@ -65,6 +65,8 @@ class AdminController extends Controller
             'hero_tagline' => ['required', 'string', 'max:255'],
             'hero_height' => ['nullable', 'in:pendek,sedang,besar'],
             'message_height' => ['nullable', 'in:pendek,sedang,besar'],
+            'message_display_mode' => ['nullable', 'in:popup,card'],
+            'message_auto_popup' => ['nullable'],
             'hero_image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'explore_title' => ['required', 'string', 'max:150'],
             
@@ -115,6 +117,8 @@ class AdminController extends Controller
             $validated['card_rules_image'] = $this->handleImageUpload($request, 'card_rules_image_file', 'card_rules', $settings->card_rules_image);
         }
 
+        $validated['message_auto_popup'] = $request->has('message_auto_popup');
+
         $settings->update($validated);
 
         return redirect()->route('admin.home.edit')
@@ -150,11 +154,19 @@ class AdminController extends Controller
             'quote' => ['nullable', 'string', 'max:255'],
             'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'message_height' => ['nullable', 'in:pendek,sedang,besar'],
+            'message_display_mode' => ['nullable', 'in:popup,card'],
+            'message_auto_popup' => ['nullable'],
         ]);
 
+        $settingsUpdates = [];
         if ($request->filled('message_height')) {
-            HomeSetting::current()->update(['message_height' => $request->input('message_height')]);
+            $settingsUpdates['message_height'] = $request->input('message_height');
         }
+        if ($request->filled('message_display_mode')) {
+            $settingsUpdates['message_display_mode'] = $request->input('message_display_mode');
+        }
+        $settingsUpdates['message_auto_popup'] = $request->has('message_auto_popup');
+        HomeSetting::current()->update($settingsUpdates);
 
         if ($request->hasFile('image_file')) {
             $imagePath = $this->handleImageUpload($request, 'image_file', 'management', $message->image_path);

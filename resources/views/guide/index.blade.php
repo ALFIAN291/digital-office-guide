@@ -2,7 +2,21 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
-     x-data="{ showMessageModal: false }">
+     x-data="{ 
+        showMessageModal: false,
+        autoPopup: {{ ($settings->message_auto_popup ?? false) ? 'true' : 'false' }},
+        init() {
+            if (this.autoPopup && !sessionStorage.getItem('akebono_mgmt_popup_closed')) {
+                setTimeout(() => {
+                    this.showMessageModal = true;
+                }, 600);
+            }
+        },
+        closeModal() {
+            this.showMessageModal = false;
+            sessionStorage.setItem('akebono_mgmt_popup_closed', 'true');
+        }
+     }">
 
     <!-- Admin Floating Quick Edit Buttons (Matching Design Mockup when Logged In) -->
     @auth
@@ -90,47 +104,92 @@
         </div>
     </div>
 
-    <!-- 2. A Message from Management Card (Dynamic Height: pendek, sedang, besar) -->
-    <div class="bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden relative group">
-        
-        @auth
-            <a href="{{ route('admin.message.edit') }}" title="Edit Pesan Ini" 
-               class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 px-2.5 py-1 bg-white/90 hover:bg-white text-[11px] font-bold text-slate-700 shadow-xs rounded-full border border-slate-200 flex items-center gap-1">
-                <span>✏️ Edit Pesan</span>
-            </a>
-        @endauth
+    <!-- 2. A Message from Management (Mode Popup / Mode Kartu) -->
+    @php
+        $displayMode = $settings->message_display_mode ?? 'popup';
+    @endphp
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
+    @if($displayMode === 'popup')
+        <!-- Mode Popup: Banner Ramping & Hemat Tempat (Klik untuk Buka Modal Popup) -->
+        <div @click="showMessageModal = true"
+             class="bg-gradient-to-r from-sky-50 via-white to-sky-50/70 hover:from-sky-100 hover:to-white border border-sky-200/90 rounded-2xl p-2.5 sm:p-3.5 flex items-center justify-between gap-3 shadow-xs hover:shadow-md cursor-pointer transition-all duration-200 group">
             
-            <!-- Left Image (Workstation interior) -->
-            <div class="relative {{ $msgImgClass }} overflow-hidden">
-                <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
-            </div>
+            <div class="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                <!-- Avatar Thumbnail -->
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-sky-500 shrink-0 border border-sky-200 shadow-xs relative">
+                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Management" class="w-full h-full object-cover">
+                </div>
 
-            <!-- Right Message Content -->
-            <div class="{{ $msgPaddingClass }} flex flex-col justify-center">
-                <h2 class="{{ $msgTitleClass }} font-extrabold text-[#0f2e54] tracking-tight leading-snug">
-                    {{ $message->title ?? 'A Message from Management' }}
-                </h2>
-                
-                <div class="w-8 sm:w-10 h-0.75 bg-[#0084f8] rounded-full mt-1 mb-2"></div>
-                
-                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed {{ $msgMarginClass }} {{ $msgClampClass }} font-normal">
-                    {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
-                </p>
-
-                <div>
-                    <button @click="showMessageModal = true" 
-                            class="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
-                        <span>Read Message</span>
-                        <span class="text-sm leading-none">→</span>
-                    </button>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#0084f8] bg-sky-100 px-2 py-0.5 rounded-full">
+                            {{ $message->title ?? 'A Message from Management' }}
+                        </span>
+                        <span class="text-[10px] text-slate-400 hidden sm:inline">• Klik untuk baca popup</span>
+                    </div>
+                    <p class="text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5 group-hover:text-[#0084f8] transition">
+                        {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative workplace.' }}
+                    </p>
                 </div>
             </div>
 
+            <div class="flex items-center gap-2 shrink-0">
+                @auth
+                    <a href="{{ route('admin.message.edit') }}" @click.stop="" title="Edit Pesan" 
+                       class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-white rounded-lg transition text-xs">
+                        ✏️
+                    </a>
+                @endauth
+                <div class="px-3 py-1.5 bg-[#0084f8] group-hover:bg-[#0070d6] text-white text-xs font-bold rounded-full shadow-xs flex items-center gap-1 transition-all">
+                    <span>Buka Pesan</span>
+                    <span class="text-xs leading-none">↗</span>
+                </div>
+            </div>
         </div>
-    </div>
+    @else
+        <!-- Mode Kartu Penuh (Klik Seluruh Kartu untuk Buka Popup) -->
+        <div @click="showMessageModal = true"
+             class="bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden relative group cursor-pointer transition-all hover:shadow-md">
+            
+            @auth
+                <a href="{{ route('admin.message.edit') }}" @click.stop="" title="Edit Pesan Ini" 
+                   class="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 z-20 px-2.5 py-1 bg-white/90 hover:bg-white text-[11px] font-bold text-slate-700 shadow-xs rounded-full border border-slate-200 flex items-center gap-1">
+                    <span>✏️ Edit Pesan</span>
+                </a>
+            @endauth
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
+                
+                <!-- Left Image (Workstation interior) -->
+                <div class="relative {{ $msgImgClass }} overflow-hidden">
+                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
+                </div>
+
+                <!-- Right Message Content -->
+                <div class="{{ $msgPaddingClass }} flex flex-col justify-center">
+                    <h2 class="{{ $msgTitleClass }} font-extrabold text-[#0f2e54] tracking-tight leading-snug">
+                        {{ $message->title ?? 'A Message from Management' }}
+                    </h2>
+                    
+                    <div class="w-8 sm:w-10 h-0.75 bg-[#0084f8] rounded-full mt-1 mb-2"></div>
+                    
+                    <p class="text-slate-600 text-xs sm:text-sm leading-relaxed {{ $msgMarginClass }} {{ $msgClampClass }} font-normal">
+                        {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
+                    </p>
+
+                    <div>
+                        <button type="button"
+                                class="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
+                            <span>Read Message</span>
+                            <span class="text-sm leading-none">→</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    @endif
 
     <!-- 3. Explore Your Workplace Section (Matching Mockup) -->
     <div class="space-y-4">
@@ -245,51 +304,132 @@
         </p>
     </div>
 
-    <!-- Management Message Modal -->
-    <div x-show="showMessageModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" @click="showMessageModal = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[85vh] overflow-y-auto">
+    <!-- Management Message Modal (Executive Popup) -->
+    <div x-show="showMessageModal" 
+         x-cloak 
+         class="fixed inset-0 z-50 overflow-y-auto p-3 sm:p-6 flex items-center justify-center" 
+         role="dialog" 
+         aria-modal="true"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs transition-opacity" @click="closeModal()"></div>
+
+        <!-- Modal Box -->
+        <div class="relative bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200/90 overflow-hidden max-h-[90vh] flex flex-col z-10"
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200 transform"
+             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 scale-95">
             
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 24px; width: auto;" class="h-6 w-auto">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sambutan Manajemen</span>
-                </div>
-                <button @click="showMessageModal = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            <!-- Top Header Banner with Image & Close Button -->
+            <div class="relative h-36 sm:h-44 w-full bg-slate-900 shrink-0 overflow-hidden">
+                <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
+                     alt="Management Workplace" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/30"></div>
+
+                <!-- Floating Close Button -->
+                <button type="button" 
+                        @click="closeModal()" 
+                        class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-9 sm:h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all border border-white/20 hover:scale-105"
+                        title="Tutup Popup">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
+
+                <!-- Header Content inside Banner -->
+                <div class="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 text-white">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-[#0084f8] text-white shadow-xs">
+                            <span>📢</span>
+                            <span>Official Announcement</span>
+                        </span>
+                        <span class="text-[11px] text-white/80 font-medium hidden sm:inline">• Karawang Campus 2026</span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
+                        {{ $message->title ?? 'A Message from Management' }}
+                    </h3>
+                </div>
             </div>
 
-            <div class="mt-6 space-y-4">
-                <h3 class="text-2xl font-extrabold text-[#0f2e54]">{{ $message->title ?? 'A Message from Management' }}</h3>
-                <div class="w-12 h-1 bg-[#0084f8] rounded-full"></div>
-
-                <div class="bg-sky-50 border-l-4 border-[#0084f8] p-4 rounded-r-xl">
-                    <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] italic">
-                        "{{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}"
-                    </p>
+            <!-- Scrollable Modal Body -->
+            <div class="p-5 sm:p-7 overflow-y-auto space-y-4 text-slate-700">
+                
+                <!-- Quote Box -->
+                <div class="bg-gradient-to-r from-sky-50 via-blue-50/50 to-white border-l-4 border-[#0084f8] p-3.5 sm:p-4 rounded-r-2xl shadow-xs">
+                    <div class="flex items-start gap-2.5">
+                        <span class="text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
+                        <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic">
+                            {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
+                        </p>
+                    </div>
                 </div>
 
-                <div class="text-slate-700 text-sm leading-relaxed whitespace-pre-line space-y-3 font-normal">
+                <!-- Main Speech Content -->
+                <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-3 font-normal whitespace-pre-line">
                     {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
                 </div>
 
-                <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
-                    <div>
-                        <div class="text-sm font-bold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
-                        <div class="text-xs text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
+                <!-- 3 Pillars / Core Workplace Values -->
+                <div class="pt-2">
+                    <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">
+                        Nilai Utama Lingkungan Kerja Kita:
                     </div>
-                    <div class="text-right">
-                        <span class="text-xs font-semibold text-[#0084f8] bg-sky-50 px-3 py-1 rounded-full">Akebono Karawang 2026</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                            <div class="text-base mb-1">🛡️</div>
+                            <div class="text-xs font-bold text-slate-900">Safety First</div>
+                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Prioritas keselamatan tanpa kompromi di seluruh area.</div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                            <div class="text-base mb-1">🤝</div>
+                            <div class="text-xs font-bold text-slate-900">Kolaboratif</div>
+                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Ruang terbuka untuk sinergi & komunikasi efektif.</div>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+                            <div class="text-base mb-1">🌿</div>
+                            <div class="text-xs font-bold text-slate-900">5S & Green</div>
+                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Kebersihan, kerapian, dan kepedulian lingkungan kerja.</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Sign-off Section -->
+                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
+                            <div class="text-[11px] text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
+                        </div>
+                    </div>
+                    <div class="text-right w-full sm:w-auto">
+                        <span class="inline-block text-[11px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
+                            Akebono Karawang 2026
+                        </span>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="mt-6 pt-4 border-t border-slate-100">
-                <button @click="showMessageModal = false" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm rounded-xl transition">
-                    Tutup
+            <!-- Footer Action Button -->
+            <div class="p-4 sm:px-7 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
+                <span class="text-[11px] text-slate-400 hidden sm:inline">
+                    Pesan ini dapat diakses kapan saja dari beranda
+                </span>
+                <button type="button" 
+                        @click="closeModal()" 
+                        class="w-full sm:w-auto px-6 py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-xs">
+                    Tutup Popup
                 </button>
             </div>
 
