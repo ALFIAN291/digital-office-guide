@@ -15,3 +15,4 @@ if (!function_exists('office_image')) {
         return asset(ltrim($path, '/'));
     }
 }
+

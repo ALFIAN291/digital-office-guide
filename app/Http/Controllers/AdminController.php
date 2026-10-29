@@ -297,26 +297,44 @@ class AdminController extends Controller
      */
     public function createRule()
     {
-        return view('admin.rules.create');
+        $categories = ['General', 'Meeting Room', 'Workspace', 'Canteen', 'Safety'];
+        return view('admin.rules.create', compact('categories'));
     }
 
     /**
-     * Store new rule.
+     * Store new paired rule.
      */
     public function storeRule(Request $request)
     {
         $validated = $request->validate([
-            'category' => ['required', 'string'],
-            'type' => ['required', 'in:do,dont'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'tip_or_consequence' => ['nullable', 'string'],
+            'category' => ['required', 'string', 'max:100'],
+            'do_text' => ['required', 'string', 'max:500'],
+            'do_sub' => ['nullable', 'string', 'max:1000'],
+            'dont_text' => ['required', 'string', 'max:500'],
+            'dont_sub' => ['nullable', 'string', 'max:1000'],
+            'image_file' => ['nullable', 'image', 'max:5120'],
+            'sort_order' => ['nullable', 'integer'],
         ]);
 
-        DosAndDont::create($validated);
+        $imagePath = $this->handleImageUpload($request, 'image_file', 'rule');
+
+        DosAndDont::create([
+            'category' => $validated['category'],
+            'image_path' => $imagePath ?: '/images/hero-office.jpg',
+            'do_text' => $validated['do_text'],
+            'do_sub' => $validated['do_sub'] ?? null,
+            'dont_text' => $validated['dont_text'],
+            'dont_sub' => $validated['dont_sub'] ?? null,
+            'sort_order' => (int) ($request->input('sort_order', 0) ?? 0),
+            'is_active' => true,
+            // Compatibility fields
+            'type' => 'do',
+            'title' => $validated['do_text'],
+            'description' => $validated['do_sub'] ?? $validated['do_text'],
+        ]);
 
         return redirect()->route('admin.rules.index')
-            ->with('success', 'Pedoman ' . strtoupper($validated['type']) . ' berhasil ditambahkan!');
+            ->with('success', 'Pedoman (DO & DON\'T) berhasil ditambahkan!');
     }
 
     /**
@@ -325,28 +343,45 @@ class AdminController extends Controller
     public function editRule($id)
     {
         $rule = DosAndDont::findOrFail($id);
-        return view('admin.rules.edit', compact('rule'));
+        $categories = ['General', 'Meeting Room', 'Workspace', 'Canteen', 'Safety'];
+        return view('admin.rules.edit', compact('rule', 'categories'));
     }
 
     /**
-     * Update existing rule.
+     * Update existing paired rule.
      */
     public function updateRule(Request $request, $id)
     {
         $rule = DosAndDont::findOrFail($id);
 
         $validated = $request->validate([
-            'category' => ['required', 'string'],
-            'type' => ['required', 'in:do,dont'],
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'tip_or_consequence' => ['nullable', 'string'],
+            'category' => ['required', 'string', 'max:100'],
+            'do_text' => ['required', 'string', 'max:500'],
+            'do_sub' => ['nullable', 'string', 'max:1000'],
+            'dont_text' => ['required', 'string', 'max:500'],
+            'dont_sub' => ['nullable', 'string', 'max:1000'],
+            'image_file' => ['nullable', 'image', 'max:5120'],
+            'sort_order' => ['nullable', 'integer'],
         ]);
 
-        $rule->update($validated);
+        $imagePath = $this->handleImageUpload($request, 'image_file', 'rule', $rule->image_path);
+
+        $rule->update([
+            'category' => $validated['category'],
+            'image_path' => $imagePath,
+            'do_text' => $validated['do_text'],
+            'do_sub' => $validated['do_sub'] ?? null,
+            'dont_text' => $validated['dont_text'],
+            'dont_sub' => $validated['dont_sub'] ?? null,
+            'sort_order' => (int) ($request->input('sort_order', 0) ?? 0),
+            'is_active' => $request->has('is_active') ? (bool) $request->input('is_active') : true,
+            // Compatibility fields
+            'title' => $validated['do_text'],
+            'description' => $validated['do_sub'] ?? $validated['do_text'],
+        ]);
 
         return redirect()->route('admin.rules.index')
-            ->with('success', 'Pedoman "' . $rule->title . '" berhasil diperbarui!');
+            ->with('success', 'Pedoman "' . $rule->do_text . '" berhasil diperbarui!');
     }
 
     /**

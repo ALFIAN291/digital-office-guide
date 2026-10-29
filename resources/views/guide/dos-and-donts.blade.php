@@ -5,13 +5,7 @@
      x-data="{
         activeTab: '{{ $initialCategory ?? 'General' }}',
         searchQuery: '{{ $initialQuery ?? '' }}',
-        categoryTitles: {
-            'General': 'General Etiquette',
-            'Meeting Room': 'Meeting Room Etiquette',
-            'Workspace': 'Workspace Etiquette',
-            'Canteen': 'Canteen Etiquette',
-            'Safety': 'Safety Etiquette'
-        },
+        categoryTitles: {{ Js::from($categories) }},
         items: {{ Js::from($pairs) }},
         
         setTab(tab) {
