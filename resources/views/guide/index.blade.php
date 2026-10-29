@@ -332,12 +332,12 @@
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 scale-95">
             
-            <!-- Top Header (Clean Executive Light Header) -->
-            <div class="p-5 sm:p-6 pb-4 border-b border-slate-100 shrink-0 bg-white">
+            <!-- Top Header (Clean Executive Light Header - Fixed at Top) -->
+            <div class="p-4 sm:p-5 pb-3 border-b border-slate-100 shrink-0 bg-white">
                 <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-2.5 flex-wrap">
-                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
-                        <div class="h-4 w-px bg-slate-200"></div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 20px; width: auto;" class="h-5 w-auto">
+                        <div class="h-3.5 w-px bg-slate-200"></div>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-[#0084f8] border border-sky-100 shadow-2xs">
                             <span>📢</span>
                             <span>{{ $message->badge_label ?? 'Official Announcement' }}</span>
@@ -350,7 +350,7 @@
                     <!-- Close Button (Clean & Highly Visible) -->
                     <button type="button" 
                             @click="closeModal()" 
-                            class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
                             title="Tutup Popup">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
@@ -358,21 +358,21 @@
                     </button>
                 </div>
 
-                <div class="mt-3">
-                    <h3 class="text-xl sm:text-2xl font-black text-[#0f2e54] tracking-tight">
+                <div class="mt-2.5">
+                    <h3 class="text-lg sm:text-xl font-black text-[#0f2e54] tracking-tight">
                         {{ $message->title ?? 'A Message from Management' }}
                     </h3>
-                    <div class="w-10 h-1 bg-[#0084f8] rounded-full mt-1.5"></div>
+                    <div class="w-8 h-1 bg-[#0084f8] rounded-full mt-1"></div>
                 </div>
             </div>
 
-            <!-- Scrollable Modal Body -->
-            <div class="p-5 sm:p-7 overflow-y-auto space-y-4 text-slate-700">
+            <!-- Scrollable Modal Body (Teks & Nilai Utama) -->
+            <div class="p-4 sm:p-5 overflow-y-auto space-y-3.5 text-slate-700 flex-1">
                 
                 <!-- Quote Box -->
-                <div class="bg-gradient-to-r from-sky-50 via-blue-50/50 to-white border-l-4 border-[#0084f8] p-3.5 sm:p-4 rounded-r-2xl shadow-xs">
-                    <div class="flex items-start gap-2.5">
-                        <span class="text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
+                <div class="bg-gradient-to-r from-sky-50 via-blue-50/50 to-white border-l-4 border-[#0084f8] p-3 sm:p-3.5 rounded-r-xl shadow-xs">
+                    <div class="flex items-start gap-2">
+                        <span class="text-xl text-[#0084f8] font-serif leading-none select-none">“</span>
                         <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic">
                             {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
                         </p>
@@ -380,61 +380,64 @@
                 </div>
 
                 <!-- Main Speech Content -->
-                <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-3 font-normal whitespace-pre-line">
+                <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-2 font-normal whitespace-pre-line">
                     {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
                 </div>
 
-                <!-- Management & Team Photo (Full & Proporsional di Bawah Pesan) -->
-                <div class="rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-50 my-2">
-                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
-                         alt="Management & Team" 
-                         class="w-full h-auto max-h-72 sm:max-h-84 object-cover object-center">
-                    <div class="px-4 py-2 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                        <span class="font-semibold text-slate-700">Manajemen & Karyawan PT Akebono Brake Astra Indonesia</span>
-                        <span>{{ $message->subtitle ?? 'Karawang 2026' }}</span>
-                    </div>
-                </div>
-
                 <!-- 3 Pillars / Core Workplace Values -->
-                <div class="pt-2">
-                    <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">
+                <div class="pt-1">
+                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
                         Nilai Utama Lingkungan Kerja Kita:
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                            <div class="text-base mb-1">🛡️</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                            <div class="text-sm mb-0.5">🛡️</div>
                             <div class="text-xs font-bold text-slate-900">Safety First</div>
-                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Prioritas keselamatan tanpa kompromi di seluruh area.</div>
+                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Prioritas keselamatan tanpa kompromi.</div>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                            <div class="text-base mb-1">🤝</div>
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                            <div class="text-sm mb-0.5">🤝</div>
                             <div class="text-xs font-bold text-slate-900">Kolaboratif</div>
-                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Ruang terbuka untuk sinergi & komunikasi efektif.</div>
+                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Ruang terbuka sinergi tim.</div>
                         </div>
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                            <div class="text-base mb-1">🌿</div>
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                            <div class="text-sm mb-0.5">🌿</div>
                             <div class="text-xs font-bold text-slate-900">5S & Green</div>
-                            <div class="text-[11px] text-slate-500 leading-snug mt-0.5">Kebersihan, kerapian, dan kepedulian lingkungan kerja.</div>
+                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Disiplin 5S & ramah lingkungan.</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Sign-off Section -->
-                <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex items-center gap-3">
-                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
-                        <div>
-                            <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
-                            <div class="text-[11px] text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
-                        </div>
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
+                        <div class="text-[10px] text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
                     </div>
-                    <div class="text-right w-full sm:w-auto">
-                        <span class="inline-block text-[11px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
+                    <div class="text-right">
+                        <span class="inline-block text-[10px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-full">
                             {{ $message->subtitle ?? 'Akebono Karawang 2026' }}
                         </span>
                     </div>
                 </div>
 
+            </div>
+
+            <!-- Bottom Photo Section (Docked Langsung di Bawah Popup - Tidak Perlu Scroll!) -->
+            <div class="shrink-0 border-t border-slate-200/80 bg-slate-900 relative overflow-hidden">
+                <div class="relative h-36 sm:h-44 w-full">
+                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
+                         alt="Management & Team" 
+                         class="w-full h-full object-cover object-[center_20%]">
+                    <!-- Subtle caption strip at bottom of photo -->
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-900/40 to-transparent px-4 py-2 flex items-center justify-between text-white">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="text-xs font-bold text-white drop-shadow-xs">Tim Manajemen & Karyawan</span>
+                        </div>
+                        <span class="text-[11px] text-white/90 font-medium drop-shadow-xs">{{ $message->subtitle ?? 'Akebono Karawang 2026' }}</span>
+                    </div>
+                </div>
             </div>
 
         </div>
