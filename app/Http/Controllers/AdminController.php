@@ -46,7 +46,8 @@ class AdminController extends Controller
     public function editHome()
     {
         $settings = HomeSetting::current();
-        return view('admin.home-editor', compact('settings'));
+        $message = ManagementMessage::where('is_active', true)->first() ?? new ManagementMessage();
+        return view('admin.home-editor', compact('settings', 'message'));
     }
 
     /**
@@ -121,6 +122,15 @@ class AdminController extends Controller
 
         $settings->update($validated);
 
+        if ($request->has('message_badge_label') || $request->has('message_subtitle')) {
+            $msg = ManagementMessage::where('is_active', true)->first();
+            if ($msg) {
+                if ($request->has('message_badge_label')) $msg->badge_label = $request->input('message_badge_label');
+                if ($request->has('message_subtitle')) $msg->subtitle = $request->input('message_subtitle');
+                $msg->save();
+            }
+        }
+
         return redirect()->route('admin.home.edit')
             ->with('success', 'Konten Beranda dan Tampilan Awal berhasil diperbarui!');
     }
@@ -147,6 +157,8 @@ class AdminController extends Controller
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'badge_label' => ['nullable', 'string', 'max:100'],
+            'subtitle' => ['nullable', 'string', 'max:150'],
             'sender_name' => ['required', 'string', 'max:255'],
             'sender_role' => ['required', 'string', 'max:255'],
             'summary' => ['required', 'string'],

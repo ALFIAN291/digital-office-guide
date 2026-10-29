@@ -8,6 +8,8 @@ class ManagementMessage extends Model
 {
     protected $fillable = [
         'title',
+        'badge_label',
+        'subtitle',
         'sender_name',
         'sender_role',
         'summary',

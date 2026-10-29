@@ -47,6 +47,21 @@
             </div>
 
             <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Badge Header Popup (Label Biru):</label>
+                <input type="text" name="badge_label" value="{{ old('badge_label', $message->badge_label ?? 'Official Announcement') }}"
+                       placeholder="Contoh: Official Announcement / Sambutan Resmi"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden font-semibold text-[#0084f8]">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Subtitle / Keterangan Lokasi Header:</label>
+                <input type="text" name="subtitle" value="{{ old('subtitle', $message->subtitle ?? 'Karawang Office 2026') }}"
+                       placeholder="Contoh: Karawang Office 2026 / Karawang Plant"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+                <p class="text-[10px] text-slate-400 mt-0.5">Teks di samping badge header popup (bebas diubah, misal: Karawang Office 2026).</p>
+            </div>
+
+            <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Slogan Kutipan (Quote):</label>
                 <input type="text" name="quote" value="{{ old('quote', $message->quote ?? 'Moving Together. Working Better. Growing Stronger.') }}"
                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">

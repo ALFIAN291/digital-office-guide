@@ -122,9 +122,13 @@
                 <div class="min-w-0">
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#0084f8] bg-sky-100 px-2 py-0.5 rounded-full">
-                            {{ $message->title ?? 'A Message from Management' }}
+                            {{ $message->badge_label ?? 'Official Announcement' }}
                         </span>
-                        <span class="text-[10px] text-slate-400 hidden sm:inline">• Klik untuk baca popup</span>
+                        @if(!empty($message->subtitle))
+                            <span class="text-[10px] text-slate-500 hidden sm:inline">• {{ $message->subtitle }}</span>
+                        @else
+                            <span class="text-[10px] text-slate-400 hidden sm:inline">• Klik untuk baca popup</span>
+                        @endif
                     </div>
                     <p class="text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5 group-hover:text-[#0084f8] transition">
                         {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative workplace.' }}
@@ -347,12 +351,14 @@
 
                 <!-- Header Content inside Banner -->
                 <div class="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 text-white">
-                    <div class="flex items-center gap-2 mb-1.5">
+                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-[#0084f8] text-white shadow-xs">
                             <span>📢</span>
-                            <span>Official Announcement</span>
+                            <span>{{ $message->badge_label ?? 'Official Announcement' }}</span>
                         </span>
-                        <span class="text-[11px] text-white/80 font-medium hidden sm:inline">• Karawang Campus 2026</span>
+                        @if(!empty($message->subtitle))
+                            <span class="text-[11px] text-white/90 font-semibold">• {{ $message->subtitle }}</span>
+                        @endif
                     </div>
                     <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
                         {{ $message->title ?? 'A Message from Management' }}
@@ -413,7 +419,7 @@
                     </div>
                     <div class="text-right w-full sm:w-auto">
                         <span class="inline-block text-[11px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-100 px-3 py-1 rounded-full">
-                            Akebono Karawang 2026
+                            {{ $message->subtitle ?? 'Akebono Karawang 2026' }}
                         </span>
                     </div>
                 </div>

@@ -56,6 +56,10 @@ Route::get('/admin/setup-db', function () {
 
         try {
             \Illuminate\Support\Facades\DB::table('home_settings')->update(['message_auto_popup' => true]);
+            \Illuminate\Support\Facades\DB::table('management_messages')
+                ->whereNull('subtitle')
+                ->orWhere('subtitle', 'like', '%Campus%')
+                ->update(['subtitle' => 'Karawang Office 2026', 'badge_label' => 'Official Announcement']);
         } catch (\Throwable $e) {}
 
         $seedOutput = '';

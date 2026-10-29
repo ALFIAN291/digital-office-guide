@@ -176,6 +176,22 @@
                     </label>
                 </div>
 
+                <!-- Teks Badge & Subtitle Popup / Banner -->
+                <div class="pt-3 border-t border-sky-100/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Badge Header Popup (Label Biru):</label>
+                        <input type="text" name="message_badge_label" value="{{ old('message_badge_label', $message->badge_label ?? 'Official Announcement') }}"
+                               placeholder="Contoh: Official Announcement / Sambutan Resmi"
+                               class="w-full px-3 py-2 bg-white rounded-xl border border-sky-200 text-xs focus:border-[#0084f8] focus:outline-hidden font-semibold text-[#0084f8]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Subtitle / Lokasi Header Popup:</label>
+                        <input type="text" name="message_subtitle" value="{{ old('message_subtitle', $message->subtitle ?? 'Karawang Office 2026') }}"
+                               placeholder="Contoh: Karawang Office 2026 / Karawang Plant"
+                               class="w-full px-3 py-2 bg-white rounded-xl border border-sky-200 text-xs focus:border-[#0084f8] focus:outline-hidden">
+                    </div>
+                </div>
+
                 <!-- Opsi Auto-Popup -->
                 <div class="pt-3 border-t border-sky-100/80 flex items-center gap-3">
                     <input type="checkbox" id="message_auto_popup" name="message_auto_popup" value="1" {{ old('message_auto_popup', $settings->message_auto_popup ?? true) ? 'checked' : '' }}
