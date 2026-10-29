@@ -426,18 +426,6 @@
 
             </div>
 
-            <!-- Footer Action Button -->
-            <div class="p-4 sm:px-7 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
-                <span class="text-[11px] text-slate-400 hidden sm:inline">
-                    Pesan ini dapat diakses kapan saja dari beranda
-                </span>
-                <button type="button" 
-                        @click="closeModal()" 
-                        class="w-full sm:w-auto px-6 py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-xs">
-                    Tutup Popup
-                </button>
-            </div>
-
         </div>
     </div>
 
