@@ -183,6 +183,55 @@
                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden font-normal text-slate-700 leading-relaxed">{{ old('content', $message->content) }}</textarea>
         </div>
 
+        <!-- Opsi & Editor Nilai Utama Lingkungan Kerja (3 Kotak Mini) -->
+        <div class="p-5 bg-slate-50/80 rounded-2xl border border-slate-200/90 space-y-4" x-data="{ showValues: {{ old('show_core_values', $message->show_core_values ?? false) ? 'true' : 'false' }} }">
+            <div class="flex items-center justify-between">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-800">
+                        Bagian "Nilai Utama Lingkungan Kerja Kita" (3 Kotak Nilai):
+                    </label>
+                    <p class="text-[11px] text-slate-500">Bisa diaktifkan jika ingin menampilkan 3 pilar nilai, atau dinonaktifkan (dihapus) agar popup ringkas tanpa scroll.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="show_core_values" value="1" x-model="showValues" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0084f8]"></div>
+                    <span class="ml-2 text-xs font-bold text-slate-700" x-text="showValues ? 'Aktif' : 'Nonaktif (Dihapus)'"></span>
+                </label>
+            </div>
+
+            <!-- Inputs (Hanya Muncul Jika Toggle Aktif) -->
+            <div x-show="showValues" x-cloak class="pt-3 border-t border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <span>🛡️</span>
+                            <span>Nilai 1</span>
+                        </div>
+                        <input type="text" name="val_1_title" value="{{ old('val_1_title', $message->val_1_title ?? 'Safety First') }}" placeholder="Judul (Safety First)" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 font-bold">
+                        <input type="text" name="val_1_desc" value="{{ old('val_1_desc', $message->val_1_desc ?? 'Prioritas keselamatan tanpa kompromi.') }}" placeholder="Keterangan singkat" class="w-full px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-200">
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <span>🤝</span>
+                            <span>Nilai 2</span>
+                        </div>
+                        <input type="text" name="val_2_title" value="{{ old('val_2_title', $message->val_2_title ?? 'Kolaboratif') }}" placeholder="Judul (Kolaboratif)" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 font-bold">
+                        <input type="text" name="val_2_desc" value="{{ old('val_2_desc', $message->val_2_desc ?? 'Ruang terbuka sinergi tim.') }}" placeholder="Keterangan singkat" class="w-full px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-200">
+                    </div>
+
+                    <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <span>🌿</span>
+                            <span>Nilai 3</span>
+                        </div>
+                        <input type="text" name="val_3_title" value="{{ old('val_3_title', $message->val_3_title ?? '5S & Green') }}" placeholder="Judul (5S & Green)" class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 font-bold">
+                        <input type="text" name="val_3_desc" value="{{ old('val_3_desc', $message->val_3_desc ?? 'Disiplin 5S & ramah lingkungan.') }}" placeholder="Keterangan singkat" class="w-full px-2.5 py-1.5 text-[11px] rounded-lg border border-slate-200">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Save Button -->
         <div class="pt-4 border-t border-slate-100 flex items-center justify-end">
             <button type="submit" class="px-6 py-2.5 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-1.5">

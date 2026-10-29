@@ -168,7 +168,16 @@ class AdminController extends Controller
             'message_height' => ['nullable', 'in:pendek,sedang,besar'],
             'message_display_mode' => ['nullable', 'in:popup,card'],
             'message_auto_popup' => ['nullable'],
+            'show_core_values' => ['nullable'],
+            'val_1_title' => ['nullable', 'string', 'max:100'],
+            'val_1_desc' => ['nullable', 'string', 'max:255'],
+            'val_2_title' => ['nullable', 'string', 'max:100'],
+            'val_2_desc' => ['nullable', 'string', 'max:255'],
+            'val_3_title' => ['nullable', 'string', 'max:100'],
+            'val_3_desc' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $validated['show_core_values'] = $request->has('show_core_values');
 
         $settingsUpdates = [];
         if ($request->filled('message_height')) {

@@ -401,29 +401,31 @@
                     {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
                 </div>
 
-                <!-- 3 Pillars / Core Workplace Values -->
-                <div class="pt-1">
-                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
-                        Nilai Utama Lingkungan Kerja Kita:
+                <!-- 3 Pillars / Core Workplace Values (Opsional, Hanya Muncul Jika Diaktifkan) -->
+                @if($message->show_core_values ?? false)
+                    <div class="pt-1">
+                        <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-2">
+                            Nilai Utama Lingkungan Kerja Kita:
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                                <div class="text-sm mb-0.5">🛡️</div>
+                                <div class="text-xs font-bold text-slate-900">{{ $message->val_1_title ?? 'Safety First' }}</div>
+                                <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_1_desc ?? 'Prioritas keselamatan tanpa kompromi.' }}</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                                <div class="text-sm mb-0.5">🤝</div>
+                                <div class="text-xs font-bold text-slate-900">{{ $message->val_2_title ?? 'Kolaboratif' }}</div>
+                                <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_2_desc ?? 'Ruang terbuka sinergi tim.' }}</div>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
+                                <div class="text-sm mb-0.5">🌿</div>
+                                <div class="text-xs font-bold text-slate-900">{{ $message->val_3_title ?? '5S & Green' }}</div>
+                                <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_3_desc ?? 'Disiplin 5S & ramah lingkungan.' }}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
-                            <div class="text-sm mb-0.5">🛡️</div>
-                            <div class="text-xs font-bold text-slate-900">Safety First</div>
-                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Prioritas keselamatan tanpa kompromi.</div>
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
-                            <div class="text-sm mb-0.5">🤝</div>
-                            <div class="text-xs font-bold text-slate-900">Kolaboratif</div>
-                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Ruang terbuka sinergi tim.</div>
-                        </div>
-                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
-                            <div class="text-sm mb-0.5">🌿</div>
-                            <div class="text-xs font-bold text-slate-900">5S & Green</div>
-                            <div class="text-[10px] text-slate-500 leading-snug mt-0.5">Disiplin 5S & ramah lingkungan.</div>
-                        </div>
-                    </div>
-                </div>
+                @endif
 
                 <!-- Sign-off Section -->
                 <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
