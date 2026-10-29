@@ -27,12 +27,12 @@ class AppServiceProvider extends ServiceProvider
         if ($host && str_contains($host, 'neon.tech')) {
             $endpointId = preg_replace('/-pooler$/', '', explode('.', $host)[0]);
             if (str_starts_with($endpointId, 'ep-')) {
-                $user = $parsed['username'] ?? '';
-                if ($user && !str_contains($user, '$')) {
-                    $parsed['username'] = "{$user}\${$endpointId}";
-                }
                 $directHost = str_replace('-pooler.', '.', $host);
                 $parsed['host'] = "{$directHost};options='endpoint={$endpointId}'";
+                // Ensure username does not contain extra $endpointId
+                if (!empty($parsed['username']) && str_contains($parsed['username'], '$')) {
+                    $parsed['username'] = explode('$', $parsed['username'])[0];
+                }
             }
         }
         $parsed['url'] = null;
