@@ -12,6 +12,20 @@ use Illuminate\Http\Request;
 class GuideController extends Controller
 {
     /**
+     * Helper to render views with Vercel Edge caching for guest visitors.
+     */
+    protected function renderWithCache($view, array $data = [])
+    {
+        $response = response()->view($view, $data);
+        if (!auth()->check()) {
+            $response->header('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+        } else {
+            $response->header('Cache-Control', 'no-cache, private');
+        }
+        return $response;
+    }
+
+    /**
      * Display the main home screen matching the design.
      */
     public function index()
@@ -43,7 +57,7 @@ class GuideController extends Controller
             ]);
         }
 
-        return view('guide.index', compact(
+        return $this->renderWithCache('guide.index', compact(
             'message',
             'facilities',
             'featuredFacilities',
@@ -74,7 +88,7 @@ class GuideController extends Controller
             ]);
         }
 
-        return view('guide.message', compact('message'));
+        return $this->renderWithCache('guide.message', compact('message'));
     }
 
     /**
@@ -116,7 +130,7 @@ class GuideController extends Controller
 
         $floors = ['all' => 'Semua Lantai', 'Lantai 1' => 'Lantai 1', 'Lantai 2' => 'Lantai 2', 'Plant Area' => 'Plant Area', 'Outdoor' => 'Outdoor'];
 
-        return view('guide.facilities', compact('facilities', 'categories', 'floors', 'matchingRules'));
+        return $this->renderWithCache('guide.facilities', compact('facilities', 'categories', 'floors', 'matchingRules'));
     }
 
     /**
@@ -137,7 +151,7 @@ class GuideController extends Controller
             return redirect()->route('guide.facilities');
         }
 
-        return view('guide.facility-detail', compact('facility', 'related'));
+        return $this->renderWithCache('guide.facility-detail', compact('facility', 'related'));
     }
 
     /**
@@ -160,7 +174,7 @@ class GuideController extends Controller
             'Ground Floor' => 'Plant 1 & Plant 2 (Pabrik)',
         ];
 
-        return view('guide.map', compact('zones', 'floor', 'floors', 'allZones'));
+        return $this->renderWithCache('guide.map', compact('zones', 'floor', 'floors', 'allZones'));
     }
 
     /**
@@ -192,7 +206,7 @@ class GuideController extends Controller
         $initialCategory = $request->get('category', 'all');
         $initialQuery = $request->get('q', '');
 
-        return view('guide.dos-and-donts', [
+        return $this->renderWithCache('guide.dos-and-donts', [
             'rules' => $allRules,
             'categories' => $categories,
             'counts' => $counts,
@@ -215,7 +229,7 @@ class GuideController extends Controller
             $emergencyContacts = collect();
         }
 
-        return view('guide.office-and-plant', compact('facilities', 'emergencyContacts'));
+        return $this->renderWithCache('guide.office-and-plant', compact('facilities', 'emergencyContacts'));
     }
 
     /**
@@ -228,7 +242,7 @@ class GuideController extends Controller
         } catch (\Throwable $e) {
             $contacts = collect();
         }
-        return view('guide.emergency', compact('contacts'));
+        return $this->renderWithCache('guide.emergency', compact('contacts'));
     }
 
     /**

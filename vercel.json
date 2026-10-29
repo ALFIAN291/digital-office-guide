@@ -2,11 +2,43 @@
   "version": 2,
   "framework": null,
   "outputDirectory": "dist",
+  "regions": ["sin1"],
   "functions": {
     "api/index.php": {
-      "runtime": "vercel-php@0.9.0"
+      "runtime": "vercel-php@0.9.0",
+      "memory": 1024,
+      "maxDuration": 15
     }
   },
+  "headers": [
+    {
+      "source": "/build/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/favicon.(png|ico)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ],
   "routes": [
     {
       "src": "/build/(.*)",
@@ -33,7 +65,7 @@
     "APP_ENV": "production",
     "APP_URL": "https://digital-office-guide.vercel.app",
     "ASSET_URL": "https://digital-office-guide.vercel.app",
-    "APP_DEBUG": "true",
+    "APP_DEBUG": "false",
     "APP_KEY": "base64:tigzIT0KdOm/rQmFnJ94VOPQUPowd+6vgQO26MRRWTU=",
     "VERCEL": "1",
     "LOG_CHANNEL": "stderr",

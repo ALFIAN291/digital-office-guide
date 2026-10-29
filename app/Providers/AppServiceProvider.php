@@ -51,8 +51,12 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view) {
             try {
-                if (Schema::hasTable('home_settings')) {
-                    $view->with('settings', HomeSetting::current());
+                static $cachedSettings = null;
+                if ($cachedSettings === null && Schema::hasTable('home_settings')) {
+                    $cachedSettings = HomeSetting::current();
+                }
+                if ($cachedSettings) {
+                    $view->with('settings', $cachedSettings);
                 }
             } catch (\Throwable $e) {
                 // fallback if DB not ready yet
