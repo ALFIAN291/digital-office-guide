@@ -250,14 +250,14 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 pb-8 w-full">
+    <!-- Main Content Area (pb-24 to guarantee content is never hidden behind fixed bottom bar) -->
+    <main class="flex-1 pb-24 sm:pb-28 w-full">
         @yield('content')
     </main>
 
-    <!-- Bottom Navigation Bar (Docked at Bottom, Never Covers Mid-Page Content in Screenshots) -->
-    <nav class="sticky bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-md mt-auto w-full">
-        <div class="max-w-3xl mx-auto px-4 h-16 sm:h-18 flex items-center justify-around">
+    <!-- Bottom Navigation Bar (Fixed at Bottom with Safe Area Padding) -->
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full">
+        <div class="max-w-3xl mx-auto px-4 h-16 sm:h-18 flex items-center justify-around pb-[env(safe-area-inset-bottom,0px)]">
             
             <a href="{{ route('guide.index') }}" 
                class="flex flex-col items-center justify-center flex-1 h-full relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
