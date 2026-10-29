@@ -83,13 +83,6 @@ foreach ($userKeys as $key) {
         break;
     }
 }
-    if (!empty($val)) {
-        putenv("DB_USERNAME={$val}");
-        $_ENV['DB_USERNAME'] = $val;
-        $_SERVER['DB_USERNAME'] = $val;
-        break;
-    }
-}
 
 $passKeys = ['POSTGRES_PASSWORD', 'PGPASSWORD', 'DB_PASSWORD'];
 foreach ($passKeys as $key) {
