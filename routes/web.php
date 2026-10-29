@@ -54,8 +54,13 @@ Route::get('/admin/setup-db', function () {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
 
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+        $seedOutput = '';
+        if (\App\Models\User::count() === 0 || \App\Models\Facility::count() === 0) {
+            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+            $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+        } else {
+            $seedOutput = 'Database sudah aktif dan terisi data. Data yang Anda buat tetap aman dan terjaga.';
+        }
 
         return response()->view('admin.setup-db', [
             'status' => 'success',

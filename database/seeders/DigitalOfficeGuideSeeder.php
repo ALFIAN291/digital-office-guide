@@ -16,21 +16,22 @@ class DigitalOfficeGuideSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Management Message
-        ManagementMessage::truncate();
-        ManagementMessage::create([
-            'title' => 'A Message from Management',
-            'sender_name' => 'Board of Management Akebono Brake Astra Indonesia',
-            'sender_role' => 'President Director & Executive Committee',
-            'summary' => 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.',
-            'content' => "Selamat datang di Fasilitas Kantor & Pabrik Baru Akebono Karawang.\n\nPerjalanan baru ini menandai komitmen kami untuk menghadirkan lingkungan kerja berkelas dunia yang mengintegrasikan efisiensi manufaktur modern dengan kenyamanan dan kesejahteraan seluruh karyawan. Fasilitas Karawang dirancang dengan standar keselamatan tertinggi (Zero Accident Mindset), arsitektur ramah lingkungan, serta teknologi kolaboratif terkini.\n\nDi tempat baru ini, mari kita bersama-sama memperkuat budaya 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), menjunjung tinggi integritas, dan saling menghargai ruang kerja bersama. Ruang-ruang kerja terbuka, ruang rapat cerdas, dan fasilitas penunjang yang komprehensif ini didedikasikan untuk mendukung produktivitas dan inovasi kita bersama.\n\nMari kita jadikan setiap sudut kantor ini tempat di mana ide-ide terbaik lahir dan masa depan industri otomotif dibangun dengan rasa bangga.",
-            'quote' => 'Moving Together. Working Better. Growing Stronger.',
-            'image_path' => '/images/management-office.jpg',
-            'is_active' => true,
-        ]);
+        // 1. Management Message (Only seed if empty, never overwrite user changes)
+        if (ManagementMessage::count() === 0) {
+            ManagementMessage::create([
+                'title' => 'A Message from Management',
+                'sender_name' => 'Board of Management Akebono Brake Astra Indonesia',
+                'sender_role' => 'President Director & Executive Committee',
+                'summary' => 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.',
+                'content' => "Selamat datang di Fasilitas Kantor & Pabrik Baru Akebono Karawang.\n\nPerjalanan baru ini menandai komitmen kami untuk menghadirkan lingkungan kerja berkelas dunia yang mengintegrasikan efisiensi manufaktur modern dengan kenyamanan dan kesejahteraan seluruh karyawan. Fasilitas Karawang dirancang dengan standar keselamatan tertinggi (Zero Accident Mindset), arsitektur ramah lingkungan, serta teknologi kolaboratif terkini.\n\nDi tempat baru ini, mari kita bersama-sama memperkuat budaya 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), menjunjung tinggi integritas, dan saling menghargai ruang kerja bersama. Ruang-ruang kerja terbuka, ruang rapat cerdas, dan fasilitas penunjang yang komprehensif ini didedikasikan untuk mendukung produktivitas dan inovasi kita bersama.\n\nMari kita jadikan setiap sudut kantor ini tempat di mana ide-ide terbaik lahir dan masa depan industri otomotif dibangun dengan rasa bangga.",
+                'quote' => 'Moving Together. Working Better. Growing Stronger.',
+                'image_path' => '/images/management-office.jpg',
+                'is_active' => true,
+            ]);
+        }
 
-        // 2. Facilities
-        Facility::truncate();
+        // 2. Facilities (Only seed if empty, preserve existing data)
+        if (Facility::count() === 0) {
         $facilities = [
             [
                 'name' => 'Lobi Utama & Resepsionis',
@@ -162,13 +163,14 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
         ];
 
-        foreach ($facilities as $facility) {
-            Facility::create($facility);
+            foreach ($facilities as $facility) {
+                Facility::create($facility);
+            }
         }
 
-        // 3. Dos & Don'ts (Paired Guidelines matching official UI)
-        DosAndDont::truncate();
-        $rules = [
+        // 3. Dos & Don'ts (Only seed if empty, preserve user guidelines)
+        if (DosAndDont::count() === 0) {
+            $rules = [
             // General
             [
                 'category' => 'General',
@@ -375,13 +377,14 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
         ];
 
-        foreach ($rules as $rule) {
-            DosAndDont::create($rule);
+            foreach ($rules as $rule) {
+                DosAndDont::create($rule);
+            }
         }
 
-        // 4. Office Zones / Map
-        OfficeZone::truncate();
-        $zones = [
+        // 4. Office Zones / Map (Only seed if empty)
+        if (OfficeZone::count() === 0) {
+            $zones = [
             // Lantai 1 Gedung Utama
             [
                 'building' => 'Gedung Utama (Main Office)',
@@ -533,13 +536,14 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
         ];
 
-        foreach ($zones as $zone) {
-            OfficeZone::create($zone);
+            foreach ($zones as $zone) {
+                OfficeZone::create($zone);
+            }
         }
 
-        // 5. Emergency Contacts
-        EmergencyContact::truncate();
-        $contacts = [
+        // 5. Emergency Contacts (Only seed if empty)
+        if (EmergencyContact::count() === 0) {
+            $contacts = [
             [
                 'name' => 'Security Pos Utama (24 Jam)',
                 'phone' => '(0267) 845-9001',
@@ -596,8 +600,9 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
         ];
 
-        foreach ($contacts as $contact) {
-            EmergencyContact::create($contact);
+            foreach ($contacts as $contact) {
+                EmergencyContact::create($contact);
+            }
         }
     }
 }
