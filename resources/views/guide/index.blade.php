@@ -332,37 +332,37 @@
              x-transition:leave-start="opacity-100 translate-y-0 scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 scale-95">
             
-            <!-- Top Header Banner with Image & Close Button -->
-            <div class="relative h-36 sm:h-44 w-full bg-slate-900 shrink-0 overflow-hidden">
-                <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
-                     alt="Management Workplace" 
-                     class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/30"></div>
-
-                <!-- Floating Close Button -->
-                <button type="button" 
-                        @click="closeModal()" 
-                        class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-9 sm:h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-all border border-white/20 hover:scale-105"
-                        title="Tutup Popup">
-                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-
-                <!-- Header Content inside Banner -->
-                <div class="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 text-white">
-                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-[#0084f8] text-white shadow-xs">
+            <!-- Top Header (Clean Executive Light Header) -->
+            <div class="p-5 sm:p-6 pb-4 border-b border-slate-100 shrink-0 bg-white">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
+                        <div class="h-4 w-px bg-slate-200"></div>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-extrabold uppercase tracking-wider bg-sky-50 text-[#0084f8] border border-sky-100 shadow-2xs">
                             <span>📢</span>
                             <span>{{ $message->badge_label ?? 'Official Announcement' }}</span>
                         </span>
                         @if(!empty($message->subtitle))
-                            <span class="text-[11px] text-white/90 font-semibold">• {{ $message->subtitle }}</span>
+                            <span class="text-xs text-slate-500 font-semibold">• {{ $message->subtitle }}</span>
                         @endif
                     </div>
-                    <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-sm">
+                    
+                    <!-- Close Button (Clean & Highly Visible) -->
+                    <button type="button" 
+                            @click="closeModal()" 
+                            class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                            title="Tutup Popup">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="mt-3">
+                    <h3 class="text-xl sm:text-2xl font-black text-[#0f2e54] tracking-tight">
                         {{ $message->title ?? 'A Message from Management' }}
                     </h3>
+                    <div class="w-10 h-1 bg-[#0084f8] rounded-full mt-1.5"></div>
                 </div>
             </div>
 
@@ -382,6 +382,17 @@
                 <!-- Main Speech Content -->
                 <div class="text-slate-600 text-xs sm:text-sm leading-relaxed space-y-3 font-normal whitespace-pre-line">
                     {!! nl2br(e($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.')) !!}
+                </div>
+
+                <!-- Management & Team Photo (Full & Proporsional di Bawah Pesan) -->
+                <div class="rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-50 my-2">
+                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
+                         alt="Management & Team" 
+                         class="w-full h-auto max-h-72 sm:max-h-84 object-cover object-center">
+                    <div class="px-4 py-2 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                        <span class="font-semibold text-slate-700">Manajemen & Karyawan PT Akebono Brake Astra Indonesia</span>
+                        <span>{{ $message->subtitle ?? 'Karawang 2026' }}</span>
+                    </div>
                 </div>
 
                 <!-- 3 Pillars / Core Workplace Values -->
