@@ -34,8 +34,15 @@
 
         <!-- Error Messages -->
         @if($errors->any())
-            <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-                {{ $errors->first() }}
+            <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold space-y-1.5">
+                <div>{{ $errors->first() }}</div>
+                @if(str_contains($errors->first(), 'setup-db') || str_contains($errors->first(), 'belum'))
+                    <div class="pt-1">
+                        <a href="{{ route('admin.setup-db') }}" class="inline-block text-[#0084f8] underline font-bold">
+                            👉 Klik di sini untuk Cek Status & Setup Database
+                        </a>
+                    </div>
+                @endif
             </div>
         @endif
 

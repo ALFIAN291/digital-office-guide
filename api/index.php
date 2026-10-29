@@ -13,6 +13,71 @@ if ((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PRO
     $_SERVER['SERVER_PORT'] = 443;
 }
 
+// Auto-detect Postgres connection string from Vercel / Neon integrations
+$urlKeys = [
+    'POSTGRES_URL',
+    'POSTGRES_URL_NON_POOLING',
+    'POSTGRES_PRISMA_URL',
+    'DATABASE_URL',
+    'NEON_DATABASE_URL',
+    'DB_URL',
+];
+
+foreach ($urlKeys as $key) {
+    $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        putenv("DB_URL={$val}");
+        $_ENV['DB_URL'] = $val;
+        $_SERVER['DB_URL'] = $val;
+        break;
+    }
+}
+
+// Auto-detect individual Postgres credentials
+$hostKeys = ['POSTGRES_HOST', 'PGHOST', 'DB_HOST'];
+foreach ($hostKeys as $key) {
+    $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        putenv("DB_HOST={$val}");
+        $_ENV['DB_HOST'] = $val;
+        $_SERVER['DB_HOST'] = $val;
+        break;
+    }
+}
+
+$userKeys = ['POSTGRES_USER', 'PGUSER', 'DB_USERNAME'];
+foreach ($userKeys as $key) {
+    $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        putenv("DB_USERNAME={$val}");
+        $_ENV['DB_USERNAME'] = $val;
+        $_SERVER['DB_USERNAME'] = $val;
+        break;
+    }
+}
+
+$passKeys = ['POSTGRES_PASSWORD', 'PGPASSWORD', 'DB_PASSWORD'];
+foreach ($passKeys as $key) {
+    $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        putenv("DB_PASSWORD={$val}");
+        $_ENV['DB_PASSWORD'] = $val;
+        $_SERVER['DB_PASSWORD'] = $val;
+        break;
+    }
+}
+
+$dbKeys = ['POSTGRES_DATABASE', 'PGDATABASE', 'DB_DATABASE'];
+foreach ($dbKeys as $key) {
+    $val = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+    if (!empty($val)) {
+        putenv("DB_DATABASE={$val}");
+        $_ENV['DB_DATABASE'] = $val;
+        $_SERVER['DB_DATABASE'] = $val;
+        break;
+    }
+}
+
 // Prepare writable storage & view paths in /tmp (since Vercel root is read-only)
 $storageDirs = [
     '/tmp/storage',

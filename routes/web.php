@@ -26,6 +26,56 @@ Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // ==========================================
+// Setup & Diagnostic Database Route (Vercel One-Click Setup)
+// ==========================================
+Route::get('/admin/setup-db', function () {
+    $dbHost = config('database.connections.pgsql.host');
+    $dbName = config('database.connections.pgsql.database');
+    $dbUrlSet = !empty(config('database.connections.pgsql.url'));
+
+    $envInfo = [
+        'DB_CONNECTION' => config('database.default'),
+        'PG_HOST' => $dbHost,
+        'PG_DATABASE' => $dbName,
+        'HAS_DB_URL' => $dbUrlSet ? 'YES (Terkoneksi Neon)' : 'NO (Masih default 127.0.0.1)',
+    ];
+
+    if ($dbHost === '127.0.0.1' && !$dbUrlSet) {
+        return response()->view('admin.setup-db', [
+            'status' => 'error',
+            'title' => 'Database Belum Terhubung ke Vercel',
+            'message' => 'Project Vercel belum mendeteksi environment variable dari database Neon (akebono-db).',
+            'details' => "Langkah menghubungkan di Vercel Dashboard:\n1. Buka Vercel Dashboard > tab Storage (atau menu Storage).\n2. Klik database 'akebono-db' yang sudah Anda buat.\n3. Masuk ke tab 'Settings' atau cari tombol 'Connect Project'.\n4. Pilih project 'digital-office-guide' lalu klik Connect.\n5. Setelah itu, buka tab 'Deployments' di Vercel > klik titik tiga (...) di deployment paling atas > klik 'Redeploy'.",
+            'envInfo' => $envInfo,
+        ]);
+    }
+
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        return response()->view('admin.setup-db', [
+            'status' => 'success',
+            'title' => 'Database Berhasil Disetup & Diisi Data Awal!',
+            'message' => 'Semua tabel panduan kantor dan akun Administrator default telah berhasil dibuat.',
+            'details' => $migrateOutput . "\n" . $seedOutput,
+            'envInfo' => $envInfo,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->view('admin.setup-db', [
+            'status' => 'error',
+            'title' => 'Koneksi ke Database Gagal',
+            'message' => $e->getMessage(),
+            'details' => $e->getTraceAsString(),
+            'envInfo' => $envInfo,
+        ]);
+    }
+})->name('admin.setup-db');
+
+// ==========================================
 // Admin Protected CMS Routes
 // ==========================================
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
