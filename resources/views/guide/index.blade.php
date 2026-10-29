@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-3 sm:pt-4 space-y-6 sm:space-y-7 relative" 
+<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
      x-data="{ showMessageModal: false }">
 
     <!-- Admin Floating Quick Edit Buttons (Matching Design Mockup when Logged In) -->
@@ -20,33 +20,33 @@
         </div>
     @endauth
 
-    <!-- 1. Hero Section (Matching Design Mockup) -->
-    <div class="relative rounded-3xl overflow-hidden shadow-md h-72 sm:h-96 md:h-[400px] flex items-end">
+    <!-- 1. Hero Section (Compact & Sleek) -->
+    <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs h-44 sm:h-52 md:h-60 flex items-end">
         <!-- Hero Background Image -->
         <img src="{{ asset($settings->hero_image ?? 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover">
         
         <!-- Subtle Gradient Overlay for Text Readability -->
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/25 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/35 to-transparent"></div>
 
-        <!-- Hero Text (Matching Mockup: Welcome to / Your New Workplace / Tagline) -->
-        <div class="relative z-10 p-6 sm:p-9 text-white w-full">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.12] drop-shadow-sm">
-                {{ $settings->hero_title_line1 ?? 'Welcome to' }}<br>
+        <!-- Hero Text -->
+        <div class="relative z-10 p-4 sm:p-6 text-white w-full">
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight drop-shadow-xs">
+                {{ $settings->hero_title_line1 ?? 'Welcome to' }}
                 <span>{{ $settings->hero_title_line2 ?? 'Your New Workplace' }}</span>
             </h1>
             
-            <p class="text-white/95 text-sm sm:text-base font-medium mt-2 max-w-xl drop-shadow-sm">
+            <p class="text-white/90 text-xs sm:text-sm font-medium mt-1 max-w-xl drop-shadow-xs">
                 {{ $settings->hero_tagline ?? 'Moving Together. Working Better. Growing Stronger.' }}
             </p>
         </div>
     </div>
 
-    <!-- 2. A Message from Management Card (Directly Below Hero, Matching Mockup) -->
-    <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden relative group">
+    <!-- 2. A Message from Management Card (Compact & Proportional) -->
+    <div class="bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden relative group">
         
         @auth
             <a href="{{ route('admin.message.edit') }}" title="Edit Pesan Ini" 
-               class="absolute top-4 right-4 z-20 px-3 py-1 bg-white/90 hover:bg-white text-xs font-bold text-slate-700 shadow rounded-full border border-slate-200 flex items-center gap-1">
+               class="absolute top-3 right-3 z-20 px-2.5 py-1 bg-white/90 hover:bg-white text-[11px] font-bold text-slate-700 shadow-xs rounded-full border border-slate-200 flex items-center gap-1">
                 <span>✏️ Edit Pesan</span>
             </a>
         @endauth
@@ -54,28 +54,28 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch">
             
             <!-- Left Image (Workstation interior) -->
-            <div class="relative h-56 sm:h-64 md:h-full min-h-[220px] overflow-hidden">
+            <div class="relative h-44 sm:h-52 md:h-auto min-h-[170px] overflow-hidden">
                 <img src="{{ asset($message->image_path ?? 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent md:hidden"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
             </div>
 
             <!-- Right Message Content -->
-            <div class="p-6 sm:p-8 md:p-9 flex flex-col justify-center">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight leading-snug">
+            <div class="p-4 sm:p-5 md:p-6 flex flex-col justify-center">
+                <h2 class="text-lg sm:text-xl md:text-2xl font-extrabold text-[#0f2e54] tracking-tight leading-snug">
                     {{ $message->title ?? 'A Message from Management' }}
                 </h2>
                 
-                <div class="w-12 h-1 bg-[#0084f8] rounded-full mt-2 mb-4"></div>
+                <div class="w-10 h-0.75 bg-[#0084f8] rounded-full mt-1.5 mb-2.5"></div>
                 
-                <p class="text-slate-600 text-sm sm:text-[15px] leading-relaxed mb-6 font-normal">
+                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed mb-4 font-normal">
                     {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
                 </p>
 
                 <div>
                     <button @click="showMessageModal = true" 
-                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0084f8] hover:bg-[#0070d6] text-white text-sm font-semibold rounded-full shadow-md hover:shadow-lg transition-all transform active:scale-95">
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
                         <span>Read Message</span>
-                        <span class="text-base leading-none">→</span>
+                        <span class="text-sm leading-none">→</span>
                     </button>
                 </div>
             </div>
