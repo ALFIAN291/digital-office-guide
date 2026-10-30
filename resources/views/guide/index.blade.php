@@ -376,19 +376,19 @@
             <!-- Scrollable Modal Body (Teks & Foto Terstruktur Rapi - Mepet & Hemat Tempat) -->
             <div class="px-5 sm:px-6 pt-2.5 sm:pt-3 pb-5 sm:pb-6 overflow-y-auto space-y-3 sm:space-y-3.5 text-slate-700 flex-1 custom-modal-scroll">
                 
-                <!-- 1. Foto Tim Langsung di Bawah Judul (Berbingkai & Proporsional) -->
-                <div class="relative h-36 sm:h-48 w-full rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
+                <!-- 1. Foto Tim Langsung di Bawah Judul (Lebih Ringkas & Tidak Kegedean) -->
+                <div class="relative h-28 sm:h-36 w-full rounded-xl sm:rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
                     <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
                          alt="Management & Team" 
                          class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
                     
-                    <!-- Caption Strip with Pulse Dot -->
-                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-900/40 to-transparent px-4 py-2 flex items-center justify-between text-white">
+                    <!-- Caption Strip with Pulse Dot (Ringkas & Proporsional) -->
+                    <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-900/40 to-transparent px-3 py-1.5 flex items-center justify-between text-white">
                         <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span class="text-xs font-bold text-white drop-shadow-xs">Tim Manajemen & Karyawan</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-[11px] font-bold text-white drop-shadow-xs">Tim Manajemen & Karyawan</span>
                         </div>
-                        <span class="text-[11px] text-white/90 font-medium drop-shadow-xs">{{ $message->subtitle ?? 'Karawang 2026' }}</span>
+                        <span class="text-[10px] text-white/90 font-medium drop-shadow-xs">{{ $message->subtitle ?? 'Karawang 2026' }}</span>
                     </div>
                 </div>
 
