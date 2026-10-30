@@ -207,93 +207,113 @@
             @endauth
         </div>
 
-        <!-- 4 Grid Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+        <!-- 4 Grid Cards (Horizontal Compact Media Cards di Mobile, 2-Kolom Grid di Desktop) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-5">
             
             <!-- Card 1: Office & Plant -->
-            <a href="{{ route('guide.office-and-plant') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
-                <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
+            <a href="{{ route('guide.office-and-plant') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
+                <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
                     <img src="{{ office_image($settings->card_office_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Office & Plant' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
-                <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                         </div>
-                        <span class="text-base sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors">
-                            {{ $settings->card_office_title ?? 'Office & Plant' }}
-                        </span>
+                        <div class="min-w-0">
+                            <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
+                                {{ $settings->card_office_title ?? 'Office & Plant' }}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
+                                Panduan gedung & area pabrik
+                            </span>
+                        </div>
                     </div>
-                    <span class="text-[#0084f8] text-xl font-bold group-hover:translate-x-1 transition-transform">
+                    <span class="text-[#0084f8] text-base sm:text-xl font-bold group-hover:translate-x-1 transition-transform shrink-0 pr-1 sm:pr-0">
                         →
                     </span>
                 </div>
             </a>
 
             <!-- Card 2: Facilities -->
-            <a href="{{ route('guide.facilities') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
-                <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
+            <a href="{{ route('guide.facilities') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
+                <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
                     <img src="{{ office_image($settings->card_facilities_image ?? null, 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Facilities' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
-                <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
-                        <span class="text-base sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors">
-                            {{ $settings->card_facilities_title ?? 'Facilities' }}
-                        </span>
+                        <div class="min-w-0">
+                            <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
+                                {{ $settings->card_facilities_title ?? 'Facilities' }}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
+                                Ruangan, kapasitas & jam kerja
+                            </span>
+                        </div>
                     </div>
-                    <span class="text-[#0084f8] text-xl font-bold group-hover:translate-x-1 transition-transform">
+                    <span class="text-[#0084f8] text-base sm:text-xl font-bold group-hover:translate-x-1 transition-transform shrink-0 pr-1 sm:pr-0">
                         →
                     </span>
                 </div>
             </a>
 
             <!-- Card 3: Office Map -->
-            <a href="{{ route('guide.map') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
-                <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
+            <a href="{{ route('guide.map') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
+                <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
                     <img src="{{ office_image($settings->card_map_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Office Map' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
-                <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="1.5"></circle>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>
                             </svg>
                         </div>
-                        <span class="text-base sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors">
-                            {{ $settings->card_map_title ?? 'Office Map' }}
-                        </span>
+                        <div class="min-w-0">
+                            <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
+                                {{ $settings->card_map_title ?? 'Office Map' }}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
+                                Denah interaktif & titik lokasi
+                            </span>
+                        </div>
                     </div>
-                    <span class="text-[#0084f8] text-xl font-bold group-hover:translate-x-1 transition-transform">
+                    <span class="text-[#0084f8] text-base sm:text-xl font-bold group-hover:translate-x-1 transition-transform shrink-0 pr-1 sm:pr-0">
                         →
                     </span>
                 </div>
             </a>
 
             <!-- Card 4: Dos & Don'ts -->
-            <a href="{{ route('guide.dos-and-donts') }}" class="group bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col">
-                <div class="h-44 sm:h-52 w-full overflow-hidden bg-slate-100">
+            <a href="{{ route('guide.dos-and-donts') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
+                <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
                     <img src="{{ office_image($settings->card_rules_image ?? null, 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? "Dos & Don'ts" }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
-                <div class="p-4 sm:p-5 flex items-center justify-between mt-auto">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-sky-50 text-[#0084f8] flex items-center justify-center shrink-0 group-hover:bg-[#0084f8] group-hover:text-white transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                             </svg>
                         </div>
-                        <span class="text-base sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors">
-                            {{ $settings->card_rules_title ?? "Dos & Don'ts" }}
-                        </span>
+                        <div class="min-w-0">
+                            <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
+                                {{ $settings->card_rules_title ?? "Dos & Don'ts" }}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
+                                Tata tertib & keselamatan kerja
+                            </span>
+                        </div>
                     </div>
-                    <span class="text-[#0084f8] text-xl font-bold group-hover:translate-x-1 transition-transform">
+                    <span class="text-[#0084f8] text-base sm:text-xl font-bold group-hover:translate-x-1 transition-transform shrink-0 pr-1 sm:pr-0">
                         →
                     </span>
                 </div>
