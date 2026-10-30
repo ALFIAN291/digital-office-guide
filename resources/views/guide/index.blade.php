@@ -350,34 +350,34 @@
              x-transition:leave-end="opacity-0 translate-y-4 scale-95">
             
             <!-- Top Header (Clean Executive Light Header) -->
-            <div class="p-5 sm:p-6 pb-3 border-b border-slate-100/80 shrink-0 bg-white">
+            <div class="px-5 sm:px-6 pt-3.5 sm:pt-4 pb-2 sm:pb-2.5 border-b border-slate-100/80 shrink-0 bg-white">
                 <div class="flex items-center justify-between gap-3">
-                    <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 24px; width: auto;" class="h-6 w-auto">
+                    <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 22px; width: auto;" class="h-5.5 w-auto">
                     
                     <!-- Close Button (Clean & Highly Visible) -->
                     <button type="button" 
                             @click="closeModal()" 
-                            class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer shrink-0"
                             title="Tutup Popup">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
 
-                <div class="mt-2.5">
-                    <h3 class="text-xl sm:text-2xl font-black text-[#0f2e54] tracking-tight">
+                <div class="mt-1 sm:mt-1.5">
+                    <h3 class="text-lg sm:text-xl font-black text-[#0f2e54] tracking-tight">
                         {{ $message->title ?? 'A Message from Management' }}
                     </h3>
-                    <div class="w-10 h-1 bg-[#0084f8] rounded-full mt-1.5"></div>
+                    <div class="w-8 h-1 bg-[#0084f8] rounded-full mt-1"></div>
                 </div>
             </div>
 
-            <!-- Scrollable Modal Body (Teks & Foto Terstruktur Rapi) -->
-            <div class="p-5 sm:p-6 overflow-y-auto space-y-4 text-slate-700 flex-1 custom-modal-scroll">
+            <!-- Scrollable Modal Body (Teks & Foto Terstruktur Rapi - Mepet & Hemat Tempat) -->
+            <div class="px-5 sm:px-6 pt-2.5 sm:pt-3 pb-5 sm:pb-6 overflow-y-auto space-y-3 sm:space-y-3.5 text-slate-700 flex-1 custom-modal-scroll">
                 
-                <!-- 1. Foto Tim Langsung di Bawah Judul "A Message from Management" (Berbingkai & Ber-border) -->
-                <div class="relative h-44 sm:h-56 w-full rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-100 group">
+                <!-- 1. Foto Tim Langsung di Bawah Judul (Berbingkai & Proporsional) -->
+                <div class="relative h-36 sm:h-48 w-full rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-100 group">
                     <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
                          alt="Management & Team" 
                          class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
@@ -393,18 +393,18 @@
                 </div>
 
                 <!-- 2. Kotak Quote ("As we begin...") dengan Border Biru -->
-                <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] border border-sky-100/90 p-3.5 sm:p-4 rounded-2xl shadow-2xs">
+                <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] border border-sky-100/90 p-3 sm:p-3.5 rounded-2xl shadow-2xs">
                     <div class="flex items-start gap-2.5">
-                        <span class="text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
-                        <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic">
+                        <span class="text-xl sm:text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
+                        <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic text-justify">
                             {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
                         </p>
                     </div>
                 </div>
 
-                <!-- 3. Kotak Teks Sambutan (Ber-border Bersih, Tanpa Jarak Kosong di Awal) -->
-                <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/90 bg-white sm:bg-slate-50/40 shadow-2xs space-y-3.5">
-                    <div class="text-slate-700 text-xs sm:text-sm leading-relaxed font-normal">{!! nl2br(e(trim($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.'))) !!}</div>
+                <!-- 3. Kotak Teks Sambutan (Ber-border Bersih, Rata Kiri Kanan, Tanpa Jarak Kosong di Awal) -->
+                <div class="p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 bg-white sm:bg-slate-50/40 shadow-2xs space-y-3">
+                    <div class="text-slate-700 text-xs sm:text-sm leading-relaxed font-normal text-justify">{!! nl2br(e(trim($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.'))) !!}</div>
 
                     <!-- Sign-off Section di Dalam Kotak Ber-border -->
                     <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-3">
