@@ -56,10 +56,13 @@ class AppServiceProvider extends ServiceProvider
                     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
 
                     try {
-                        $existingContacts = \App\Models\EmergencyContact::whereNull('whatsapp')->get();
+                        $existingContacts = \App\Models\EmergencyContact::all();
                         foreach ($existingContacts as $c) {
-                            $c->whatsapp = '0812-8459-000' . $c->id;
-                            $c->save();
+                            if (str_contains($c->phone, '0267') || empty($c->whatsapp)) {
+                                $c->phone = '0812-8459-000' . $c->id;
+                                $c->whatsapp = $c->phone;
+                                $c->save();
+                            }
                         }
                     } catch (\Throwable $e) {}
                 }

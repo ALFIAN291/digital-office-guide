@@ -228,9 +228,6 @@
                                         <span class="text-[10px] font-semibold text-slate-400 font-sans">/ {{ $hotline->extension }}</span>
                                     @endif
                                 </div>
-                                @if($hotline->whatsapp)
-                                    <div class="text-[10px] font-semibold text-emerald-700 mt-0.5">WA: {{ $hotline->whatsapp }}</div>
-                                @endif
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <a href="{{ $hotline->whatsapp_url }}" target="_blank" rel="noopener noreferrer" 
@@ -273,58 +270,58 @@
         </div>
     </div>
 
-    <!-- Main Content Area (pb-32 to guarantee content is never cut off or hidden behind fixed bottom bar on mobile) -->
-    <main class="flex-1 pb-32 sm:pb-36 w-full">
+    <!-- Main Content Area -->
+    <main class="flex-1 pb-20 sm:pb-24 w-full">
         @yield('content')
     </main>
 
     <!-- Bottom Navigation Bar (Fixed at Bottom with Safe Area Padding) -->
-    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));">
-        <div class="max-w-3xl mx-auto px-4 h-16 sm:h-18 flex items-center justify-around">
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+        <div class="max-w-3xl mx-auto px-4 h-13 sm:h-14 flex items-center justify-around">
             
             <a href="{{ route('guide.index') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.index'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
-                <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                 </svg>
-                <span class="text-[11px] sm:text-xs tracking-tight leading-tight">Home</span>
+                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Home</span>
             </a>
 
             <a href="{{ route('guide.facilities') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full relative transition-colors {{ Route::is('guide.facilities*') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.facilities*') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.facilities*'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
-                <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                 </svg>
-                <span class="text-[11px] sm:text-xs tracking-tight leading-tight">Facilities</span>
+                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Facilities</span>
             </a>
 
             <a href="{{ route('guide.map') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full relative transition-colors {{ Route::is('guide.map') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.map') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.map'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
-                <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="1.5"></circle>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>
                 </svg>
-                <span class="text-[11px] sm:text-xs tracking-tight leading-tight">Map</span>
+                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Map</span>
             </a>
 
             <a href="{{ route('guide.dos-and-donts') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full relative transition-colors {{ Route::is('guide.dos-and-donts') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.dos-and-donts') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.dos-and-donts'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
-                <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                 </svg>
-                <span class="text-[11px] sm:text-xs tracking-tight leading-tight">Dos & Don'ts</span>
+                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Dos & Don'ts</span>
             </a>
 
         </div>

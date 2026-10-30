@@ -45,9 +45,9 @@
                         {{ $contact->name }}
                     </h3>
 
-                    <div class="text-2xl font-black text-rose-600 mt-2 font-mono tracking-tight flex items-center gap-2">
+                    <div class="text-2xl font-black text-[#0f2e54] mt-2 font-mono tracking-tight flex items-center gap-2">
                         <a href="{{ $contact->whatsapp_url }}" target="_blank" rel="noopener noreferrer" 
-                           class="hover:underline flex items-center gap-2 group text-rose-600 hover:text-emerald-600 transition" 
+                           class="hover:underline flex items-center gap-2 group text-[#0f2e54] hover:text-emerald-600 transition" 
                            title="Klik untuk Chat WhatsApp">
                             <span>{{ $contact->phone }}</span>
                             <span class="text-xs font-sans font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-700 opacity-0 group-hover:opacity-100 transition">WA ↗</span>
@@ -57,15 +57,6 @@
                     @if($contact->extension)
                         <div class="text-xs font-semibold text-slate-500 mt-0.5">
                             Internal: <span class="text-slate-800 font-bold">{{ $contact->extension }}</span>
-                        </div>
-                    @endif
-
-                    @if($contact->whatsapp)
-                        <div class="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold">
-                            <svg class="w-3.5 h-3.5 fill-[#25D366] shrink-0" viewBox="0 0 24 24">
-                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.06-2.12-.531-1.822-.754-2.98-2.617-3.07-2.738-.09-.12-1.245-1.657-1.245-3.16 0-1.503.784-2.242 1.062-2.528.278-.285.606-.356.808-.356.202 0 .405.002.583.01.19.009.444-.072.695.531.259.621.884 2.158.961 2.315.077.157.129.34.026.545-.103.204-.155.331-.309.51-.154.179-.324.4-.463.537-.154.152-.315.318-.135.627.18.308.8 1.319 1.717 2.136 1.18 1.05 2.175 1.376 2.483 1.53.308.154.489.13.67-.078.18-.208.775-.905.981-1.214.206-.308.411-.257.695-.153.285.103 1.808.853 2.117 1.008.309.154.515.231.592.36.077.13.077.75-.067 1.155z"/>
-                            </svg>
-                            <span>WhatsApp: <strong class="font-bold">{{ $contact->whatsapp }}</strong></span>
                         </div>
                     @endif
                 </div>

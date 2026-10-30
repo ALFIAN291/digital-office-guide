@@ -546,7 +546,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             $contacts = [
             [
                 'name' => 'Security Pos Utama (24 Jam)',
-                'phone' => '(0267) 845-9001',
+                'phone' => '0812-8459-0001',
                 'whatsapp' => '0812-8459-0001',
                 'extension' => 'Ext. 100 / 101',
                 'location' => 'Gate 1 Pos Barat',
@@ -556,7 +556,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
             [
                 'name' => 'Klinik Medis & Emergency Response',
-                'phone' => '(0267) 845-9002',
+                'phone' => '0812-8459-0002',
                 'whatsapp' => '0812-8459-0002',
                 'extension' => 'Ext. 119',
                 'location' => 'Gedung Utama Lt. 1',
@@ -566,7 +566,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
             [
                 'name' => 'HSE Safety Officer On Duty',
-                'phone' => '(0267) 845-9003',
+                'phone' => '0812-8459-0003',
                 'whatsapp' => '0812-8459-0003',
                 'extension' => 'Ext. 112',
                 'location' => 'Safety Command Center',
@@ -576,7 +576,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
             [
                 'name' => 'Pemadam Kebakaran Internal (ERT)',
-                'phone' => '(0267) 845-9004',
+                'phone' => '0812-8459-0004',
                 'whatsapp' => '0812-8459-0004',
                 'extension' => 'Ext. 113',
                 'location' => 'Fire Station Komplek Karawang',
@@ -586,7 +586,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
             [
                 'name' => 'IT Helpdesk & Cyber Security Support',
-                'phone' => '(0267) 845-9005',
+                'phone' => '0812-8459-0005',
                 'whatsapp' => '0812-8459-0005',
                 'extension' => 'Ext. 200',
                 'location' => 'Server Room Gedung Utama Lt. 2',
@@ -596,7 +596,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             ],
             [
                 'name' => 'General Affairs & Facility Management',
-                'phone' => '(0267) 845-9006',
+                'phone' => '0812-8459-0006',
                 'whatsapp' => '0812-8459-0006',
                 'extension' => 'Ext. 104',
                 'location' => 'GA Office Lt. 1',

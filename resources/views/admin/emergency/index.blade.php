@@ -37,14 +37,8 @@
                         </div>
 
                         <div>
-                            <label class="block font-bold text-slate-700 mb-1">Nomor Telepon Hotline (PABX / Telp):</label>
-                            <input type="text" name="phone" value="{{ old('phone', $contact->phone) }}" required
-                                   class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-[#0084f8] focus:outline-hidden font-mono font-bold text-rose-600">
-                        </div>
-
-                        <div>
                             <label class="block font-bold text-slate-700 mb-1 flex items-center justify-between">
-                                <span>Nomor WhatsApp (Direct Chat):</span>
+                                <span>Nomor Telepon & WhatsApp:</span>
                                 @if($contact->whatsapp_url !== '#')
                                     <a href="{{ $contact->whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="text-[10px] text-emerald-600 hover:underline font-bold flex items-center gap-1">
                                         <span>Test WA</span>
@@ -52,9 +46,9 @@
                                     </a>
                                 @endif
                             </label>
-                            <input type="text" name="whatsapp" value="{{ old('whatsapp', $contact->whatsapp) }}" placeholder="Contoh: 081234567890 (jika kosong memakai nomor telp)"
-                                   class="w-full px-3 py-2 rounded-xl border border-emerald-300 focus:border-emerald-500 focus:outline-hidden font-mono font-bold text-emerald-700 bg-emerald-50/20">
-                            <span class="text-[10px] text-slate-400 mt-0.5 block">Bisa diisi nomor HP/WA khusus. Otomatis membuka tautan wa.me dengan template pesan.</span>
+                            <input type="text" name="phone" value="{{ old('phone', $contact->phone) }}" required
+                                   class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-[#0084f8] focus:outline-hidden font-mono font-bold text-rose-600">
+                            <span class="text-[10px] text-slate-400 mt-0.5 block">Nomor ini digunakan sekaligus untuk tombol WhatsApp dan panggilan telepon langsung.</span>
                         </div>
 
                         <div>
@@ -63,7 +57,7 @@
                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-[#0084f8] focus:outline-hidden">
                         </div>
 
-                        <div class="sm:col-span-2">
+                        <div>
                             <label class="block font-bold text-slate-700 mb-1">Lokasi Pos / Ruangan:</label>
                             <input type="text" name="location" value="{{ old('location', $contact->location) }}"
                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:border-[#0084f8] focus:outline-hidden">
