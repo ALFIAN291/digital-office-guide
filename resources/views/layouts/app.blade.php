@@ -250,8 +250,8 @@
         </div>
     </div>
 
-    <!-- Main Content Area (pb-24 to guarantee content is never hidden behind fixed bottom bar) -->
-    <main class="flex-1 pb-24 sm:pb-28 w-full">
+    <!-- Main Content Area (pb-32 to guarantee content is never cut off or hidden behind fixed bottom bar on mobile) -->
+    <main class="flex-1 pb-32 sm:pb-36 w-full">
         @yield('content')
     </main>
 

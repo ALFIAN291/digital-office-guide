@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 pb-16 space-y-5 sm:space-y-6" 
+<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 pb-24 sm:pb-32 space-y-4 sm:space-y-6" 
      x-data="{
         activeTab: '{{ $initialCategory ?? 'General' }}',
         searchQuery: '{{ $initialQuery ?? '' }}',
@@ -109,56 +109,52 @@
         </h2>
     </div>
 
-    <!-- Guideline Cards (Simple, Compact & Responsive) -->
+    <!-- Guideline Cards (Layout: [ Gambar di Kiri ] | [ DO (Atas) & DON'T (Bawah) di Kanan ]) -->
     <div class="space-y-3 sm:space-y-4">
         @foreach($pairs as $item)
             <div x-show="matches({{ Js::from($item) }})"
                  x-transition:enter="transition ease-out duration-150"
                  x-transition:enter-start="opacity-0 transform translate-y-1"
                  x-transition:enter-end="opacity-100 transform translate-y-0"
-                 class="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 shadow-xs border border-slate-200/80 flex flex-col md:flex-row items-stretch gap-2.5 sm:gap-4 transition-all hover:shadow-md">
+                 class="bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-xs border border-slate-200/80 hover:border-sky-300 flex flex-row items-stretch gap-2.5 sm:gap-4 transition-all hover:shadow-md">
                 
-                <!-- 1. Left: Photo Thumbnail (Kompak di Mobile h-24, Hero di Desktop md:w-52) -->
-                <div class="w-full md:w-52 h-24 sm:h-32 md:h-auto rounded-xl sm:rounded-2xl overflow-hidden shrink-0 bg-slate-100 relative">
+                <!-- 1. Gambar di Kiri (Proporsional & Mengikuti Tinggi Isi) -->
+                <div class="w-24 sm:w-44 md:w-52 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 bg-slate-100 relative self-stretch">
                     <img src="{{ $item['image'] }}" 
                          alt="{{ $item['category'] }}" 
                          class="w-full h-full object-cover">
                 </div>
 
-                <!-- 2. DO & DON'T Container (Side-by-side di Desktop, Bersih & Kontras di Mobile) -->
-                <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                <!-- 2. DO & DON'T di Kanan (Atas-Bawah Rapi & Terstruktur) -->
+                <div class="flex-1 flex flex-col justify-between gap-2 sm:gap-2.5 min-w-0">
                     
-                    <!-- DO Box (Pastel Green) -->
-                    <div class="bg-[#eaf8ee] rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between border border-emerald-100/80">
-                        <div>
-                            <div class="flex items-center gap-1.5 text-emerald-700 font-extrabold text-xs tracking-wider uppercase mb-1">
-                                <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-600 text-white text-[9px] font-black">✓</span>
-                                <span>DO</span>
-                            </div>
-                            <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
-                                {{ $item['do'] }}
-                            </p>
+                    <!-- Atas: DO Box (Pastel Green) -->
+                    <div class="bg-[#eaf8ee] rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-center border border-emerald-100/80 flex-1">
+                        <div class="flex items-center gap-1.5 text-emerald-700 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase mb-0.5 sm:mb-1">
+                            <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-600 text-white text-[9px] font-black">✓</span>
+                            <span>DO</span>
                         </div>
+                        <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
+                            {{ $item['do'] }}
+                        </p>
                         @if(!empty($item['do_sub']))
-                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-relaxed">
+                            <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 sm:mt-1 font-normal leading-relaxed line-clamp-2 sm:line-clamp-none">
                                 {{ $item['do_sub'] }}
                             </p>
                         @endif
                     </div>
 
-                    <!-- DON'T Box (Pastel Red/Pink) -->
-                    <div class="bg-[#feeff0] rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col justify-between border border-rose-100/80">
-                        <div>
-                            <div class="flex items-center gap-1.5 text-rose-600 font-extrabold text-xs tracking-wider uppercase mb-1">
-                                <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-rose-600 text-white text-[9px] font-black">✕</span>
-                                <span>DON'T</span>
-                            </div>
-                            <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
-                                {{ $item['dont'] }}
-                            </p>
+                    <!-- Bawah: DON'T Box (Pastel Red/Pink) -->
+                    <div class="bg-[#feeff0] rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-center border border-rose-100/80 flex-1">
+                        <div class="flex items-center gap-1.5 text-rose-600 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase mb-0.5 sm:mb-1">
+                            <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-rose-600 text-white text-[9px] font-black">✕</span>
+                            <span>DON'T</span>
                         </div>
+                        <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
+                            {{ $item['dont'] }}
+                        </p>
                         @if(!empty($item['dont_sub']))
-                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 font-normal leading-relaxed">
+                            <p class="text-[10px] sm:text-xs text-slate-600 mt-0.5 sm:mt-1 font-normal leading-relaxed line-clamp-2 sm:line-clamp-none">
                                 {{ $item['dont_sub'] }}
                             </p>
                         @endif
@@ -168,6 +164,7 @@
 
             </div>
         @endforeach
+    </div>
 
         <!-- Empty State if search or filter returns no items -->
         <div x-show="visibleCount === 0" x-cloak class="bg-white rounded-3xl p-10 text-center shadow-xs border border-slate-200">
