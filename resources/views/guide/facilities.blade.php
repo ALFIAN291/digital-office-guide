@@ -127,23 +127,24 @@
     </div>
 
     <!-- Facilities Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-6">
         @foreach($facilities as $facility)
-            <div x-show="matches('{{ $facility->category }}', '{{ $facility->floor }}', {{ Js::from($facility->name) }}, {{ Js::from($facility->description) }}, {{ Js::from($facility->location_detail) }})"
-                 x-transition:enter="transition ease-out duration-150"
-                 x-transition:enter-start="opacity-0 transform translate-y-1"
-                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                 class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col justify-between">
+            <a href="{{ route('guide.facility.detail', $facility->slug) }}"
+               x-show="matches('{{ $facility->category }}', '{{ $facility->floor }}', {{ Js::from($facility->name) }}, {{ Js::from($facility->description) }}, {{ Js::from($facility->location_detail) }})"
+               x-transition:enter="transition ease-out duration-150"
+               x-transition:enter-start="opacity-0 transform translate-y-1"
+               x-transition:enter-end="opacity-100 transform translate-y-0"
+               class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden card-hover flex flex-col justify-between cursor-pointer">
                 
                 <!-- Photo Header -->
-                <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-                    <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover">
-                    <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                        <span class="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-[11px] font-bold text-slate-700 shadow-xs">
+                <div class="relative h-36 sm:h-48 w-full bg-slate-100 overflow-hidden">
+                    <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300">
+                    <div class="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 flex items-center gap-1.5">
+                        <span class="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white/95 backdrop-blur-xs text-[10px] sm:text-[11px] font-bold text-slate-700 shadow-xs">
                             {{ $facility->floor }}
                         </span>
                         @if($facility->is_featured)
-                            <span class="px-2.5 py-1 rounded-full bg-[#0084f8] text-white text-[11px] font-bold shadow-xs">
+                            <span class="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-[#0084f8] text-white text-[10px] sm:text-[11px] font-bold shadow-xs">
                                 ★ Populer
                             </span>
                         @endif
@@ -151,20 +152,22 @@
                 </div>
 
                 <!-- Details Body -->
-                <div class="p-5 flex-1 flex flex-col justify-between">
+                <div class="p-3.5 sm:p-5 flex-1 flex flex-col justify-between">
                     <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8] mb-1">
+                        <div class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#0084f8] mb-0.5 sm:mb-1">
                             {{ strtoupper($facility->category) }}
                         </div>
-                        <h3 class="text-lg font-extrabold text-[#0f2e54] leading-snug">
+                        <h3 class="text-sm sm:text-lg font-extrabold text-[#0f2e54] leading-snug group-hover:text-[#0084f8] transition-colors line-clamp-1 sm:line-clamp-none">
                             {{ $facility->name }}
                         </h3>
-                        <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+
+                        <!-- Description (Hanya di layar desktop/tablet agar di mobile ringkas & cepat di-scan) -->
+                        <p class="hidden sm:block text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
                             {{ $facility->description }}
                         </p>
 
-                        <!-- Meta Chips -->
-                        <div class="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px] text-slate-600 font-medium">
+                        <!-- Meta Chips (Desktop Only) -->
+                        <div class="hidden sm:flex mt-3.5 pt-3 border-t border-slate-100 flex-wrap items-center gap-2 text-[11px] text-slate-600 font-medium">
                             @if($facility->capacity)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100">
                                     👥 {{ $facility->capacity }}
@@ -177,9 +180,9 @@
                             @endif
                         </div>
 
-                        <!-- Amenities Tags -->
+                        <!-- Amenities Tags (Desktop Only) -->
                         @if(!empty($facility->amenities))
-                            <div class="mt-2.5 flex flex-wrap gap-1.5">
+                            <div class="hidden sm:flex mt-2.5 flex-wrap gap-1.5">
                                 @foreach(array_slice($facility->amenities, 0, 3) as $amenity)
                                     <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-sky-50 text-[#0b3c6d]">
                                         ✓ {{ $amenity }}
@@ -195,17 +198,17 @@
                     </div>
 
                     <!-- Card Footer Action -->
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[11px] text-slate-400 font-medium truncate max-w-[180px]">
+                    <div class="mt-2.5 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <span class="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate max-w-[170px] sm:max-w-[200px]">
                             📍 {{ $facility->location_detail }}
                         </span>
-                        <a href="{{ route('guide.facility.detail', $facility->slug) }}" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs font-bold rounded-full transition shadow-xs">
+                        <span class="inline-flex items-center gap-1 px-3 sm:px-3.5 py-1 sm:py-1.5 bg-sky-50 text-[#0084f8] group-hover:bg-[#0084f8] group-hover:text-white text-[11px] sm:text-xs font-bold rounded-full transition shadow-2xs shrink-0">
                             <span>Detail</span>
                             <span>→</span>
-                        </a>
+                        </span>
                     </div>
                 </div>
-            </div>
+            </a>
         @endforeach
     </div>
 
