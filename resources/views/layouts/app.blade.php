@@ -271,16 +271,16 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-1 pb-20 sm:pb-24 w-full">
+    <main class="flex-1 pb-16 sm:pb-20 w-full">
         @yield('content')
     </main>
 
-    <!-- Bottom Navigation Bar (Fixed at Bottom with Safe Area Padding) -->
-    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
-        <div class="max-w-3xl mx-auto px-4 h-13 sm:h-14 flex items-center justify-around">
+    <!-- Bottom Navigation Bar (Fixed at Bottom with Balanced Mobile Spacing) -->
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) * 0.35));">
+        <div class="max-w-3xl mx-auto px-4 pt-1.5 pb-1 flex items-center justify-around">
             
             <a href="{{ route('guide.index') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.index'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
@@ -291,7 +291,7 @@
             </a>
 
             <a href="{{ route('guide.facilities') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.facilities*') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.facilities*') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.facilities*'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
@@ -302,7 +302,7 @@
             </a>
 
             <a href="{{ route('guide.map') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.map') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.map') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.map'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif
@@ -314,7 +314,7 @@
             </a>
 
             <a href="{{ route('guide.dos-and-donts') }}" 
-               class="flex flex-col items-center justify-center flex-1 h-full py-1 relative transition-colors {{ Route::is('guide.dos-and-donts') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
+               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.dos-and-donts') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
                 @if(Route::is('guide.dos-and-donts'))
                     <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
                 @endif

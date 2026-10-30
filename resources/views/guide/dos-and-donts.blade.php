@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 pb-4 space-y-4 sm:space-y-6" 
+<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 pb-1 space-y-3 sm:space-y-4" 
      x-data="{
         activeTab: '{{ $initialCategory ?? 'General' }}',
         searchQuery: '{{ $initialQuery ?? '' }}',
