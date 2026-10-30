@@ -462,6 +462,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:100'],
+            'whatsapp' => ['nullable', 'string', 'max:100'],
             'extension' => ['nullable', 'string', 'max:100'],
             'location' => ['nullable', 'string', 'max:255'],
             'is_hotline' => ['nullable', 'boolean'],

@@ -60,6 +60,12 @@ Route::get('/admin/setup-db', function () {
                 ->whereNull('subtitle')
                 ->orWhere('subtitle', 'like', '%Campus%')
                 ->update(['subtitle' => 'Karawang Office 2026', 'badge_label' => 'Official Announcement']);
+
+            $existingContacts = \App\Models\EmergencyContact::whereNull('whatsapp')->get();
+            foreach ($existingContacts as $c) {
+                $c->whatsapp = '0812-8459-000' . $c->id;
+                $c->save();
+            }
         } catch (\Throwable $e) {}
 
         $seedOutput = '';

@@ -54,6 +54,14 @@ class AppServiceProvider extends ServiceProvider
                 if (!$autoMigrated && config('database.default') === 'pgsql') {
                     $autoMigrated = true;
                     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+
+                    try {
+                        $existingContacts = \App\Models\EmergencyContact::whereNull('whatsapp')->get();
+                        foreach ($existingContacts as $c) {
+                            $c->whatsapp = '0812-8459-000' . $c->id;
+                            $c->save();
+                        }
+                    } catch (\Throwable $e) {}
                 }
             } catch (\Throwable $e) {
                 // Silently pass if database is not reachable yet
@@ -63,11 +71,20 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             try {
                 static $cachedSettings = null;
+                static $cachedHotlines = null;
                 if ($cachedSettings === null && Schema::hasTable('home_settings')) {
                     $cachedSettings = HomeSetting::current();
                 }
+                if ($cachedHotlines === null && Schema::hasTable('emergency_contacts')) {
+                    $cachedHotlines = \App\Models\EmergencyContact::where('is_hotline', true)
+                        ->orderBy('sort_order')
+                        ->get();
+                }
                 if ($cachedSettings) {
                     $view->with('settings', $cachedSettings);
+                }
+                if ($cachedHotlines && $cachedHotlines->isNotEmpty()) {
+                    $view->with('emergencyHotlines', $cachedHotlines);
                 }
             } catch (\Throwable $e) {
                 // fallback if DB not ready yet

@@ -209,44 +209,67 @@
     <!-- SOS Hotline Modal -->
     <div x-show="sosModalOpen" x-cloak class="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" @click="sosModalOpen = false"></div>
-        <div class="relative bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-rose-100 text-center">
-            <div class="w-14 h-14 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
+        <div class="relative bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-rose-100 text-center">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-3 font-bold text-xl">
+                🚨
             </div>
-            <h3 class="text-xl font-bold text-slate-900">Kontak Darurat (SOS) Karawang</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-5">Hubungi nomor darurat di bawah untuk bantuan segera</p>
+            <h3 class="text-xl font-extrabold text-slate-900">Kontak Darurat (SOS) Karawang</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Hubungi via WhatsApp atau Telepon untuk bantuan cepat</p>
 
-            <div class="space-y-2.5 text-left mb-6">
-                <a href="tel:02678459001" class="flex items-center justify-between p-3.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-2xl transition">
-                    <div>
-                        <div class="text-xs font-semibold text-rose-800">Security Pos Utama (24 Jam)</div>
-                        <div class="text-base font-extrabold text-rose-700">(0267) 845-9001 <span class="text-xs font-normal">/ Ext. 100</span></div>
+            <div class="space-y-2.5 text-left mb-5">
+                @if(isset($emergencyHotlines) && $emergencyHotlines->isNotEmpty())
+                    @foreach($emergencyHotlines as $hotline)
+                        <div class="p-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 rounded-2xl transition flex items-center justify-between gap-2.5">
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold text-[#0f2e54] truncate">{{ $hotline->name }}</div>
+                                <div class="text-xs font-black text-rose-600 font-mono mt-0.5">
+                                    {{ $hotline->phone }} 
+                                    @if($hotline->extension)
+                                        <span class="text-[10px] font-semibold text-slate-400 font-sans">/ {{ $hotline->extension }}</span>
+                                    @endif
+                                </div>
+                                @if($hotline->whatsapp)
+                                    <div class="text-[10px] font-semibold text-emerald-700 mt-0.5">WA: {{ $hotline->whatsapp }}</div>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <a href="{{ $hotline->whatsapp_url }}" target="_blank" rel="noopener noreferrer" 
+                                   class="px-2.5 py-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-2xs transition active:scale-95" 
+                                   title="Chat WhatsApp">
+                                    <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.06-2.12-.531-1.822-.754-2.98-2.617-3.07-2.738-.09-.12-1.245-1.657-1.245-3.16 0-1.503.784-2.242 1.062-2.528.278-.285.606-.356.808-.356.202 0 .405.002.583.01.19.009.444-.072.695.531.259.621.884 2.158.961 2.315.077.157.129.34.026.545-.103.204-.155.331-.309.51-.154.179-.324.4-.463.537-.154.152-.315.318-.135.627.18.308.8 1.319 1.717 2.136 1.18 1.05 2.175 1.376 2.483 1.53.308.154.489.13.67-.078.18-.208.775-.905.981-1.214.206-.308.411-.257.695-.153.285.103 1.808.853 2.117 1.008.309.154.515.231.592.36.077.13.077.75-.067 1.155z"/></svg>
+                                    <span>WA</span>
+                                </a>
+                                <a href="{{ $hotline->tel_url }}" 
+                                   class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1 transition active:scale-95" 
+                                   title="Telepon Langsung">
+                                    <span>📞</span>
+                                    <span>Telp</span>
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-2.5">
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs font-bold text-slate-800">Security Pos Utama (24 Jam)</div>
+                            <div class="text-xs font-black text-rose-600 font-mono">(0267) 845-9001 / Ext. 100</div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <a href="https://wa.me/6281284590001?text=Halo%20Security%20Pos%20Utama%2C%20saya%20butuh%20bantuan%20darurat" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 bg-[#25D366] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-2xs">WA</a>
+                            <a href="tel:02678459001" class="px-2.5 py-1.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1">Telp</a>
+                        </div>
                     </div>
-                    <span class="p-2 bg-rose-600 text-white rounded-xl">📞 Panggil</span>
-                </a>
-
-                <a href="tel:02678459002" class="flex items-center justify-between p-3.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-2xl transition">
-                    <div>
-                        <div class="text-xs font-semibold text-sky-800">Klinik & First Aid Paramedis</div>
-                        <div class="text-base font-extrabold text-sky-700">(0267) 845-9002 <span class="text-xs font-normal">/ Ext. 119</span></div>
-                    </div>
-                    <span class="p-2 bg-[#0084f8] text-white rounded-xl">📞 Panggil</span>
-                </a>
-
-                <a href="tel:02678459003" class="flex items-center justify-between p-3.5 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-2xl transition">
-                    <div>
-                        <div class="text-xs font-semibold text-amber-800">HSE Safety Officer On Duty</div>
-                        <div class="text-base font-extrabold text-amber-700">(0267) 845-9003 <span class="text-xs font-normal">/ Ext. 112</span></div>
-                    </div>
-                    <span class="p-2 bg-amber-600 text-white rounded-xl">📞 Panggil</span>
-                </a>
+                @endif
             </div>
 
-            <button @click="sosModalOpen = false" class="w-full py-2.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
-                Tutup
-            </button>
+            <div class="flex items-center gap-2 pt-1 border-t border-slate-100">
+                <a href="{{ route('guide.emergency') }}" class="flex-1 py-2.5 text-xs font-bold text-[#0084f8] bg-sky-50 hover:bg-sky-100 rounded-xl transition">
+                    Lihat Semua Kontak Lengkap →
+                </a>
+                <button @click="sosModalOpen = false" class="py-2.5 px-4 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 

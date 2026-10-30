@@ -547,6 +547,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'Security Pos Utama (24 Jam)',
                 'phone' => '(0267) 845-9001',
+                'whatsapp' => '0812-8459-0001',
                 'extension' => 'Ext. 100 / 101',
                 'location' => 'Gate 1 Pos Barat',
                 'operating_hours' => '24 Jam Nonstop',
@@ -556,6 +557,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'Klinik Medis & Emergency Response',
                 'phone' => '(0267) 845-9002',
+                'whatsapp' => '0812-8459-0002',
                 'extension' => 'Ext. 119',
                 'location' => 'Gedung Utama Lt. 1',
                 'operating_hours' => '24 Jam Nonstop',
@@ -565,6 +567,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'HSE Safety Officer On Duty',
                 'phone' => '(0267) 845-9003',
+                'whatsapp' => '0812-8459-0003',
                 'extension' => 'Ext. 112',
                 'location' => 'Safety Command Center',
                 'operating_hours' => 'Setiap Hari Kerja & Jam Shift',
@@ -574,6 +577,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'Pemadam Kebakaran Internal (ERT)',
                 'phone' => '(0267) 845-9004',
+                'whatsapp' => '0812-8459-0004',
                 'extension' => 'Ext. 113',
                 'location' => 'Fire Station Komplek Karawang',
                 'operating_hours' => '24 Jam Siaga',
@@ -583,6 +587,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'IT Helpdesk & Cyber Security Support',
                 'phone' => '(0267) 845-9005',
+                'whatsapp' => '0812-8459-0005',
                 'extension' => 'Ext. 200',
                 'location' => 'Server Room Gedung Utama Lt. 2',
                 'operating_hours' => '07:00 - 19:00 WIB',
@@ -592,6 +597,7 @@ class DigitalOfficeGuideSeeder extends Seeder
             [
                 'name' => 'General Affairs & Facility Management',
                 'phone' => '(0267) 845-9006',
+                'whatsapp' => '0812-8459-0006',
                 'extension' => 'Ext. 104',
                 'location' => 'GA Office Lt. 1',
                 'operating_hours' => '07:30 - 17:00 WIB',
