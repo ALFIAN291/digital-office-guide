@@ -377,7 +377,7 @@
             <div class="px-5 sm:px-6 pt-2.5 sm:pt-3 pb-5 sm:pb-6 overflow-y-auto space-y-3 sm:space-y-3.5 text-slate-700 flex-1 custom-modal-scroll">
                 
                 <!-- 1. Foto Tim Langsung di Bawah Judul (Berbingkai & Proporsional) -->
-                <div class="relative h-36 sm:h-48 w-full rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs bg-slate-100 group">
+                <div class="relative h-36 sm:h-48 w-full rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
                     <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
                          alt="Management & Team" 
                          class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
@@ -393,7 +393,7 @@
                 </div>
 
                 <!-- 2. Kotak Quote ("As we begin...") dengan Border Biru -->
-                <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] border border-sky-100/90 p-3 sm:p-3.5 rounded-2xl shadow-2xs">
+                <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] border border-sky-200 p-3 sm:p-3.5 rounded-2xl shadow-xs">
                     <div class="flex items-start gap-2.5">
                         <span class="text-xl sm:text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
                         <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic text-justify">
@@ -402,18 +402,18 @@
                     </div>
                 </div>
 
-                <!-- 3. Kotak Teks Sambutan (Ber-border Bersih, Rata Kiri Kanan, Tanpa Jarak Kosong di Awal) -->
-                <div class="p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 bg-white sm:bg-slate-50/40 shadow-2xs space-y-3">
+                <!-- 3. Kotak Teks Sambutan (Ber-border Jelas, Rata Kiri Kanan, Kontras Nyata) -->
+                <div class="p-3.5 sm:p-4 rounded-2xl border-2 border-slate-300 bg-slate-50/80 shadow-xs space-y-3">
                     <div class="text-slate-700 text-xs sm:text-sm leading-relaxed font-normal text-justify">{!! nl2br(e(trim($message->content ?? 'Selamat datang di panduan fasilitas kantor Akebono Karawang. Silakan jelajahi area kerja dan fasilitas pendukung untuk produktivitas Anda.'))) !!}</div>
 
                     <!-- Sign-off Section di Dalam Kotak Ber-border -->
-                    <div class="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-3">
+                    <div class="pt-3 border-t border-slate-300/80 flex items-center justify-between gap-3">
                         <div>
                             <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
                             <div class="text-[10px] text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
                         </div>
                         <div class="text-right">
-                            <span class="inline-block text-[10px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-full">
+                            <span class="inline-block text-[10px] font-semibold text-[#0084f8] bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
                                 {{ $message->subtitle ?? 'Akebono Karawang 2026' }}
                             </span>
                         </div>
