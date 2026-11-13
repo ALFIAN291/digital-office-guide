@@ -19,10 +19,10 @@ class GuideController extends Controller
     protected function renderWithCache($view, array $data = [])
     {
         $response = response()->view($view, $data);
-        if (!auth()->check()) {
+        if (!auth()->check() && app()->environment('production')) {
             $response->header('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
         } else {
-            $response->header('Cache-Control', 'no-cache, private');
+            $response->header('Cache-Control', 'no-cache, no-store, must-revalidate, private');
         }
         return $response;
     }
@@ -122,6 +122,7 @@ class GuideController extends Controller
     public function facilities(Request $request)
     {
         try {
+            $this->ensureDefaultMeetingRoom5();
             $facilities = Facility::orderBy('sort_order')->get();
         } catch (\Throwable $e) {
             $facilities = collect();
@@ -160,11 +161,39 @@ class GuideController extends Controller
     }
 
     /**
+     * Ensure Meeting Room 5 exists so Floor 2 Map & Facility Detail match the reference design.
+     */
+    protected function ensureDefaultMeetingRoom5(): void
+    {
+        if (!Facility::where('slug', 'meeting-room-5')->exists()) {
+            Facility::create([
+                'name' => 'Meeting Room 5',
+                'slug' => 'meeting-room-5',
+                'category' => 'meeting',
+                'floor' => 'Lantai 2',
+                'location_detail' => '2nd Floor (East Wing)',
+                'capacity' => '8 – 10 people',
+                'operating_hours' => '07:30 - 18:00 WIB',
+                'availability_note' => 'Check on room tablet / SSO',
+                'usage_purpose' => 'Internal & cross-team meetings',
+                'description' => 'Ruang rapat kolaboratif di Lantai 2 yang dilengkapi layar pintar 4K, kamera konferensi video, mikrofon beamforming, dan sistem audio jernih untuk rapat internal maupun hybrid.',
+                'guidelines' => "Book the room in advance via SSO Portal.\nKeep the room clean and tidy.\nTurn off display & equipment after use.\nBe on time and respect the next booking.",
+                'amenities' => ['Display (4K)', 'Camera (VC)', 'Microphone (Beamforming)', 'Speaker (Audio)', 'Video Conference'],
+                'icon' => 'users',
+                'image_path' => '/images/meeting-room.jpg',
+                'is_featured' => true,
+                'sort_order' => 1,
+            ]);
+        }
+    }
+
+    /**
      * Display single facility details.
      */
     public function facilityDetail($slug)
     {
         try {
+            $this->ensureDefaultMeetingRoom5();
             $facility = Facility::where('slug', $slug)->first();
             if (!$facility) {
                 return redirect()->route('guide.facilities');

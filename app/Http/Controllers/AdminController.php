@@ -204,17 +204,56 @@ class AdminController extends Controller
 
         if ($request->boolean('remove_video')) {
             $validated['video_url'] = null;
-        } elseif ($request->hasFile('video_file') && $request->file('video_file')->isValid()) {
-            $videoFile = $request->file('video_file');
+            $validated['video_chapters'] = [];
+        } else {
             $isVercel = isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL');
-            if (!$isVercel) {
-                $videoDir = public_path('videos/uploads');
+            $videoDir = public_path('videos/uploads');
+
+            // Process single main video file upload if present
+            if ($request->hasFile('video_file') && $request->file('video_file')->isValid() && !$isVercel) {
                 if (!file_exists($videoDir)) {
                     @mkdir($videoDir, 0755, true);
                 }
+                $videoFile = $request->file('video_file');
                 $videoName = 'mgmt_video_' . time() . '.' . $videoFile->getClientOriginalExtension();
                 $videoFile->move($videoDir, $videoName);
                 $validated['video_url'] = '/videos/uploads/' . $videoName;
+            }
+
+            // Process playlist videos (Nama Video + Link/File Video for right-side list)
+            if ($request->has('playlist_titles') && is_array($request->input('playlist_titles'))) {
+                $titles = $request->input('playlist_titles', []);
+                $urls = $request->input('playlist_urls', []);
+                $uploadedFiles = $request->file('playlist_files', []);
+                $playlist = [];
+
+                foreach ($titles as $idx => $rawTitle) {
+                    $itemTitle = trim((string) $rawTitle);
+                    $itemUrl = trim((string) ($urls[$idx] ?? ''));
+
+                    if (isset($uploadedFiles[$idx]) && $uploadedFiles[$idx] && $uploadedFiles[$idx]->isValid() && !$isVercel) {
+                        if (!file_exists($videoDir)) {
+                            @mkdir($videoDir, 0755, true);
+                        }
+                        $f = $uploadedFiles[$idx];
+                        $fName = 'playlist_' . time() . '_' . $idx . '.' . $f->getClientOriginalExtension();
+                        $f->move($videoDir, $fName);
+                        $itemUrl = '/videos/uploads/' . $fName;
+                    }
+
+                    if ($itemTitle !== '' || $itemUrl !== '') {
+                        $playlist[] = [
+                            'id' => 'vid-' . ($idx + 1),
+                            'title' => $itemTitle !== '' ? $itemTitle : 'Video ' . ($idx + 1),
+                            'video_url' => $itemUrl,
+                        ];
+                    }
+                }
+
+                $validated['video_chapters'] = $playlist;
+                if (!$request->hasFile('video_file')) {
+                    $validated['video_url'] = $playlist[0]['video_url'] ?? null;
+                }
             }
         }
         unset($validated['video_file']);

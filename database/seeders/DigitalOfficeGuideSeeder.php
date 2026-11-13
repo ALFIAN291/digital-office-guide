@@ -38,6 +38,24 @@ class DigitalOfficeGuideSeeder extends Seeder
         if (Facility::count() === 0) {
         $facilities = [
             [
+                'name' => 'Meeting Room 5',
+                'slug' => 'meeting-room-5',
+                'category' => 'meeting',
+                'floor' => 'Lantai 2',
+                'location_detail' => '2nd Floor (East Wing)',
+                'capacity' => '8 – 10 people',
+                'operating_hours' => '07:30 - 18:00 WIB',
+                'availability_note' => 'Check on room tablet / SSO',
+                'usage_purpose' => 'Internal & cross-team meetings',
+                'description' => 'Ruang rapat kolaboratif di Lantai 2 yang dilengkapi layar pintar 4K, kamera konferensi video, mikrofon beamforming, dan sistem audio jernih untuk rapat internal maupun hybrid.',
+                'guidelines' => "Book the room in advance via SSO Portal.\nKeep the room clean and tidy.\nTurn off display & equipment after use.\nBe on time and respect the next booking.",
+                'amenities' => ['Display (4K)', 'Camera (VC)', 'Microphone (Beamforming)', 'Speaker (Audio)', 'Video Conference'],
+                'icon' => 'users',
+                'image_path' => '/images/meeting-room.jpg',
+                'is_featured' => true,
+                'sort_order' => 1,
+            ],
+            [
                 'name' => 'Lobi Utama & Resepsionis',
                 'slug' => 'lobi-utama-dan-resepsionis',
                 'category' => 'service',

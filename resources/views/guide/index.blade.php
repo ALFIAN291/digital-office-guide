@@ -650,10 +650,12 @@
                     </button>
                 </div>
 
-                <!-- Tab 1: Video Message Player (Concept Slide 2) -->
-                <div x-show="modalTab === 'video'" x-cloak>
-                    <x-video-message-player :message="$message" :chapters="$videoChapters" :scenes="$videoScenes" :compact="true" />
-                </div>
+                <!-- Tab 1: Video Message Player (Mounts & Autoplays Immediately When Clicked) -->
+                <template x-if="showMessageModal && modalTab === 'video'">
+                    <div>
+                        <x-video-message-player :message="$message" :chapters="$videoChapters" :scenes="$videoScenes" :compact="true" :autoplay="true" />
+                    </div>
+                </template>
 
                 <!-- Tab 2: Official Photo + Quote + Message -->
                 <div x-show="modalTab === 'letter'" class="space-y-3 sm:space-y-3.5">

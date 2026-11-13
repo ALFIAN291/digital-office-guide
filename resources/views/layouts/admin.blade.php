@@ -3,6 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script>
+        if (window.location.hostname === '127.0.0.1') {
+            window.location.replace(window.location.href.replace('127.0.0.1', 'localhost'));
+        }
+    </script>
     <title>{{ $title ?? 'Admin Panel' }} - Akebono Karawang Guide</title>
 
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">

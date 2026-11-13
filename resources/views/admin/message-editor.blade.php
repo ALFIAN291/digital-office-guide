@@ -80,69 +80,113 @@
             </div>
         </div>
 
-        <!-- Dedicated Video Message Manager Box -->
-        <div class="p-5 bg-gradient-to-br from-slate-900 to-[#0f2e54] text-white rounded-2xl border border-slate-800 space-y-4">
+        <!-- Dedicated Video Message & Playlist Manager Box -->
+        @php
+            $initialVideos = collect($message->chapters_list)->values()->map(function ($v, $i) {
+                return [
+                    'uid' => 'v-' . ($i + 1) . '-' . uniqid(),
+                    'title' => $v['title'] ?? '',
+                    'video_url' => $v['video_url'] ?? '',
+                ];
+            })->all();
+            if (empty($initialVideos)) {
+                $initialVideos = [
+                    [
+                        'uid' => 'v-1-' . uniqid(),
+                        'title' => 'Sambutan Manajemen Akebono',
+                        'video_url' => $message->video_url ?? '',
+                    ]
+                ];
+            }
+        @endphp
+        <div class="p-5 bg-gradient-to-br from-slate-900 to-[#0f2e54] text-white rounded-2xl border border-slate-800 space-y-4"
+             x-data="{
+                videos: {{ Js::from($initialVideos) }},
+                addVideo() {
+                    this.videos.push({
+                        uid: 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+                        title: '',
+                        video_url: ''
+                    });
+                },
+                removeVideo(idx) {
+                    if (this.videos.length > 1) {
+                        this.videos.splice(idx, 1);
+                    } else {
+                        this.videos.splice(0, 1, {
+                            uid: 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+                            title: '',
+                            video_url: ''
+                        });
+                    }
+                }
+             }">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/15 pb-3">
                 <div>
                     <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0084f8] text-white text-[10px] font-extrabold uppercase tracking-wider mb-1">
-                        🎬 Video Sambutan Manajemen
+                        🎬 Daftar Video Sambutan Manajemen
                     </div>
-                    <h3 class="text-sm sm:text-base font-extrabold">Tambah / Ganti Video Sambutan (Upload MP4 atau Link YouTube)</h3>
-                    <p class="text-[11px] text-sky-200">Video ini ditampilkan pada pemutar "Video Message from Management" di Beranda & halaman Pesan</p>
+                    <h3 class="text-sm sm:text-base font-extrabold">Kelola Video & Daftar Judul Video di Sebelah Kanan Player</h3>
+                    <p class="text-[11px] text-sky-200">Isi Nama Video dan Link YouTube / Upload File MP4. Daftar nama video di bawah akan tampil di sisi kanan player & langsung memutar video saat diklik.</p>
                 </div>
-                @if(!empty($message->video_url))
-                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-extrabold shrink-0">
-                        ✓ Video Aktif Terpasang
-                    </span>
-                @else
-                    <span class="px-2.5 py-1 rounded-full bg-white/10 text-sky-200 text-[10px] font-bold shrink-0">
-                        Mode Storyboard Default
-                    </span>
-                @endif
+                <button type="button" @click="addVideo()"
+                        class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#0084f8] hover:bg-[#006fd6] text-white text-xs font-extrabold transition cursor-pointer shrink-0">
+                    <span>➕</span>
+                    <span>Tambah Video</span>
+                </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Option 1: Upload Video File -->
-                <div class="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-2">
-                    <label class="block text-xs font-extrabold text-white">1. Upload File Video dari Perangkat (MP4 / WebM):</label>
-                    <input type="file" name="video_file" accept="video/mp4,video/webm,video/quicktime"
-                           class="block w-full text-xs text-sky-100 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-extrabold file:bg-[#0084f8] file:text-white hover:file:bg-[#006fd6] cursor-pointer">
-                    <p class="text-[10px] text-sky-200/80">Pilih file video `.mp4` atau `.webm` (Maks 50MB) untuk langsung diunggah ke server.</p>
-                </div>
+            <!-- Dynamic List of Videos (Nama Video + Link / File Upload) -->
+            <div class="space-y-3">
+                <template x-for="(vid, idx) in videos" :key="vid.uid">
+                    <div class="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-2.5">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="px-2 py-0.5 rounded bg-sky-500/25 text-sky-200 text-[10px] font-extrabold"
+                                  x-text="'Video #' + (idx + 1) + (idx === 0 ? ' (Utama / Pertama Diputar)' : '')"></span>
+                            <button type="button" @click="removeVideo(idx)"
+                                    class="text-[11px] font-bold text-rose-300 hover:text-rose-200 cursor-pointer">
+                                🗑️ Hapus Video Ini
+                            </button>
+                        </div>
 
-                <!-- Option 2: Paste YouTube or Direct MP4 Link -->
-                <div class="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-2">
-                    <label class="block text-xs font-extrabold text-white">2. Atau Masukkan Link YouTube / URL Video MP4:</label>
-                    <input type="text" name="video_url" value="{{ old('video_url', $message->video_url) }}"
-                           placeholder="Contoh: https://www.youtube.com/watch?v=... atau https://.../video.mp4"
-                           class="w-full px-3.5 py-2 rounded-lg bg-white text-slate-900 border border-white/20 text-xs font-semibold focus:outline-hidden">
-                    <p class="text-[10px] text-sky-200/80">Mendukung link YouTube (`youtube.com/watch?v=...` / `youtu.be/...`) maupun link `.mp4` langsung.</p>
-                </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-start">
+                            <div class="sm:col-span-5">
+                                <label class="block text-[11px] font-bold text-sky-100 mb-1">Nama / Judul Video (Tampil di Daftar Kanan):</label>
+                                <input type="text" name="playlist_titles[]" x-model="videos[idx].title"
+                                       placeholder="Contoh: Sambutan President Director"
+                                       class="w-full px-3 py-2 rounded-lg bg-white text-slate-900 text-xs font-bold focus:outline-hidden">
+                            </div>
 
+                            <div class="sm:col-span-7 space-y-1.5">
+                                <label class="block text-[11px] font-bold text-sky-100 mb-1">Link YouTube / URL Video MP4:</label>
+                                <input type="text" name="playlist_urls[]" x-model="videos[idx].video_url"
+                                       placeholder="Contoh: https://www.youtube.com/watch?v=... atau /videos/..."
+                                       class="w-full px-3 py-2 rounded-lg bg-white text-slate-900 text-xs font-semibold focus:outline-hidden">
+
+                                <div class="flex items-center gap-2 pt-0.5">
+                                    <span class="text-[10px] text-sky-200 shrink-0">Atau upload MP4:</span>
+                                    <input type="file" name="playlist_files[]" accept="video/mp4,video/webm,video/quicktime"
+                                           class="block w-full text-[11px] text-sky-100 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-[10px] file:font-extrabold file:bg-[#0084f8] file:text-white hover:file:bg-[#006fd6] cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                    <label class="block text-xs font-bold text-sky-100 mb-1">Tagline Jepang pada Cover Video:</label>
-                    <input type="text" name="japanese_tagline" value="{{ old('japanese_tagline', $message->japanese_tagline ?? '新しい職場で、ともに次の未来へ') }}"
-                           class="w-full px-3.5 py-2 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold focus:outline-hidden">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-sky-100 mb-1">Label Durasi Video:</label>
+                    <label class="block text-xs font-bold text-sky-100 mb-1">Label Durasi di Tab Video:</label>
                     <input type="text" name="video_duration" value="{{ old('video_duration', $message->video_duration ?? '1:18') }}" placeholder="1:18"
                            class="w-full px-3.5 py-2 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold focus:outline-hidden">
                 </div>
-            </div>
-
-            @if(!empty($message->video_url))
-                <div class="pt-2 border-t border-white/15 flex items-center justify-between flex-wrap gap-2">
-                    <div class="text-[11px] text-sky-200 truncate max-w-md">
-                        Video saat ini: <strong class="text-white">{{ $message->video_url }}</strong>
-                    </div>
-                    <label class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 cursor-pointer">
+                <div class="flex items-end">
+                    <label class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 cursor-pointer pb-2">
                         <input type="checkbox" name="remove_video" value="1" class="rounded border-white/30 text-rose-500">
-                        <span>🗑️ Hapus video kustom & kembali ke Storyboard Default</span>
+                        <span>🗑️ Kosongkan semua video</span>
                     </label>
                 </div>
-            @endif
+            </div>
         </div>
 
         <!-- Summary (Displayed on Home Card) -->

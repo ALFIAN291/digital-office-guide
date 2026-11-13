@@ -3,6 +3,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script>
+        if (window.location.hostname === '127.0.0.1') {
+            window.location.replace(window.location.href.replace('127.0.0.1', 'localhost'));
+        }
+    </script>
     <title>{{ $title ?? 'Akebono - ' . ($settings->office_title ?? 'Karawang') . ' Office Guide 2026' }}</title>
     
     <!-- Favicon -->
