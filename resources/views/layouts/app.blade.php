@@ -29,6 +29,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         [x-cloak] { display: none !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         
         .soft-shadow {
             box-shadow: 0 10px 30px -10px rgba(11, 60, 109, 0.10), 0 4px 6px -4px rgba(11, 60, 109, 0.04);
@@ -469,60 +470,63 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 min-w-0 pb-16 lg:pb-10 w-full">
+        <main class="flex-1 min-w-0 pb-22 lg:pb-10 w-full">
             @yield('content')
         </main>
     </div>
 
-    <!-- Bottom Navigation Bar (Mobile & Small Tablet Only, Compact Fixed at Bottom) -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) * 0.35));">
-        <div class="max-w-3xl mx-auto px-4 pt-1.5 pb-1 flex items-center justify-around">
-            
-            <a href="{{ route('guide.index') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.index') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
-                @if(Route::is('guide.index'))
-                    <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
-                @endif
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                </svg>
-                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Home</span>
-            </a>
+    <!-- Bottom Navigation Taskbar (Mobile & Small Tablet Only - Full Menu Items with Smooth Horizontal Scroll) -->
+    @php
+        $mobileTaskbarItems = [
+            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Home', 'icon' => '🏠'],
+            ['route' => 'guide.message', 'match' => 'guide.message', 'label' => 'Pesan', 'icon' => '💬'],
+            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Office & Plant', 'icon' => '🏢'],
+            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Facilities', 'icon' => '⊞'],
+            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Office Map', 'icon' => '🗺️'],
+            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Dos & Don\'ts', 'icon' => '📋'],
+            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Canteen', 'icon' => '🍽️'],
+            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Visitor', 'icon' => '🪪'],
+            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Attendance', 'icon' => '🕒'],
+            ['route' => 'guide.onboarding', 'match' => 'guide.onboarding', 'label' => 'Onboarding', 'icon' => '✅'],
+            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Support', 'icon' => '🎧'],
+            ['route' => 'guide.emergency', 'match' => 'guide.emergency', 'label' => 'Darurat SOS', 'icon' => '🚨', 'danger' => true],
+        ];
+    @endphp
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-6px_20px_rgba(15,46,84,0.08)] w-full"
+         style="padding-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) * 0.35));"
+         x-init="$nextTick(() => { const el = $el.querySelector('[data-active-nav=true]'); if (el) el.scrollIntoView({ inline: 'center', block: 'nearest' }); })">
+        <div class="flex items-center gap-1 overflow-x-auto px-2.5 pt-1.5 pb-1 no-scrollbar" style="scrollbar-width: none; -ms-overflow-style: none;">
+            @foreach($mobileTaskbarItems as $tb)
+                @php
+                    $isActive = Route::is($tb['match']);
+                    $isDanger = !empty($tb['danger']);
+                @endphp
+                <a href="{{ route($tb['route']) }}"
+                   @if($isActive) data-active-nav="true" @endif
+                   class="flex flex-col items-center justify-center shrink-0 min-w-[66px] px-2 py-1 rounded-xl relative transition-all {{ $isActive ? ($isDanger ? 'bg-rose-50 text-rose-600 font-extrabold' : 'bg-sky-50 text-[#0066dc] font-extrabold') : ($isDanger ? 'text-rose-600/80 hover:bg-rose-50/60 font-semibold' : 'text-slate-500 hover:text-[#0f2e54] hover:bg-slate-50 font-semibold') }}">
+                    @if($isActive)
+                        <span class="absolute top-0 inset-x-3 h-0.75 {{ $isDanger ? 'bg-rose-600' : 'bg-[#0066dc]' }} rounded-full"></span>
+                    @endif
+                    <span class="text-base leading-none mb-1">{{ $tb['icon'] }}</span>
+                    <span class="text-[10px] tracking-tight leading-none whitespace-nowrap">{{ $tb['label'] }}</span>
+                </a>
+            @endforeach
 
-            <a href="{{ route('guide.facilities') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.facilities*') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
-                @if(Route::is('guide.facilities*'))
-                    <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
-                @endif
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                </svg>
-                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Facilities</span>
-            </a>
+            @auth
+                <a href="{{ route('admin.desks.index') }}"
+                   @if(Route::is('admin.desks.*')) data-active-nav="true" @endif
+                   class="flex flex-col items-center justify-center shrink-0 min-w-[68px] px-2 py-1 rounded-xl relative transition-all {{ Route::is('admin.desks.*') ? 'bg-sky-100 text-[#0066dc] font-extrabold' : 'bg-sky-50/70 text-[#0066dc] font-bold' }}">
+                    <span class="text-base leading-none mb-1">🪪</span>
+                    <span class="text-[10px] tracking-tight leading-none whitespace-nowrap">QR Desk</span>
+                </a>
+            @endauth
 
-            <a href="{{ route('guide.map') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.map') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
-                @if(Route::is('guide.map'))
-                    <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
-                @endif
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="1.5"></circle>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5L12 2z"></path>
-                </svg>
-                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Map</span>
-            </a>
-
-            <a href="{{ route('guide.dos-and-donts') }}" 
-               class="flex flex-col items-center justify-center flex-1 py-0.5 relative transition-colors {{ Route::is('guide.dos-and-donts') ? 'text-[#0084f8] font-bold' : 'text-slate-400 hover:text-slate-700 font-medium' }}">
-                @if(Route::is('guide.dos-and-donts'))
-                    <span class="absolute top-0 inset-x-4 sm:inset-x-8 h-0.75 bg-[#0084f8] rounded-full"></span>
-                @endif
-                <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
-                </svg>
-                <span class="text-[10px] sm:text-[11px] tracking-tight leading-tight">Dos & Don'ts</span>
-            </a>
-
+            <!-- Quick Hamburger Drawer Trigger at End of Taskbar -->
+            <button type="button" @click="mobileMenuOpen = true"
+                    class="flex flex-col items-center justify-center shrink-0 min-w-[60px] px-2 py-1 rounded-xl text-slate-500 hover:text-[#0f2e54] hover:bg-slate-50 font-semibold cursor-pointer">
+                <span class="text-base leading-none mb-1">☰</span>
+                <span class="text-[10px] tracking-tight leading-none whitespace-nowrap">Semua</span>
+            </button>
         </div>
     </nav>
 
