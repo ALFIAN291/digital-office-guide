@@ -62,17 +62,18 @@
             { id: 'attendance', label: 'Attendance', route: '{{ route('guide.attendance') }}' },
         ],
         initPortal() {
+            localStorage.removeItem('akebono_desk_profile');
             const params = new URLSearchParams(window.location.search);
-            if (params.get('name') || params.get('desk')) {
+            if (params.get('name')) {
                 const profile = {
-                    name: params.get('name') || 'Bran',
-                    dept: params.get('dept') || 'IT Department',
-                    team: params.get('team') || 'Infrastructure & Security',
-                    desk: params.get('desk') || 'A-023',
-                    floor: params.get('floor') || '2',
-                    area: params.get('area') || 'Office Building',
+                    name: params.get('name'),
+                    dept: params.get('dept') || 'Visitor',
+                    team: params.get('team') || '',
+                    desk: params.get('desk') || '-',
+                    floor: params.get('floor') || '1',
+                    area: params.get('area') || 'Main Office',
                 };
-                localStorage.setItem('akebono_desk_profile', JSON.stringify(profile));
+                localStorage.setItem('akebono_scanned_desk_v2', JSON.stringify(profile));
             }
             let saved = ['welcome'];
             try {

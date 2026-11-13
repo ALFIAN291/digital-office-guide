@@ -2,15 +2,15 @@
 
 @section('content')
 @php
-    $dbScannedProfile = [
-        'name' => $scannedDesk?->name ?? 'Bran',
-        'dept' => $scannedDesk?->department ?? 'IT Department',
-        'team' => $scannedDesk?->sub_team ?? 'Infrastructure & Security',
-        'desk' => $scannedDesk?->desk_number ?? 'A-023',
-        'floor' => $scannedDesk?->floor ?? '2',
-        'area' => $scannedDesk?->area ?? 'Office Building',
-    ];
-    $hasExplicitQueryDesk = request()->filled('desk');
+    $dbScannedProfile = $scannedDesk ? [
+        'name' => $scannedDesk->name,
+        'dept' => $scannedDesk->department,
+        'team' => $scannedDesk->sub_team ?? '',
+        'desk' => $scannedDesk->desk_number,
+        'floor' => $scannedDesk->floor,
+        'area' => $scannedDesk->area ?? 'Office Building',
+    ] : null;
+    $hasExplicitQueryDesk = request()->filled('desk') && $scannedDesk !== null;
 @endphp
 <div class="max-w-4xl lg:max-w-none mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
      x-data="{ 
@@ -21,14 +21,15 @@
         hasQueryDesk: {{ $hasExplicitQueryDesk ? 'true' : 'false' }},
         steps: {{ Js::from($onboardingSteps) }},
         init() {
+            localStorage.removeItem('akebono_desk_profile');
             if (this.hasQueryDesk && this.deskProfile) {
-                localStorage.setItem('akebono_desk_profile', JSON.stringify(this.deskProfile));
-            } else {
+                localStorage.setItem('akebono_scanned_desk_v2', JSON.stringify(this.deskProfile));
+            } else if (!this.deskProfile) {
                 try {
-                    const raw = localStorage.getItem('akebono_desk_profile');
+                    const raw = localStorage.getItem('akebono_scanned_desk_v2');
                     if (raw) {
                         const parsed = JSON.parse(raw);
-                        if (parsed && parsed.name) {
+                        if (parsed && parsed.name && parsed.name !== 'Bran') {
                             this.deskProfile = parsed;
                         }
                     }
@@ -39,6 +40,11 @@
                     this.showMessageModal = true;
                 }, 250);
             }
+        },
+        resetVisitor() {
+            this.deskProfile = null;
+            localStorage.removeItem('akebono_scanned_desk_v2');
+            localStorage.removeItem('akebono_desk_profile');
         },
         closeModal() {
             this.showMessageModal = false;
@@ -117,16 +123,34 @@
             <div>
                 <div class="text-xs sm:text-sm font-semibold text-slate-500">Welcome,</div>
                 <div class="text-2xl sm:text-3xl font-black text-[#0f2e54] tracking-tight flex items-center gap-1.5 mt-0.5">
-                    <span x-text="deskProfile ? deskProfile.name : 'Bran'">Bran</span>
+                    <span x-text="deskProfile && deskProfile.name ? deskProfile.name : 'Visitor'">{{ $scannedDesk?->name ?? 'Visitor' }}</span>
                     <span>👋</span>
+                    <template x-if="deskProfile && deskProfile.name">
+                        <button type="button" @click="resetVisitor()"
+                                class="ml-1.5 px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 text-[10px] font-bold transition cursor-pointer"
+                                title="Reset ke Visitor">
+                            Reset
+                        </button>
+                    </template>
                 </div>
-                <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
-                    <span x-text="'Floor ' + (deskProfile ? deskProfile.floor : '2')">Floor 2</span>
-                    <span>•</span>
-                    <span x-text="deskProfile ? deskProfile.dept : 'IT Department'">IT Department</span>
-                    <span>•</span>
-                    <span class="font-bold text-[#0f2e54]" x-text="'Desk ' + (deskProfile ? deskProfile.desk : 'A-023')">Desk A-023</span>
-                </div>
+                <template x-if="deskProfile && deskProfile.desk">
+                    <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
+                        <span x-text="'Floor ' + deskProfile.floor"></span>
+                        <span>•</span>
+                        <span x-text="deskProfile.dept"></span>
+                        <span>•</span>
+                        <span class="font-bold text-[#0f2e54]" x-text="'Desk ' + deskProfile.desk"></span>
+                    </div>
+                </template>
+                <template x-if="!deskProfile || !deskProfile.desk">
+                    <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
+                        <span>Main Office & Plant</span>
+                        <span>•</span>
+                        <span>Guest & Employee Portal</span>
+                        <span>•</span>
+                        <span class="font-bold text-[#0084f8]">Scan Desk QR for Personal Desk</span>
+                    </div>
+                </template>
             </div>
 
             @auth

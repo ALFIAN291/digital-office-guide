@@ -16,12 +16,18 @@
      x-data="{
         deskProfile: {{ Js::from($dbScannedProfile) }},
         init() {
+            localStorage.removeItem('akebono_desk_profile');
             if (this.deskProfile) {
-                localStorage.setItem('akebono_desk_profile', JSON.stringify(this.deskProfile));
+                localStorage.setItem('akebono_scanned_desk_v2', JSON.stringify(this.deskProfile));
             } else {
                 try {
-                    const raw = localStorage.getItem('akebono_desk_profile');
-                    if (raw) this.deskProfile = JSON.parse(raw);
+                    const raw = localStorage.getItem('akebono_scanned_desk_v2');
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.name && parsed.name !== 'Bran') {
+                            this.deskProfile = parsed;
+                        }
+                    }
                 } catch (e) {}
             }
         }

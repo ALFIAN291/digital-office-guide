@@ -37,9 +37,6 @@ class GuideController extends Controller
             if ($request->filled('desk')) {
                 $scannedDesk = DeskCard::where('desk_number', (string) $request->input('desk'))->first();
             }
-            if (!$scannedDesk) {
-                $scannedDesk = DeskCard::orderBy('id')->first();
-            }
             $message = ManagementMessage::where('is_active', true)->first();
             $facilities = Facility::orderBy('sort_order')->take(6)->get();
             $featuredFacilities = Facility::where('is_featured', true)->orderBy('sort_order')->get();
