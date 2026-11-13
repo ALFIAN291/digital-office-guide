@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-100">
+<html lang="id" class="min-h-screen bg-slate-100">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,10 +19,14 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="h-full text-slate-800 antialiased flex flex-col md:flex-row bg-slate-100" x-data="{ sidebarOpen: false }">
+<body class="min-h-screen text-slate-800 antialiased flex flex-col md:flex-row bg-slate-100" x-data="{ sidebarOpen: false }">
+
+    <!-- Mobile Overlay Backdrop -->
+    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+         class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-xs md:hidden"></div>
 
     <!-- Mobile Header -->
-    <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+    <div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
         <div class="flex items-center gap-2">
             <img src="{{ asset('images/akebono.png') }}" alt="Akebono" class="h-6 w-auto">
             <span class="text-xs font-bold text-[#0f2e54] uppercase tracking-wider">Admin Panel</span>
@@ -34,8 +38,8 @@
         </button>
     </div>
 
-    <!-- Sidebar Navigation -->
-    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between transition-transform duration-300 md:static md:translate-x-0"
+    <!-- Sidebar Navigation (Sticky full-screen height on desktop so footer never overflows out of dark background) -->
+    <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-slate-300 flex flex-col justify-between transition-transform duration-300 md:sticky md:top-0 md:h-screen shrink-0 overflow-y-auto md:translate-x-0"
            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
         
         <div>
@@ -85,8 +89,8 @@
 
                 <a href="{{ route('admin.message.edit') }}" 
                    class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition {{ Route::is('admin.message.edit') ? 'bg-[#0084f8] text-white' : 'hover:bg-slate-800 text-slate-300' }}">
-                    <span class="text-base">📝</span>
-                    <span>Pesan Manajemen</span>
+                    <span class="text-base">🎬</span>
+                    <span>Pesan & Video Manajemen</span>
                 </a>
 
                 <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
@@ -131,9 +135,9 @@
         </div>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-800 space-y-2">
+        <div class="p-4 border-t border-slate-800 bg-slate-900 space-y-2 shrink-0">
             <a href="{{ route('guide.index') }}" target="_blank" 
-               class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition">
+               class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition">
                 <span>👁️</span>
                 <span>Lihat Situs Web ↗</span>
             </a>
@@ -141,7 +145,7 @@
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button type="submit" 
-                        class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-bold transition">
+                        class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 text-xs font-bold transition cursor-pointer">
                     <span>🚪</span>
                     <span>Logout Keluar</span>
                 </button>
@@ -151,7 +155,7 @@
     </aside>
 
     <!-- Main Content Panel -->
-    <main class="flex-1 overflow-y-auto min-h-screen p-4 sm:p-6 md:p-8">
+    <main class="flex-1 min-w-0 p-4 sm:p-6 md:p-8">
         
         <!-- Flash Alert Messages -->
         @if(session('success'))

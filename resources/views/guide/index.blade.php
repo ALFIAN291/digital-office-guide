@@ -2,14 +2,15 @@
 
 @section('content')
 @php
-    $dbScannedProfile = $scannedDesk ? [
-        'name' => $scannedDesk->name,
-        'dept' => $scannedDesk->department,
-        'team' => $scannedDesk->sub_team ?? '',
-        'desk' => $scannedDesk->desk_number,
-        'floor' => $scannedDesk->floor,
-        'area' => $scannedDesk->area,
-    ] : null;
+    $dbScannedProfile = [
+        'name' => $scannedDesk?->name ?? 'Bran',
+        'dept' => $scannedDesk?->department ?? 'IT Department',
+        'team' => $scannedDesk?->sub_team ?? 'Infrastructure & Security',
+        'desk' => $scannedDesk?->desk_number ?? 'A-023',
+        'floor' => $scannedDesk?->floor ?? '2',
+        'area' => $scannedDesk?->area ?? 'Office Building',
+    ];
+    $hasExplicitQueryDesk = request()->filled('desk');
 @endphp
 <div class="max-w-4xl lg:max-w-none mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
      x-data="{ 
@@ -17,14 +18,20 @@
         modalTab: 'letter',
         autoPopup: {{ ($settings->message_auto_popup ?? true) ? 'true' : 'false' }},
         deskProfile: {{ Js::from($dbScannedProfile) }},
+        hasQueryDesk: {{ $hasExplicitQueryDesk ? 'true' : 'false' }},
         steps: {{ Js::from($onboardingSteps) }},
         init() {
-            if (this.deskProfile) {
+            if (this.hasQueryDesk && this.deskProfile) {
                 localStorage.setItem('akebono_desk_profile', JSON.stringify(this.deskProfile));
             } else {
                 try {
                     const raw = localStorage.getItem('akebono_desk_profile');
-                    if (raw) this.deskProfile = JSON.parse(raw);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.name) {
+                            this.deskProfile = parsed;
+                        }
+                    }
                 } catch (e) {}
             }
             if (this.autoPopup) {
@@ -32,10 +39,6 @@
                     this.showMessageModal = true;
                 }, 250);
             }
-        },
-        clearProfile() {
-            this.deskProfile = null;
-            localStorage.removeItem('akebono_desk_profile');
         },
         closeModal() {
             this.showMessageModal = false;
@@ -108,23 +111,56 @@
         };
     @endphp
 
-    <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs {{ $heroHeightClass }} flex items-end">
-        <!-- Hero Background Image -->
-        <img src="{{ office_image($settings->hero_image ?? null, 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover">
-        
-        <!-- Subtle Gradient Overlay for Text Readability -->
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/35 to-transparent"></div>
+    <!-- 1. Personalized Landing Header + Hero Workplace Card (Concept Slide 1 - Screen 2) -->
+    <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-3.5">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <div class="text-xs sm:text-sm font-semibold text-slate-500">Welcome,</div>
+                <div class="text-2xl sm:text-3xl font-black text-[#0f2e54] tracking-tight flex items-center gap-1.5 mt-0.5">
+                    <span x-text="deskProfile ? deskProfile.name : 'Bran'">Bran</span>
+                    <span>👋</span>
+                </div>
+                <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
+                    <span x-text="'Floor ' + (deskProfile ? deskProfile.floor : '2')">Floor 2</span>
+                    <span>•</span>
+                    <span x-text="deskProfile ? deskProfile.dept : 'IT Department'">IT Department</span>
+                    <span>•</span>
+                    <span class="font-bold text-[#0f2e54]" x-text="'Desk ' + (deskProfile ? deskProfile.desk : 'A-023')">Desk A-023</span>
+                </div>
+            </div>
 
-        <!-- Hero Text -->
-        <div class="relative z-10 {{ $heroPaddingClass }} text-white w-full">
-            <h1 class="{{ $heroTitleClass }} font-extrabold tracking-tight leading-tight drop-shadow-xs">
-                {{ $settings->hero_title_line1 ?? 'Welcome to' }}
-                <span>{{ $settings->hero_title_line2 ?? 'Your New Workplace' }}</span>
-            </h1>
-            
-            <p class="text-white/90 text-xs sm:text-sm font-medium mt-0.5 max-w-xl drop-shadow-xs line-clamp-1">
-                {{ $settings->hero_tagline ?? 'Moving Together. Working Better. Growing Stronger.' }}
-            </p>
+            @auth
+                <a href="{{ route('admin.desks.index') }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0084f8] border border-sky-200 text-xs font-extrabold transition shrink-0">
+                    <span>🪪</span>
+                    <span>Kelola Desk QR</span>
+                </a>
+            @endauth
+        </div>
+
+        <!-- Hero Workplace Banner Card inside Personalized Landing -->
+        <div @click="showMessageModal = true"
+             class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs h-44 sm:h-56 md:h-64 flex items-end cursor-pointer">
+            <img src="{{ office_image($settings->hero_image ?? null, 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/30 to-transparent"></div>
+
+            <div class="relative z-10 p-4 sm:p-6 text-white w-full flex items-end justify-between gap-3">
+                <div>
+                    <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight drop-shadow-xs">
+                        {{ $settings->hero_title_line1 ?? 'Welcome to' }}<br>
+                        <span>{{ $settings->hero_title_line2 ?? 'Our New Workplace' }}</span>
+                    </h1>
+                    <p class="text-white/85 text-xs sm:text-sm font-medium mt-1 max-w-xl drop-shadow-xs line-clamp-1">
+                        {{ $settings->hero_tagline ?? 'Moving Together. Working Better. Growing Stronger.' }}
+                    </p>
+                </div>
+
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white text-[#0f2e54] flex items-center justify-center shadow-lg shrink-0 group-hover:translate-x-0.5 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6"/>
+                    </svg>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -219,86 +255,182 @@
         </div>
     @endif
 
-    <!-- 2B. Personalized QR Desk Onboarding & Your Onboarding Journey (Concept Slide 1) -->
-    <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 soft-shadow border border-slate-200/80 space-y-3.5" x-data="{ journeyOpen: false }">
-        <!-- Top Personalized Desk Greeting Row -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-200 text-[#0084f8] flex items-center justify-center font-extrabold text-lg shrink-0">
-                    🪪
-                </div>
-                <div class="min-w-0">
-                    <template x-if="deskProfile">
-                        <div>
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <span class="text-xs font-medium text-slate-500">Welcome,</span>
-                                <span class="text-sm sm:text-base font-extrabold text-[#0f2e54]" x-text="deskProfile.name + ' 👋'"></span>
-                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold" x-text="'Desk ' + deskProfile.desk"></span>
-                            </div>
-                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate"
-                               x-text="'Floor ' + deskProfile.floor + ' • ' + deskProfile.dept + ' • ' + deskProfile.area"></p>
-                        </div>
-                    </template>
-                    <template x-if="!deskProfile">
-                        <div>
-                            <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">
-                                Your Onboarding Journey
-                            </div>
-                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                                Panduan langkah demi langkah orientasi gedung & fasilitas kantor baru
-                            </p>
-                        </div>
-                    </template>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 shrink-0 flex-wrap">
-                <template x-if="deskProfile">
-                    <button type="button" @click="clearProfile()"
-                            class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-semibold transition cursor-pointer">
-                        Reset
-                    </button>
-                </template>
-                @auth
-                <a href="{{ route('admin.desks.index') }}"
-                   class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0084f8] border border-sky-200 text-[11px] font-bold transition">
-                    ⚙️ Kelola QR Desk (Admin)
-                </a>
-                @endauth
-                <button type="button" @click="journeyOpen = !journeyOpen"
-                        class="px-3 py-1.5 rounded-xl bg-[#0084f8] hover:bg-[#0070d6] text-white text-[11px] font-bold shadow-2xs transition cursor-pointer flex items-center gap-1.5">
-                    <span x-text="Math.round((completedSteps.length / 6) * 100) + '%'"></span>
-                    <span x-text="journeyOpen ? 'Tutup' : 'Checklist ▾'"></span>
-                </button>
-            </div>
+    <!-- 2B. Your Onboarding Journey (Concept Slide 1 - Screen 3: Always Visible on Both Mobile & Desktop) -->
+    <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-4">
+        <div class="flex items-center justify-between gap-2">
+            <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54] tracking-tight">
+                Your Onboarding Journey
+            </h2>
+            <span class="text-xs sm:text-sm font-extrabold text-slate-500"
+                  x-text="Math.min(100, Math.round((completedSteps.length / 6) * 100)) + '%'">60%</span>
         </div>
 
-        <!-- Progress bar always visible cleanly -->
-        <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-[#0084f8] to-emerald-500 rounded-full transition-all duration-500"
+        <!-- Progress Bar Row -->
+        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-[#0084f8] rounded-full transition-all duration-500"
                  :style="'width:' + Math.min(100, Math.round((completedSteps.length / 6) * 100)) + '%'"></div>
         </div>
 
-        <!-- Expandable 6-Step Onboarding Journey (Concept Slide 1) -->
-        <div x-show="journeyOpen" x-collapse x-cloak class="pt-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <!-- 6 Onboarding Journey Step Cards (Matching Screen 3 Mockup) -->
+        @php
+            $stepBadgeColors = [
+                '01' => 'bg-[#0070d6]',
+                '02' => 'bg-[#0070d6]',
+                '03' => 'bg-emerald-500',
+                '04' => 'bg-rose-500',
+                '05' => 'bg-[#0070d6]',
+                '06' => 'bg-[#0f2e54]',
+            ];
+        @endphp
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
             @foreach($onboardingSteps as $step)
+                @php
+                    $circleColor = $stepBadgeColors[$step['number']] ?? 'bg-[#0070d6]';
+                @endphp
                 <a href="{{ route($step['route']) }}"
-                   class="group flex items-center justify-between gap-2.5 p-2.5 rounded-xl border border-slate-200/80 hover:border-sky-300 bg-slate-50/70 hover:bg-sky-50/50 transition">
-                    <div class="flex items-center gap-2.5 min-w-0">
-                        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-extrabold shrink-0 transition"
-                              :class="isMilestoneDone('{{ $step['key'] }}') ? 'bg-emerald-500 text-white' : 'bg-[#0084f8] text-white'">
-                            {{ $step['number'] }}
+                   class="group flex items-center justify-between gap-3 px-3.5 py-3 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-[#0084f8] hover:shadow-md transition">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-9 h-9 rounded-full {{ $circleColor }} text-white flex items-center justify-center text-sm shrink-0 shadow-2xs">
+                            @if($step['number'] === '01')
+                                🏢
+                            @elseif($step['number'] === '02')
+                                ⚙️
+                            @elseif($step['number'] === '03')
+                                🛡️
+                            @elseif($step['number'] === '04')
+                                🍴
+                            @elseif($step['number'] === '05')
+                                👤
+                            @else
+                                🎧
+                            @endif
                         </span>
-                        <div class="min-w-0">
-                            <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] truncate">
+                        <div class="flex items-baseline gap-2 min-w-0">
+                            <span class="text-xs font-bold text-slate-400 shrink-0">{{ $step['number'] }}</span>
+                            <span class="text-sm font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] truncate transition-colors">
                                 {{ $step['title'] }}
-                            </div>
-                            <div class="text-[10px] text-slate-500 truncate">{{ $step['subtitle'] }}</div>
+                            </span>
                         </div>
                     </div>
-                    <span class="text-xs font-bold text-slate-400 group-hover:text-[#0084f8] shrink-0">›</span>
+                    <span class="text-slate-400 group-hover:text-[#0084f8] group-hover:translate-x-0.5 font-bold text-base transition-all shrink-0">›</span>
                 </a>
             @endforeach
+        </div>
+    </div>
+
+    <!-- 2C. Building Guide Interactive Preview Card (Concept Slide 1 - Screen 4: Find Your Way on Both Mobile & Desktop) -->
+    <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-4" x-data="{ bgTab: 'map' }">
+        <div class="flex items-center justify-between gap-2">
+            <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54] tracking-tight">
+                Building Guide
+            </h2>
+            <a href="{{ route('guide.map') }}" class="text-xs font-extrabold text-[#0084f8] hover:underline flex items-center gap-1">
+                <span>Buka Peta Penuh</span>
+                <span>↗</span>
+            </a>
+        </div>
+
+        <!-- 3 Pill Tabs (Floor Map | Key Locations | Emergency) -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-0.5">
+            <button type="button" @click="bgTab = 'map'"
+                    :class="bgTab === 'map' ? 'bg-[#0f2e54] text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
+                Floor Map
+            </button>
+            <button type="button" @click="bgTab = 'locations'"
+                    :class="bgTab === 'locations' ? 'bg-[#0f2e54] text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
+                Key Locations
+            </button>
+            <button type="button" @click="bgTab = 'emergency'"
+                    :class="bgTab === 'emergency' ? 'bg-rose-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                    class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
+                Emergency
+            </button>
+        </div>
+
+        <!-- Tab 1: Interactive Floor Map Preview -->
+        <div x-show="bgTab === 'map'" class="space-y-3.5">
+            <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}"
+               class="group block relative rounded-2xl overflow-hidden border border-slate-200/90 bg-gradient-to-br from-sky-50 via-white to-slate-100 h-48 sm:h-60">
+                <img src="{{ asset('images/facilities-office.jpg') }}" alt="Floor Plan Preview" class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-900/15 to-transparent"></div>
+
+                <!-- Simulated Interactive Map Pins -->
+                <div class="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 bg-[#0084f8] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md border-2 border-white flex items-center gap-1">
+                    <span>📍</span>
+                    <span x-text="'Desk ' + (deskProfile ? deskProfile.desk : 'A-023')">Desk A-023</span>
+                </div>
+                <div class="absolute top-1/2 right-1/4 bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md border-2 border-white hidden sm:flex items-center gap-1">
+                    <span>🚪</span>
+                    <span>Sakura Room</span>
+                </div>
+
+                <!-- Bottom-Left 2F Office Area Badge (Matching Screen 4) -->
+                <div class="absolute bottom-3 left-3 bg-[#0f2e54] text-white px-3.5 py-1.5 rounded-2xl shadow-lg flex items-center gap-2 border border-white/15">
+                    <span class="text-lg font-black leading-none" x-text="deskProfile ? deskProfile.floor : '2'">2</span>
+                    <div class="leading-tight text-left">
+                        <div class="text-[10px] font-extrabold text-sky-300" x-text="(deskProfile ? deskProfile.floor : '2') + 'F'">2F</div>
+                        <div class="text-[11px] font-bold" x-text="deskProfile ? deskProfile.area : 'Office Area'">Office Area</div>
+                    </div>
+                </div>
+
+                <div class="absolute bottom-3 right-3 bg-white/95 text-[#0f2e54] px-3 py-1.5 rounded-xl text-xs font-extrabold shadow-md">
+                    Interaktif 2D Map →
+                </div>
+            </a>
+
+            <!-- 3 Bottom Thumbnail Cards (Your Desk | Meeting Room | Canteen) -->
+            <div class="grid grid-cols-3 gap-2.5 sm:gap-4">
+                <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="group text-center space-y-1.5">
+                    <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
+                        <img src="{{ asset('images/facilities-office.jpg') }}" alt="Your Desk" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Your Desk</div>
+                </a>
+                <a href="{{ route('guide.facilities', ['category' => 'meeting']) }}" class="group text-center space-y-1.5">
+                    <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
+                        <img src="{{ asset('images/meeting-room.jpg') }}" alt="Meeting Room" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Meeting Room</div>
+                </a>
+                <a href="{{ route('guide.canteen') }}" class="group text-center space-y-1.5">
+                    <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
+                        <img src="{{ asset('images/hero-office.jpg') }}" alt="Canteen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Canteen</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab 2: Key Locations -->
+        <div x-show="bgTab === 'locations'" x-cloak class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <a href="{{ route('guide.office-and-plant') }}" class="p-3.5 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-200/80 transition">
+                <div class="text-base mb-1">🏢</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Gedung Utama Lt. 1 & 2</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Resepsionis, Ruang Rapat, & Open Workspace</div>
+            </a>
+            <a href="{{ route('guide.canteen') }}" class="p-3.5 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-200/80 transition">
+                <div class="text-base mb-1">🍽️</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Kantin & Mushola</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Sayap Timur Lt. 1 • Jam Makan 11:30–13:00</div>
+            </a>
+            <a href="{{ route('guide.visitor') }}" class="p-3.5 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-200/80 transition">
+                <div class="text-base mb-1">🪪</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Pos Security & Visitor</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">Registrasi Tamu, Tukar ID, & Safety Induction</div>
+            </a>
+        </div>
+
+        <!-- Tab 3: Emergency Quick Access -->
+        <div x-show="bgTab === 'emergency'" x-cloak class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <div class="text-xs font-extrabold text-rose-800">🚨 Jalur Evakuasi & Titik Kumpul (Assembly Point)</div>
+                <p class="text-[11px] text-rose-700 mt-0.5">Ikuti rambu hijau menuju Tangga Darurat Barat/Timur ke Assembly Point A (Parkir Utama).</p>
+            </div>
+            <a href="{{ route('guide.emergency') }}" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold text-center shrink-0 transition">
+                Kontak SOS & Evakuasi →
+            </a>
         </div>
     </div>
 

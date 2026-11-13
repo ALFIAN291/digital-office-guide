@@ -35,7 +35,10 @@ class GuideController extends Controller
         $scannedDesk = null;
         try {
             if ($request->filled('desk')) {
-                $scannedDesk = DeskCard::where('desk_number', $request->query('desk'))->first();
+                $scannedDesk = DeskCard::where('desk_number', (string) $request->input('desk'))->first();
+            }
+            if (!$scannedDesk) {
+                $scannedDesk = DeskCard::orderBy('id')->first();
             }
             $message = ManagementMessage::where('is_active', true)->first();
             $facilities = Facility::orderBy('sort_order')->take(6)->get();

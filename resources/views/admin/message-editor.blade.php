@@ -78,25 +78,71 @@
                 <input type="text" name="sender_role" value="{{ old('sender_role', $message->sender_role ?? 'President Director & Executive Committee') }}" required
                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
             </div>
+        </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Tagline Jepang (Video Player):</label>
-                <input type="text" name="japanese_tagline" value="{{ old('japanese_tagline', $message->japanese_tagline ?? '新しい職場で、ともに次の未来へ') }}"
-                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+        <!-- Dedicated Video Message Manager Box -->
+        <div class="p-5 bg-gradient-to-br from-slate-900 to-[#0f2e54] text-white rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/15 pb-3">
+                <div>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0084f8] text-white text-[10px] font-extrabold uppercase tracking-wider mb-1">
+                        🎬 Video Sambutan Manajemen
+                    </div>
+                    <h3 class="text-sm sm:text-base font-extrabold">Tambah / Ganti Video Sambutan (Upload MP4 atau Link YouTube)</h3>
+                    <p class="text-[11px] text-sky-200">Video ini ditampilkan pada pemutar "Video Message from Management" di Beranda & halaman Pesan</p>
+                </div>
+                @if(!empty($message->video_url))
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-extrabold shrink-0">
+                        ✓ Video Aktif Terpasang
+                    </span>
+                @else
+                    <span class="px-2.5 py-1 rounded-full bg-white/10 text-sky-200 text-[10px] font-bold shrink-0">
+                        Mode Storyboard Default
+                    </span>
+                @endif
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Durasi Video (Label):</label>
-                <input type="text" name="video_duration" value="{{ old('video_duration', $message->video_duration ?? '1:18') }}" placeholder="1:18"
-                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Option 1: Upload Video File -->
+                <div class="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-2">
+                    <label class="block text-xs font-extrabold text-white">1. Upload File Video dari Perangkat (MP4 / WebM):</label>
+                    <input type="file" name="video_file" accept="video/mp4,video/webm,video/quicktime"
+                           class="block w-full text-xs text-sky-100 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-extrabold file:bg-[#0084f8] file:text-white hover:file:bg-[#006fd6] cursor-pointer">
+                    <p class="text-[10px] text-sky-200/80">Pilih file video `.mp4` atau `.webm` (Maks 50MB) untuk langsung diunggah ke server.</p>
+                </div>
+
+                <!-- Option 2: Paste YouTube or Direct MP4 Link -->
+                <div class="p-3.5 rounded-xl bg-white/10 border border-white/15 space-y-2">
+                    <label class="block text-xs font-extrabold text-white">2. Atau Masukkan Link YouTube / URL Video MP4:</label>
+                    <input type="text" name="video_url" value="{{ old('video_url', $message->video_url) }}"
+                           placeholder="Contoh: https://www.youtube.com/watch?v=... atau https://.../video.mp4"
+                           class="w-full px-3.5 py-2 rounded-lg bg-white text-slate-900 border border-white/20 text-xs font-semibold focus:outline-hidden">
+                    <p class="text-[10px] text-sky-200/80">Mendukung link YouTube (`youtube.com/watch?v=...` / `youtu.be/...`) maupun link `.mp4` langsung.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-sky-100 mb-1">Tagline Jepang pada Cover Video:</label>
+                    <input type="text" name="japanese_tagline" value="{{ old('japanese_tagline', $message->japanese_tagline ?? '新しい職場で、ともに次の未来へ') }}"
+                           class="w-full px-3.5 py-2 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold focus:outline-hidden">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-sky-100 mb-1">Label Durasi Video:</label>
+                    <input type="text" name="video_duration" value="{{ old('video_duration', $message->video_duration ?? '1:18') }}" placeholder="1:18"
+                           class="w-full px-3.5 py-2 rounded-xl bg-white/95 text-slate-900 text-xs sm:text-sm font-semibold focus:outline-hidden">
+                </div>
             </div>
 
-            <div class="sm:col-span-2">
-                <label class="block text-xs font-bold text-slate-700 mb-1">Link Video Sambutan Opsional (YouTube / URL MP4):</label>
-                <input type="text" name="video_url" value="{{ old('video_url', $message->video_url) }}"
-                       placeholder="Kosongkan untuk menggunakan Interactive Chapter Storyboard Player, atau isi link YouTube/MP4"
-                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
-            </div>
+            @if(!empty($message->video_url))
+                <div class="pt-2 border-t border-white/15 flex items-center justify-between flex-wrap gap-2">
+                    <div class="text-[11px] text-sky-200 truncate max-w-md">
+                        Video saat ini: <strong class="text-white">{{ $message->video_url }}</strong>
+                    </div>
+                    <label class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 cursor-pointer">
+                        <input type="checkbox" name="remove_video" value="1" class="rounded border-white/30 text-rose-500">
+                        <span>🗑️ Hapus video kustom & kembali ke Storyboard Default</span>
+                    </label>
+                </div>
+            @endif
         </div>
 
         <!-- Summary (Displayed on Home Card) -->

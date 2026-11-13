@@ -167,7 +167,8 @@ class AdminController extends Controller
             'content' => ['required', 'string'],
             'quote' => ['nullable', 'string', 'max:255'],
             'japanese_tagline' => ['nullable', 'string', 'max:255'],
-            'video_url' => ['nullable', 'string', 'max:1000'],
+            'video_url' => ['nullable', 'string', 'max:2000'],
+            'video_file' => ['nullable', 'file', 'mimes:mp4,webm,mov,ogg', 'max:51200'],
             'video_duration' => ['nullable', 'string', 'max:20'],
             'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'message_height' => ['nullable', 'in:pendek,sedang,besar'],
@@ -200,6 +201,23 @@ class AdminController extends Controller
                 $validated['image_path'] = $imagePath;
             }
         }
+
+        if ($request->boolean('remove_video')) {
+            $validated['video_url'] = null;
+        } elseif ($request->hasFile('video_file') && $request->file('video_file')->isValid()) {
+            $videoFile = $request->file('video_file');
+            $isVercel = isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL');
+            if (!$isVercel) {
+                $videoDir = public_path('videos/uploads');
+                if (!file_exists($videoDir)) {
+                    @mkdir($videoDir, 0755, true);
+                }
+                $videoName = 'mgmt_video_' . time() . '.' . $videoFile->getClientOriginalExtension();
+                $videoFile->move($videoDir, $videoName);
+                $validated['video_url'] = '/videos/uploads/' . $videoName;
+            }
+        }
+        unset($validated['video_file']);
 
         $message->fill($validated);
         $message->is_active = true;
