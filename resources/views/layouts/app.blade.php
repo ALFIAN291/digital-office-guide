@@ -530,29 +530,5 @@
         </div>
     </nav>
 
-    <!-- Instant Page Transition Prefetcher (Zero Delay across menus) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const prefetched = new Set();
-            const prefetch = (url) => {
-                if (!url || prefetched.has(url) || url.startsWith('#') || url.includes('logout') || url.includes('login')) return;
-                prefetched.add(url);
-                const link = document.createElement('link');
-                link.rel = 'prefetch';
-                link.href = url;
-                document.head.appendChild(link);
-            };
-
-            const attachListeners = () => {
-                document.querySelectorAll('a[href^="/"], a[href^="' + window.location.origin + '"]').forEach(a => {
-                    a.addEventListener('mouseenter', () => prefetch(a.href), { passive: true });
-                    a.addEventListener('touchstart', () => prefetch(a.href), { passive: true });
-                });
-            };
-
-            attachListeners();
-        });
-    </script>
-
 </body>
 </html>

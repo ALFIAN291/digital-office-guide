@@ -119,8 +119,11 @@ class GuideController extends Controller
     public function facilities(Request $request)
     {
         try {
-            $this->ensureDefaultMeetingRoom5();
             $facilities = Facility::orderBy('sort_order')->get();
+            if ($facilities->isNotEmpty() && !$facilities->contains('slug', 'meeting-room-5')) {
+                $this->ensureDefaultMeetingRoom5();
+                $facilities = Facility::orderBy('sort_order')->get();
+            }
         } catch (\Throwable $e) {
             $facilities = collect();
         }
@@ -190,8 +193,11 @@ class GuideController extends Controller
     public function facilityDetail($slug)
     {
         try {
-            $this->ensureDefaultMeetingRoom5();
             $facility = Facility::where('slug', $slug)->first();
+            if (!$facility && $slug === 'meeting-room-5') {
+                $this->ensureDefaultMeetingRoom5();
+                $facility = Facility::where('slug', $slug)->first();
+            }
             if (!$facility) {
                 return redirect()->route('guide.facilities');
             }
