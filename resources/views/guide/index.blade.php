@@ -670,7 +670,6 @@
                             class="flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer flex items-center justify-center gap-1.5"
                             :class="modalTab === 'video' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'">
                         <span>🎬 Video Message</span>
-                        <span class="px-1.5 py-0.2 rounded text-[10px]" :class="modalTab === 'video' ? 'bg-white/20 text-white' : 'bg-sky-100 text-[#0084f8]'">{{ $message->video_duration ?? '1:18' }}</span>
                     </button>
                 </div>
 

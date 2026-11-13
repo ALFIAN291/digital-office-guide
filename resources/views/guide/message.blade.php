@@ -11,7 +11,7 @@
             <span class="text-[#0f2e54]">Pesan Manajemen & Video</span>
         </div>
         <span class="px-2.5 py-1 rounded-full bg-sky-100 text-[#0084f8] text-[11px] font-bold">
-            🎬 Video Onboarding • {{ $message->video_duration ?? '1:18' }}
+            🎬 Video Onboarding
         </span>
     </div>
 
