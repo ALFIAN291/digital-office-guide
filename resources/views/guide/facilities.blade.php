@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-3 sm:pt-5 space-y-3.5 sm:space-y-6" 
+<div class="max-w-5xl lg:max-w-none mx-auto px-4 sm:px-6 pt-3 sm:pt-5 space-y-3.5 sm:space-y-6" 
      x-data="{ 
         activeCategory: '{{ request('category', 'all') }}',
         activeFloor: '{{ request('floor', 'all') }}',

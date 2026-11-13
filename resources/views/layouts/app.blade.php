@@ -42,7 +42,84 @@
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 antialiased flex flex-col bg-[#eaf3fa]" x-data="{ mobileMenuOpen: false, sosModalOpen: false, activeTab: '{{ Route::currentRouteName() }}' }">
+<body class="min-h-screen text-slate-800 antialiased flex flex-col bg-[#eaf3fa]"
+      x-data="{
+        mobileMenuOpen: false,
+        sosModalOpen: false,
+        activeTab: '{{ Route::currentRouteName() }}',
+        completedSteps: [],
+        sidebarMilestones: [
+            { id: 'welcome', label: 'Welcome', route: '{{ route('guide.message') }}' },
+            { id: 'building', label: 'Explore Building', route: '{{ route('guide.office-and-plant') }}' },
+            { id: 'facilities', label: 'Facilities', route: '{{ route('guide.facilities') }}' },
+            { id: 'safety', label: 'Safety', route: '{{ route('guide.dos-and-donts') }}' },
+            { id: 'attendance', label: 'Attendance', route: '{{ route('guide.attendance') }}' },
+        ],
+        initPortal() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('name') || params.get('desk')) {
+                const profile = {
+                    name: params.get('name') || 'Bran',
+                    dept: params.get('dept') || 'IT Department',
+                    team: params.get('team') || 'Infrastructure & Security',
+                    desk: params.get('desk') || 'A-023',
+                    floor: params.get('floor') || '2',
+                    area: params.get('area') || 'Office Building',
+                };
+                localStorage.setItem('akebono_desk_profile', JSON.stringify(profile));
+            }
+            let saved = ['welcome'];
+            try {
+                const rawSteps = localStorage.getItem('akebono_onboarding_v1');
+                if (rawSteps) saved = JSON.parse(rawSteps);
+            } catch (e) {
+                saved = ['welcome'];
+            }
+            const routeMap = {
+                'guide.index': 'welcome',
+                'guide.message': 'welcome',
+                'guide.onboarding': 'welcome',
+                'guide.office-and-plant': 'building',
+                'guide.map': 'building',
+                'guide.facilities': 'facilities',
+                'guide.facility.detail': 'facilities',
+                'guide.dos-and-donts': 'safety',
+                'guide.emergency': 'safety',
+                'guide.canteen': 'canteen',
+                'guide.attendance': 'attendance',
+                'guide.support': 'support',
+                'guide.visitor': 'building',
+            };
+            const currentKey = routeMap[this.activeTab];
+            if (currentKey && !saved.includes(currentKey)) {
+                saved.push(currentKey);
+            }
+            this.completedSteps = [...new Set(saved)];
+            localStorage.setItem('akebono_onboarding_v1', JSON.stringify(this.completedSteps));
+            window.addEventListener('onboarding-updated', (e) => {
+                if (Array.isArray(e.detail)) {
+                    this.completedSteps = e.detail;
+                }
+            });
+        },
+        isMilestoneDone(key) {
+            return this.completedSteps.includes(key);
+        },
+        toggleStep(key) {
+            if (this.completedSteps.includes(key)) {
+                this.completedSteps = this.completedSteps.filter(k => k !== key);
+            } else {
+                this.completedSteps = [...this.completedSteps, key];
+            }
+            localStorage.setItem('akebono_onboarding_v1', JSON.stringify(this.completedSteps));
+            window.dispatchEvent(new CustomEvent('onboarding-updated', { detail: this.completedSteps }));
+        },
+        get sidebarPercent() {
+            const count = this.sidebarMilestones.filter(m => this.completedSteps.includes(m.id)).length;
+            return Math.round((count / this.sidebarMilestones.length) * 100);
+        }
+      }"
+      x-init="initPortal()">
 
     <!-- Admin Notification Toast if session has success -->
     @if(session('success'))
@@ -53,11 +130,11 @@
         </div>
     @endif
 
-    <!-- Top Navigation Bar (Header - Matching Mockup) -->
+    <!-- Top Navigation Bar (Header - Matching Mockup & Desktop Portal) -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-all">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 md:h-18 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
             <!-- Brand Logo & Office Label -->
-            <a href="{{ route('guide.index') }}" class="flex items-center gap-3.5 group">
+            <a href="{{ route('guide.index') }}" class="flex items-center gap-3.5 group shrink-0">
                 <img src="{{ asset('images/akebono.png') }}" alt="Akebono Brake" style="max-height: 36px; width: auto;" class="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-105">
                 
                 <div class="h-7 w-px bg-slate-300"></div>
@@ -68,16 +145,36 @@
                 </div>
             </a>
 
-            <!-- Right Controls (Only Hamburger & Admin Mode if logged in) -->
-            <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Desktop Quick Floor & Building Bar (Concept Slide 4 & 7) -->
+            <div class="hidden lg:flex items-center gap-2">
+                <div class="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/70 text-xs font-bold">
+                    <a href="{{ route('guide.map', ['floor' => 'Lantai 1']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Lantai 1' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">1F</a>
+                    <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="px-2.5 py-1 rounded-lg transition {{ (Route::is('guide.map') && request('floor', 'Lantai 2') === 'Lantai 2') ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">2F</a>
+                    <a href="{{ route('guide.map', ['floor' => 'Ground Floor']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Ground Floor' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">Plant</a>
+                </div>
                 @auth
-                    <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold hover:bg-amber-100 transition">
+                <a href="{{ route('admin.desks.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0f2e54] border border-sky-200 text-xs font-bold transition">
+                    <span>🪪</span>
+                    <span>Kelola QR Desk</span>
+                </a>
+                @endauth
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-2 sm:gap-2.5">
+                <button @click="sosModalOpen = true" type="button" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-full text-xs font-bold transition cursor-pointer">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                    <span>SOS Hotline</span>
+                </button>
+
+                @auth
+                    <a href="{{ route('admin.dashboard') }}" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold hover:bg-amber-100 transition">
                         <span>⚙️ Admin</span>
                     </a>
                 @endauth
 
-                <!-- Hamburger Menu Button (Matching Mockup) -->
-                <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu" class="p-2 text-slate-700 hover:text-[#0084f8] hover:bg-slate-100 rounded-lg transition-colors focus:outline-hidden">
+                <!-- Hamburger Menu Button -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Menu" class="p-2 text-slate-700 hover:text-[#0084f8] hover:bg-slate-100 rounded-lg transition-colors focus:outline-hidden cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -178,6 +275,42 @@
                         <span>Dos & Don'ts (Etiket & K3)</span>
                     </a>
 
+                    <div class="pt-2 pb-1 px-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Layanan & Onboarding
+                    </div>
+
+                    <a href="{{ route('guide.canteen') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.canteen') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
+                        <span class="w-5 text-center">🍽️</span>
+                        <span>Canteen & Services</span>
+                    </a>
+
+                    <a href="{{ route('guide.visitor') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.visitor') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
+                        <span class="w-5 text-center">🪪</span>
+                        <span>Visitor Guide</span>
+                    </a>
+
+                    <a href="{{ route('guide.attendance') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.attendance') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
+                        <span class="w-5 text-center">🕒</span>
+                        <span>Attendance Guide</span>
+                    </a>
+
+                    <a href="{{ route('guide.onboarding') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.onboarding') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
+                        <span class="w-5 text-center">✅</span>
+                        <span>Onboarding Journey</span>
+                    </a>
+
+                    @auth
+                    <a href="{{ route('admin.desks.index') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold text-[#0084f8] bg-sky-50/70 hover:bg-sky-100">
+                        <span class="w-5 text-center">🪪</span>
+                        <span>Kelola QR Desk (Admin)</span>
+                    </a>
+                    @endauth
+
+                    <a href="{{ route('guide.support') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.support') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
+                        <span class="w-5 text-center">🎧</span>
+                        <span>Support & Contact</span>
+                    </a>
+
                     <a href="{{ route('guide.emergency') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.emergency') ? 'bg-rose-50 text-rose-600' : 'text-rose-700 hover:bg-rose-50' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -270,13 +403,72 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 pb-16 sm:pb-20 w-full">
-        @yield('content')
-    </main>
+    <!-- Main Workspace Wrapper (Desktop Sidebar + Content Area, Mobile Single Column) -->
+    <div class="flex-1 w-full max-w-7xl mx-auto flex gap-6 lg:px-6 lg:pt-5">
+        <!-- Desktop / Tablet Persistent Portal Sidebar (Concept Slide 4) -->
+        <aside class="hidden lg:flex flex-col w-64 shrink-0">
+            <div class="sticky top-21 bg-white rounded-3xl soft-shadow border border-slate-200/80 p-3.5 flex flex-col justify-between gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+                <nav class="space-y-1 text-[13px] font-semibold">
+                    @php
+                        $sidebarNav = [
+                            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Home', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+                            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Interactive Map', 'icon' => 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'],
+                            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Building Guide', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
+                            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Facilities', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
+                            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Dos & Don\'ts', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
+                            ['route' => 'guide.emergency', 'match' => 'guide.emergency', 'label' => 'Safety & Emergency', 'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'],
+                            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Canteen', 'icon' => 'M12 6v6m0 0v6m0-6h6m-6 0H6'],
+                            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Visitor Guide', 'icon' => 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0'],
+                            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Attendance', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Support & Contact', 'icon' => 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'],
+                        ];
+                    @endphp
+                    @foreach($sidebarNav as $navItem)
+                        <a href="{{ route($navItem['route']) }}"
+                           class="flex items-center gap-3 px-3 py-2 rounded-xl transition {{ Route::is($navItem['match']) ? 'bg-sky-50 text-[#0084f8] font-bold shadow-2xs ring-1 ring-sky-200/80' : 'text-slate-600 hover:bg-slate-50 hover:text-[#0f2e54]' }}">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $navItem['icon'] }}"></path>
+                            </svg>
+                            <span class="truncate">{{ $navItem['label'] }}</span>
+                        </a>
+                    @endforeach
+                </nav>
 
-    <!-- Bottom Navigation Bar (Fixed at Bottom with Balanced Mobile Spacing) -->
-    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) * 0.35));">
+                <!-- Onboarding Progress Tracker Widget (Concept Slide 4) -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[11px] font-extrabold text-[#0f2e54] leading-tight">Your Onboarding<br>Progress</span>
+                        <span class="text-xs font-extrabold text-[#0084f8]" x-text="sidebarPercent + '%'">40%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#0084f8] rounded-full transition-all duration-500" :style="'width:' + sidebarPercent + '%'"></div>
+                    </div>
+                    <div class="space-y-1.5 pt-1">
+                        <template x-for="m in sidebarMilestones" :key="m.id">
+                            <div class="flex items-center justify-between gap-2 text-[11px]">
+                                <a :href="m.route" class="flex items-center gap-2 min-w-0 flex-1 text-slate-600 hover:text-[#0084f8] transition">
+                                    <span class="w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0"
+                                          :class="isMilestoneDone(m.id) ? 'bg-emerald-500 text-white' : 'border border-slate-300 bg-white text-transparent'">✓</span>
+                                    <span class="truncate" :class="isMilestoneDone(m.id) ? 'font-bold text-[#0f2e54]' : ''" x-text="m.label"></span>
+                                </a>
+                            </div>
+                        </template>
+                    </div>
+                    <a href="{{ route('guide.onboarding') }}" class="block text-center py-1.5 px-2 bg-white hover:bg-sky-50 border border-slate-200 rounded-lg text-[11px] font-bold text-[#0084f8] transition">
+                        Onboarding Journey →
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0 pb-16 lg:pb-10 w-full">
+            @yield('content')
+        </main>
+    </div>
+
+    <!-- Bottom Navigation Bar (Mobile & Small Tablet Only, Compact Fixed at Bottom) -->
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] w-full" style="padding-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) * 0.35));">
         <div class="max-w-3xl mx-auto px-4 pt-1.5 pb-1 flex items-center justify-around">
             
             <a href="{{ route('guide.index') }}" 

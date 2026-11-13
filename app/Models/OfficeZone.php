@@ -17,6 +17,12 @@ class OfficeZone extends Model
         'description',
         'contact_person',
         'sort_order',
+        'area_group',
+        'capacity',
+        'facilities_list',
+        'usage_info',
+        'how_to_book',
+        'image_path',
     ];
 
     protected $casts = [

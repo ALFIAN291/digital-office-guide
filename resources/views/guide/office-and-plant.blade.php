@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
+<div class="max-w-5xl lg:max-w-none mx-auto px-4 sm:px-6 pt-5 space-y-6">
 
     <!-- Header & Breadcrumb -->
     <div>
@@ -106,14 +106,85 @@
             </div>
 
             <!-- Quick Links -->
-            <div class="pt-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="pt-2 flex flex-wrap items-center justify-between gap-3">
                 <a href="{{ route('guide.map', ['floor' => 'Ground Floor']) }}" class="px-5 py-2.5 bg-[#0084f8] hover:bg-[#0070d6] text-white font-bold text-xs rounded-full shadow-md transition">
                     Buka Denah Kawasan Pabrik →
                 </a>
-                <a href="{{ route('guide.dos-and-donts', ['category' => 'HSE & Keselamatan']) }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-full transition">
+                <a href="{{ route('guide.dos-and-donts', ['category' => 'Safety']) }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-full transition">
                     Lihat Aturan Lengkap K3 →
                 </a>
             </div>
+        </div>
+    </div>
+
+    <!-- Concept Slide 6: Building Layout & Movement (6 Key Movement Rules) -->
+    <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 sm:p-8 space-y-5">
+        <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Facility Socialization</div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">Building Layout & Movement</h2>
+            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">Know where to enter, where to go and where not to go.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            @php
+                $movementPillars = [
+                    ['num' => 1, 'title' => 'Entrance / Exit', 'desc' => 'Main employee and visitor flow.', 'route' => route('guide.attendance')],
+                    ['num' => 2, 'title' => 'Office Areas', 'desc' => 'Department locations and common spaces.', 'route' => route('guide.map', ['floor' => 'Lantai 2'])],
+                    ['num' => 3, 'title' => 'Meeting Rooms', 'desc' => 'Room numbers, booking and equipment.', 'route' => route('guide.facilities', ['category' => 'meeting'])],
+                    ['num' => 4, 'title' => 'Canteen', 'desc' => 'Access, ordering and usage rules.', 'route' => route('guide.canteen')],
+                    ['num' => 5, 'title' => 'Emergency Route', 'desc' => 'Evacuation path and assembly point.', 'route' => route('guide.emergency')],
+                    ['num' => 6, 'title' => 'Visitor Area', 'desc' => 'Registration and visitor access flow.', 'route' => route('guide.visitor')],
+                ];
+            @endphp
+            @foreach($movementPillars as $mp)
+                <a href="{{ $mp['route'] }}"
+                   class="group p-4 rounded-2xl bg-slate-50 hover:bg-sky-50/60 border border-slate-200/80 hover:border-sky-300 transition flex items-start gap-3">
+                    <span class="w-8 h-8 rounded-full bg-[#0084f8] text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition">
+                        {{ $mp['num'] }}
+                    </span>
+                    <div class="min-w-0">
+                        <div class="text-sm font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] transition">{{ $mp['title'] }} →</div>
+                        <div class="text-xs text-slate-500 mt-0.5 leading-snug">{{ $mp['desc'] }}</div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+
+    <!-- Concept Slide 8: How to Use the New Facilities (6 Smart Systems) -->
+    <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 sm:p-8 space-y-5">
+        <div>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Facility Socialization</div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">How to Use the New Facilities & Systems</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Ringkasan pengoperasian teknologi gedung baru Akebono Karawang</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            @php
+                $smartSystems = [
+                    ['num' => 1, 'title' => 'Meeting Room Multimedia', 'desc' => 'Display • camera • microphone • room control', 'link' => route('guide.facility.detail', 'ruang-rapat-sakura')],
+                    ['num' => 2, 'title' => 'Building Management System', 'desc' => 'Building systems, smart HVAC, lighting & access doors', 'link' => route('guide.map', ['floor' => 'Lantai 2'])],
+                    ['num' => 3, 'title' => 'Visitor Management', 'desc' => 'Registration • host notification • visitor access', 'link' => route('guide.visitor')],
+                    ['num' => 4, 'title' => 'Virtual Reception', 'desc' => 'Visitor assistance and digital self-check-in flow', 'link' => route('guide.visitor') . '#virtual-reception'],
+                    ['num' => 5, 'title' => 'Auditorium Multimedia', 'desc' => 'Presentation • audio • wireless microphone', 'link' => route('guide.facility.detail', 'lobi-utama-dan-resepsionis')],
+                    ['num' => 6, 'title' => 'Canteen System', 'desc' => 'Ordering • cashless Tap ID payment • 5S tray rules', 'link' => route('guide.canteen')],
+                ];
+            @endphp
+            @foreach($smartSystems as $sys)
+                <a href="{{ $sys['link'] }}"
+                   class="group p-4 rounded-2xl bg-white hover:bg-sky-50/40 border border-slate-200 hover:border-sky-300 transition flex items-center justify-between gap-3 shadow-2xs">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-9 h-9 rounded-full bg-[#0084f8] text-white font-extrabold text-sm flex items-center justify-center shrink-0">
+                            {{ $sys['num'] }}
+                        </span>
+                        <div class="min-w-0">
+                            <div class="text-sm font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] truncate">{{ $sys['title'] }}</div>
+                            <div class="text-xs text-slate-500 truncate mt-0.5">{{ $sys['desc'] }}</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-[#0084f8] shrink-0">Guide →</span>
+                </a>
+            @endforeach
         </div>
     </div>
 

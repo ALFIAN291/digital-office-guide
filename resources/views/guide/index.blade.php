@@ -1,16 +1,41 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-3xl mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
+@php
+    $dbScannedProfile = $scannedDesk ? [
+        'name' => $scannedDesk->name,
+        'dept' => $scannedDesk->department,
+        'team' => $scannedDesk->sub_team ?? '',
+        'desk' => $scannedDesk->desk_number,
+        'floor' => $scannedDesk->floor,
+        'area' => $scannedDesk->area,
+    ] : null;
+@endphp
+<div class="max-w-4xl lg:max-w-none mx-auto px-4 sm:px-6 pt-2 sm:pt-3 space-y-4 sm:space-y-5 relative" 
      x-data="{ 
         showMessageModal: false,
+        modalTab: 'letter',
         autoPopup: {{ ($settings->message_auto_popup ?? true) ? 'true' : 'false' }},
+        deskProfile: {{ Js::from($dbScannedProfile) }},
+        steps: {{ Js::from($onboardingSteps) }},
         init() {
+            if (this.deskProfile) {
+                localStorage.setItem('akebono_desk_profile', JSON.stringify(this.deskProfile));
+            } else {
+                try {
+                    const raw = localStorage.getItem('akebono_desk_profile');
+                    if (raw) this.deskProfile = JSON.parse(raw);
+                } catch (e) {}
+            }
             if (this.autoPopup) {
                 setTimeout(() => {
                     this.showMessageModal = true;
                 }, 250);
             }
+        },
+        clearProfile() {
+            this.deskProfile = null;
+            localStorage.removeItem('akebono_desk_profile');
         },
         closeModal() {
             this.showMessageModal = false;
@@ -193,6 +218,89 @@
             </div>
         </div>
     @endif
+
+    <!-- 2B. Personalized QR Desk Onboarding & Your Onboarding Journey (Concept Slide 1) -->
+    <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 soft-shadow border border-slate-200/80 space-y-3.5" x-data="{ journeyOpen: false }">
+        <!-- Top Personalized Desk Greeting Row -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-200 text-[#0084f8] flex items-center justify-center font-extrabold text-lg shrink-0">
+                    🪪
+                </div>
+                <div class="min-w-0">
+                    <template x-if="deskProfile">
+                        <div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-xs font-medium text-slate-500">Welcome,</span>
+                                <span class="text-sm sm:text-base font-extrabold text-[#0f2e54]" x-text="deskProfile.name + ' 👋'"></span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold" x-text="'Desk ' + deskProfile.desk"></span>
+                            </div>
+                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 truncate"
+                               x-text="'Floor ' + deskProfile.floor + ' • ' + deskProfile.dept + ' • ' + deskProfile.area"></p>
+                        </div>
+                    </template>
+                    <template x-if="!deskProfile">
+                        <div>
+                            <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">
+                                Your Onboarding Journey
+                            </div>
+                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                                Panduan langkah demi langkah orientasi gedung & fasilitas kantor baru
+                            </p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                <template x-if="deskProfile">
+                    <button type="button" @click="clearProfile()"
+                            class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-semibold transition cursor-pointer">
+                        Reset
+                    </button>
+                </template>
+                @auth
+                <a href="{{ route('admin.desks.index') }}"
+                   class="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0084f8] border border-sky-200 text-[11px] font-bold transition">
+                    ⚙️ Kelola QR Desk (Admin)
+                </a>
+                @endauth
+                <button type="button" @click="journeyOpen = !journeyOpen"
+                        class="px-3 py-1.5 rounded-xl bg-[#0084f8] hover:bg-[#0070d6] text-white text-[11px] font-bold shadow-2xs transition cursor-pointer flex items-center gap-1.5">
+                    <span x-text="Math.round((completedSteps.length / 6) * 100) + '%'"></span>
+                    <span x-text="journeyOpen ? 'Tutup' : 'Checklist ▾'"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress bar always visible cleanly -->
+        <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-[#0084f8] to-emerald-500 rounded-full transition-all duration-500"
+                 :style="'width:' + Math.min(100, Math.round((completedSteps.length / 6) * 100)) + '%'"></div>
+        </div>
+
+        <!-- Expandable 6-Step Onboarding Journey (Concept Slide 1) -->
+        <div x-show="journeyOpen" x-collapse x-cloak class="pt-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            @foreach($onboardingSteps as $step)
+                <a href="{{ route($step['route']) }}"
+                   class="group flex items-center justify-between gap-2.5 p-2.5 rounded-xl border border-slate-200/80 hover:border-sky-300 bg-slate-50/70 hover:bg-sky-50/50 transition">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-extrabold shrink-0 transition"
+                              :class="isMilestoneDone('{{ $step['key'] }}') ? 'bg-emerald-500 text-white' : 'bg-[#0084f8] text-white'">
+                            {{ $step['number'] }}
+                        </span>
+                        <div class="min-w-0">
+                            <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] truncate">
+                                {{ $step['title'] }}
+                            </div>
+                            <div class="text-[10px] text-slate-500 truncate">{{ $step['subtitle'] }}</div>
+                        </div>
+                    </div>
+                    <span class="text-xs font-bold text-slate-400 group-hover:text-[#0084f8] shrink-0">›</span>
+                </a>
+            @endforeach
+        </div>
+    </div>
 
     <!-- 3. Explore Your Workplace Section (Matching Mockup) -->
     <div class="space-y-4">
@@ -395,6 +503,28 @@
 
             <!-- Scrollable Modal Body (Teks & Foto Terstruktur Rapi - Mepet & Hemat Tempat) -->
             <div class="px-5 sm:px-6 pt-2.5 sm:pt-3 pb-5 sm:pb-6 overflow-y-auto space-y-3 sm:space-y-3.5 text-slate-700 flex-1 custom-modal-scroll">
+                <!-- Concept Slide 2 Switcher: Official Letter vs Interactive Video Message -->
+                <div class="flex items-center justify-between gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200/70">
+                    <button type="button" @click="modalTab = 'letter'"
+                            class="flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer"
+                            :class="modalTab === 'letter' ? 'bg-white text-[#0f2e54] shadow-2xs' : 'text-slate-500 hover:text-slate-800'">
+                        📝 Official Message & Photo
+                    </button>
+                    <button type="button" @click="modalTab = 'video'"
+                            class="flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer flex items-center justify-center gap-1.5"
+                            :class="modalTab === 'video' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'">
+                        <span>🎬 Video Message</span>
+                        <span class="px-1.5 py-0.2 rounded text-[10px]" :class="modalTab === 'video' ? 'bg-white/20 text-white' : 'bg-sky-100 text-[#0084f8]'">{{ $message->video_duration ?? '1:18' }}</span>
+                    </button>
+                </div>
+
+                <!-- Tab 1: Video Message Player (Concept Slide 2) -->
+                <div x-show="modalTab === 'video'" x-cloak>
+                    <x-video-message-player :message="$message" :chapters="$videoChapters" :scenes="$videoScenes" :compact="true" />
+                </div>
+
+                <!-- Tab 2: Official Photo + Quote + Message -->
+                <div x-show="modalTab === 'letter'" class="space-y-3 sm:space-y-3.5">
                 
                 <!-- 1. Foto Tim Langsung di Bawah Judul (Lebih Ringkas & Tidak Kegedean) -->
                 <div class="relative h-28 sm:h-36 w-full rounded-xl sm:rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
@@ -465,6 +595,8 @@
                         </div>
                     </div>
                 @endif
+
+                </div>
 
             </div>
 

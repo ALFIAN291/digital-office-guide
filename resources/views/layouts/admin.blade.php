@@ -111,6 +111,12 @@
                     <span>Kontak Darurat</span>
                 </a>
 
+                <a href="{{ route('admin.desks.index') }}" 
+                   class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition {{ Route::is('admin.desks*') ? 'bg-[#0084f8] text-white' : 'hover:bg-slate-800 text-slate-300' }}">
+                    <span class="text-base">🪪</span>
+                    <span>QR Desk & Tent Card</span>
+                </a>
+
                 <div class="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                     Akun & Akses
                 </div>

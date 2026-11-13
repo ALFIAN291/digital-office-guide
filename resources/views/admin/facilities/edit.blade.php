@@ -63,6 +63,24 @@
                 <input type="text" name="operating_hours" value="{{ old('operating_hours', $facility->operating_hours) }}"
                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
             </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Ketersediaan (Availability):</label>
+                <input type="text" name="availability_note" value="{{ old('availability_note', $facility->availability_note) }}" placeholder="Check on room tablet or SSO Portal"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Kegunaan Utama (Usage):</label>
+                <input type="text" name="usage_purpose" value="{{ old('usage_purpose', $facility->usage_purpose) }}" placeholder="Internal meeting, video conference, team discussion"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
+
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Link Booking SSO Portal (Opsional):</label>
+                <input type="text" name="booking_url" value="{{ old('booking_url', $facility->booking_url) }}" placeholder="https://sso.akebono.co.id/..."
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
         </div>
 
         <div>

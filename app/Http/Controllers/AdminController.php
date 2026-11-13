@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeskCard;
 use App\Models\DosAndDont;
 use App\Models\EmergencyContact;
 use App\Models\Facility;
@@ -35,6 +36,7 @@ class AdminController extends Controller
             'donts_count' => $dontsCount,
             'zones_count' => OfficeZone::count(),
             'contacts_count' => EmergencyContact::count(),
+            'desks_count' => DeskCard::count(),
         ];
 
         return view('admin.dashboard', compact('settings', 'message', 'stats'));
@@ -164,6 +166,9 @@ class AdminController extends Controller
             'summary' => ['required', 'string'],
             'content' => ['required', 'string'],
             'quote' => ['nullable', 'string', 'max:255'],
+            'japanese_tagline' => ['nullable', 'string', 'max:255'],
+            'video_url' => ['nullable', 'string', 'max:1000'],
+            'video_duration' => ['nullable', 'string', 'max:20'],
             'image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
             'message_height' => ['nullable', 'in:pendek,sedang,besar'],
             'message_display_mode' => ['nullable', 'in:popup,card'],
@@ -233,6 +238,9 @@ class AdminController extends Controller
             'location_detail' => ['nullable', 'string', 'max:255'],
             'capacity' => ['nullable', 'string', 'max:100'],
             'operating_hours' => ['nullable', 'string', 'max:100'],
+            'availability_note' => ['nullable', 'string', 'max:255'],
+            'usage_purpose' => ['nullable', 'string', 'max:255'],
+            'booking_url' => ['nullable', 'string', 'max:500'],
             'description' => ['required', 'string'],
             'guidelines' => ['nullable', 'string'],
             'amenities_text' => ['nullable', 'string'],
@@ -287,6 +295,9 @@ class AdminController extends Controller
             'location_detail' => ['nullable', 'string', 'max:255'],
             'capacity' => ['nullable', 'string', 'max:100'],
             'operating_hours' => ['nullable', 'string', 'max:100'],
+            'availability_note' => ['nullable', 'string', 'max:255'],
+            'usage_purpose' => ['nullable', 'string', 'max:255'],
+            'booking_url' => ['nullable', 'string', 'max:500'],
             'description' => ['required', 'string'],
             'guidelines' => ['nullable', 'string'],
             'amenities_text' => ['nullable', 'string'],
@@ -473,6 +484,113 @@ class AdminController extends Controller
 
         return redirect()->route('admin.emergency.index')
             ->with('success', 'Kontak darurat "' . $contact->name . '" berhasil diperbarui!');
+    }
+
+    /**
+     * Manage QR Desk Onboarding & Tent Cards in Admin.
+     */
+    public function desks(Request $request)
+    {
+        $desks = DeskCard::orderByDesc('updated_at')->orderBy('desk_number')->get();
+        $selectedDesk = null;
+        if ($request->filled('edit')) {
+            $selectedDesk = $desks->firstWhere('id', (int) $request->query('edit'));
+        }
+        if (!$selectedDesk) {
+            $selectedDesk = $desks->first();
+        }
+
+        return view('admin.desks.index', compact('desks', 'selectedDesk'));
+    }
+
+    /**
+     * Store a new Employee Desk QR Tent Card into database.
+     */
+    public function storeDesk(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'department' => ['required', 'string', 'max:150'],
+            'sub_team' => ['nullable', 'string', 'max:150'],
+            'desk_number' => ['required', 'string', 'max:50'],
+            'floor' => ['required', 'string', 'max:50'],
+            'area' => ['required', 'string', 'max:150'],
+            'image_path' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:4096'],
+        ]);
+
+        $fallbackImage = $request->input('image_path') ?: 'images/hero-office.jpg';
+        $validated['image_path'] = $this->handleImageUpload($request, 'image', 'desk', $fallbackImage);
+        unset($validated['image']);
+
+        $desk = DeskCard::create($validated);
+
+        if ($request->boolean('apply_image_all') && !empty($validated['image_path'])) {
+            DeskCard::query()->update(['image_path' => $validated['image_path']]);
+        }
+
+        return redirect()->route('admin.desks.index', ['edit' => $desk->id])
+            ->with('success', 'Data Desk QR "' . $desk->name . ' (' . $desk->desk_number . ')" berhasil disimpan ke database!');
+    }
+
+    /**
+     * Update an existing Employee Desk QR Tent Card in database.
+     */
+    public function updateDesk(Request $request, $id)
+    {
+        $desk = DeskCard::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:150'],
+            'department' => ['required', 'string', 'max:150'],
+            'sub_team' => ['nullable', 'string', 'max:150'],
+            'desk_number' => ['required', 'string', 'max:50'],
+            'floor' => ['required', 'string', 'max:50'],
+            'area' => ['required', 'string', 'max:150'],
+            'image_path' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:4096'],
+        ]);
+
+        $fallbackImage = $request->input('image_path') ?: ($desk->image_path ?: 'images/hero-office.jpg');
+        $validated['image_path'] = $this->handleImageUpload($request, 'image', 'desk', $fallbackImage);
+        unset($validated['image']);
+
+        $desk->update($validated);
+
+        if ($request->boolean('apply_image_all') && !empty($validated['image_path'])) {
+            DeskCard::query()->update(['image_path' => $validated['image_path']]);
+        }
+
+        return redirect()->route('admin.desks.index', ['edit' => $desk->id])
+            ->with('success', 'Data Desk QR "' . $desk->name . ' (' . $desk->desk_number . ')" berhasil diperbarui!');
+    }
+
+    /**
+     * Delete an Employee Desk QR Tent Card from database.
+     */
+    public function deleteDesk($id)
+    {
+        $desk = DeskCard::findOrFail($id);
+        $label = $desk->name . ' (' . $desk->desk_number . ')';
+        $desk->delete();
+
+        return redirect()->route('admin.desks.index')
+            ->with('success', 'Data Desk QR "' . $label . '" telah dihapus.');
+    }
+
+    /**
+     * Dedicated Print View for a single Desk Tent Card (or all cards if id === 'all').
+     */
+    public function printDesk($id)
+    {
+        $isBatch = ($id === 'all');
+        if ($isBatch) {
+            $desks = DeskCard::orderBy('desk_number')->get();
+        } else {
+            $desks = collect([DeskCard::findOrFail($id)]);
+        }
+
+        return view('admin.desks.print', compact('desks', 'isBatch'));
     }
 
     /**

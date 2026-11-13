@@ -113,7 +113,7 @@
     <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs">
         <h3 class="text-base font-extrabold text-[#0f2e54] mb-4">Pusat Data Master Guide</h3>
         
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
             <a href="{{ route('admin.facilities.index') }}" class="p-4 rounded-2xl bg-slate-50 hover:bg-sky-50 border border-slate-200 hover:border-sky-300 transition group">
                 <div class="text-xl mb-2">🏢</div>
@@ -131,6 +131,12 @@
                 <div class="text-xl mb-2">🚨</div>
                 <div class="font-bold text-sm text-slate-800 group-hover:text-[#0084f8]">Hotline Darurat SOS</div>
                 <div class="text-xs text-slate-500 mt-0.5">Nomor telepon satpam pos barat, klinik, dan damkar</div>
+            </a>
+
+            <a href="{{ route('admin.desks.index') }}" class="p-4 rounded-2xl bg-sky-50/70 hover:bg-sky-100/70 border border-sky-200 hover:border-sky-300 transition group">
+                <div class="text-xl mb-2">🪪</div>
+                <div class="font-bold text-sm text-[#0f2e54] group-hover:text-[#0084f8]">QR Desk & Tent Card ({{ $stats['desks_count'] ?? 0 }})</div>
+                <div class="text-xs text-slate-500 mt-0.5">Simpan meja kerja karyawan ke database & print Tent Card QR</div>
             </a>
 
         </div>

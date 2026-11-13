@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeskCard;
 use App\Models\DosAndDont;
 use App\Models\EmergencyContact;
 use App\Models\Facility;
 use App\Models\ManagementMessage;
 use App\Models\OfficeZone;
+use App\Support\OfficeConceptData;
 use Illuminate\Http\Request;
 
 class GuideController extends Controller
@@ -28,9 +30,13 @@ class GuideController extends Controller
     /**
      * Display the main home screen matching the design.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $scannedDesk = null;
         try {
+            if ($request->filled('desk')) {
+                $scannedDesk = DeskCard::where('desk_number', $request->query('desk'))->first();
+            }
             $message = ManagementMessage::where('is_active', true)->first();
             $facilities = Facility::orderBy('sort_order')->take(6)->get();
             $featuredFacilities = Facility::where('is_featured', true)->orderBy('sort_order')->get();
@@ -54,8 +60,14 @@ class GuideController extends Controller
                 'content' => "Selamat datang di panduan fasilitas kantor baru Akebono Karawang.\n\nMari kita ciptakan tempat kerja yang nyaman, aman, dan produktif bersama.",
                 'summary' => 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.',
                 'image_path' => 'images/management-office.jpg',
+                'japanese_tagline' => '新しい職場で、ともに次の未来へ',
+                'video_duration' => '1:18',
             ]);
         }
+
+        $onboardingSteps = OfficeConceptData::onboardingSteps();
+        $videoChapters = $message->chapters_list;
+        $videoScenes = OfficeConceptData::videoSceneStrip();
 
         return $this->renderWithCache('guide.index', compact(
             'message',
@@ -63,7 +75,11 @@ class GuideController extends Controller
             'featuredFacilities',
             'emergencyContacts',
             'rulesCount',
-            'zonesCount'
+            'zonesCount',
+            'onboardingSteps',
+            'videoChapters',
+            'videoScenes',
+            'scannedDesk'
         ));
     }
 
@@ -82,13 +98,18 @@ class GuideController extends Controller
             $message = new ManagementMessage([
                 'title' => 'A Message from Management',
                 'sender_name' => 'Management Board',
-                'sender_title' => 'PT Akebono Brake Astra Indonesia',
+                'sender_role' => 'PT Akebono Brake Astra Indonesia',
                 'content' => 'Selamat datang di fasilitas kantor Akebono Karawang.',
                 'summary' => 'Membangun tempat kerja yang aman, kolaboratif, dan siap menyongsong masa depan.',
+                'japanese_tagline' => '新しい職場で、ともに次の未来へ',
+                'video_duration' => '1:18',
             ]);
         }
 
-        return $this->renderWithCache('guide.message', compact('message'));
+        $videoChapters = $message->chapters_list;
+        $videoScenes = OfficeConceptData::videoSceneStrip();
+
+        return $this->renderWithCache('guide.message', compact('message', 'videoChapters', 'videoScenes'));
     }
 
     /**
@@ -149,11 +170,12 @@ class GuideController extends Controller
                 ->where('id', '!=', $facility->id)
                 ->take(3)
                 ->get();
+            $allFacilities = Facility::orderBy('sort_order')->get(['id', 'name', 'slug', 'category', 'floor']);
         } catch (\Throwable $e) {
             return redirect()->route('guide.facilities');
         }
 
-        return $this->renderWithCache('guide.facility-detail', compact('facility', 'related'));
+        return $this->renderWithCache('guide.facility-detail', compact('facility', 'related', 'allFacilities'));
     }
 
     /**
@@ -161,7 +183,18 @@ class GuideController extends Controller
      */
     public function map(Request $request)
     {
-        $floor = $request->get('floor', 'Lantai 1');
+        $requestedFloor = (string) $request->input('floor', 'Lantai 2');
+        $floorAliases = [
+            '1F' => 'Lantai 1',
+            '2F' => 'Lantai 2',
+            '3F' => 'Ground Floor',
+            'Plant Area' => 'Ground Floor',
+        ];
+        $floor = $floorAliases[$requestedFloor] ?? $requestedFloor;
+        if (!in_array($floor, ['Lantai 1', 'Lantai 2', 'Ground Floor'], true)) {
+            $floor = 'Lantai 2';
+        }
+
         try {
             $zones = OfficeZone::where('floor', $floor)->orderBy('sort_order')->get();
             $allZones = OfficeZone::orderBy('sort_order')->get();
@@ -171,12 +204,14 @@ class GuideController extends Controller
         }
 
         $floors = [
-            'Lantai 1' => 'Gedung Utama - Lantai 1',
-            'Lantai 2' => 'Gedung Utama - Lantai 2',
-            'Ground Floor' => 'Plant 1 & Plant 2 (Pabrik)',
+            'Lantai 1' => '1F • Gedung Utama Lt. 1',
+            'Lantai 2' => '2F • Gedung Utama Lt. 2',
+            'Ground Floor' => 'Plant 1 & Plant 2 (Complex)',
         ];
 
-        return $this->renderWithCache('guide.map', compact('zones', 'floor', 'floors', 'allZones'));
+        $blueprints = OfficeConceptData::architecturalBlueprints();
+
+        return $this->renderWithCache('guide.map', compact('zones', 'floor', 'floors', 'allZones', 'blueprints'));
     }
 
     /**
@@ -223,8 +258,8 @@ class GuideController extends Controller
             ];
         })->values()->all();
 
-        $initialCategory = $request->get('category', 'General');
-        $initialQuery = $request->get('q', '');
+        $initialCategory = (string) $request->input('category', 'General');
+        $initialQuery = (string) $request->input('q', '');
 
         return $this->renderWithCache('guide.dos-and-donts', [
             'pairs' => $pairs,
@@ -482,11 +517,76 @@ class GuideController extends Controller
     }
 
     /**
+     * Display personalized QR Desk Onboarding Journey (or redirect Admin to Desk Manager).
+     */
+    public function onboarding(Request $request)
+    {
+        $scannedDesk = null;
+        try {
+            if ($request->filled('desk')) {
+                $scannedDesk = DeskCard::where('desk_number', $request->query('desk'))->first();
+            }
+        } catch (\Throwable $e) {
+        }
+        $onboardingSteps = OfficeConceptData::onboardingSteps();
+        return $this->renderWithCache('guide.onboarding', compact('onboardingSteps', 'scannedDesk'));
+    }
+
+    /**
+     * Display Canteen & Dining Services Guide (Concept Slide 1, 6, 8).
+     */
+    public function canteen()
+    {
+        $diningFacility = null;
+        try {
+            $diningFacility = Facility::where('category', 'dining')->orderBy('sort_order')->first();
+        } catch (\Throwable $e) {
+        }
+        $canteenSteps = OfficeConceptData::defaultFacilitySteps('dining', 'Kantin Utama');
+        return $this->renderWithCache('guide.canteen', compact('diningFacility', 'canteenSteps'));
+    }
+
+    /**
+     * Display Visitor Management & Virtual Reception Guide (Concept Slide 6, 8, 10).
+     */
+    public function visitorGuide()
+    {
+        $lobbyFacility = null;
+        try {
+            $lobbyFacility = Facility::where('category', 'service')->orderBy('sort_order')->first();
+        } catch (\Throwable $e) {
+        }
+        $visitorSteps = OfficeConceptData::defaultFacilitySteps('service', 'Visitor & Reception');
+        return $this->renderWithCache('guide.visitor', compact('lobbyFacility', 'visitorSteps'));
+    }
+
+    /**
+     * Display Attendance & Working Hours Guide (Concept Slide 1, 4).
+     */
+    public function attendance()
+    {
+        return $this->renderWithCache('guide.attendance');
+    }
+
+    /**
+     * Display Support & Contact Center (IT, GA, HR & Emergency).
+     */
+    public function support()
+    {
+        try {
+            $contacts = EmergencyContact::orderBy('sort_order')->get();
+        } catch (\Throwable $e) {
+            $contacts = collect();
+        }
+        return $this->renderWithCache('guide.support', compact('contacts'));
+    }
+
+    /**
      * Fast global search across all guide resources.
      */
     public function search(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q = trim((string) $request->input('q', ''));
         if (strlen($q) < 2) {
             return response()->json(['results' => []]);
         }

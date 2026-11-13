@@ -1,20 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
+<div class="max-w-5xl lg:max-w-none mx-auto px-4 sm:px-6 pt-5 space-y-6">
 
     <!-- Breadcrumb -->
-    <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
-        <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
-        <span>/</span>
-        <span class="text-[#0f2e54]">Pesan Manajemen</span>
+    <div class="flex items-center justify-between gap-2 flex-wrap">
+        <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+            <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
+            <span>/</span>
+            <span class="text-[#0f2e54]">Pesan Manajemen & Video</span>
+        </div>
+        <span class="px-2.5 py-1 rounded-full bg-sky-100 text-[#0084f8] text-[11px] font-bold">
+            🎬 Video Onboarding • {{ $message->video_duration ?? '1:18' }}
+        </span>
+    </div>
+
+    <!-- Video Message from Management (Concept Slide 2 Full Interactive Player) -->
+    <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-4 sm:p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+                <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54]">Video Message from Management</h2>
+                <p class="text-xs text-slate-500">Pilih chapter atau klik play untuk menyaksikan pengenalan fasilitas baru Akebono Karawang</p>
+            </div>
+        </div>
+        <x-video-message-player :message="$message" :chapters="$videoChapters" :scenes="$videoScenes" />
     </div>
 
     <!-- Main Message Container -->
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
         <!-- Hero Header -->
-        <div class="relative h-64 sm:h-80 w-full overflow-hidden">
-            <img src="{{ asset('images/management-office.jpg') }}" alt="Karawang Office" class="w-full h-full object-cover">
+        <div class="relative h-56 sm:h-72 w-full overflow-hidden">
+            <img src="{{ office_image($message->image_path, 'images/management-office.jpg') }}" alt="Karawang Office" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent"></div>
             <div class="absolute bottom-6 left-6 right-6 text-white">
                 <span class="px-3 py-1 rounded-full bg-[#0084f8] text-xs font-bold text-white uppercase tracking-wider mb-2 inline-block">

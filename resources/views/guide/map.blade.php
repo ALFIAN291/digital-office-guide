@@ -1,197 +1,414 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 pt-5 space-y-6" 
-     x-data="{ 
-        currentFloor: '{{ $floor }}', 
-        selectedZone: {{ $zones->first() ? json_encode($zones->first()) : 'null' }},
-        selectZone(zone) {
-            this.selectedZone = zone;
+@php
+    /** @var string $floor */
+    /** @var array<string, mixed> $blueprints */
+    $floorKey = is_string($floor ?? null) ? $floor : 'Lantai 2';
+    $blueprint = $blueprints[$floorKey] ?? $blueprints['Lantai 2'];
+    $defaultRoom = collect($blueprint['rooms'])->firstWhere('code', 'MR-05') ?? ($blueprint['rooms'][0] ?? null);
+@endphp
+
+<div class="max-w-6xl lg:max-w-none mx-auto px-4 sm:px-6 pt-3 sm:pt-4 space-y-4"
+     x-data="{
+        currentFloor: {{ Js::from($floorKey) }},
+        viewMode: 'floor',
+        searchQuery: '',
+        activeFilter: 'all',
+        showRoute: true,
+        blueprint: {{ Js::from($blueprint) }},
+        dbZones: {{ Js::from($zones) }},
+        selectedItem: {{ Js::from($defaultRoom) }},
+        selectedIsZone: false,
+
+        selectRoom(room) {
+            this.selectedItem = room;
+            this.selectedIsZone = false;
+            this.showRoute = true;
+        },
+        selectDbZone(zone) {
+            this.selectedItem = {
+                code: zone.code || zone.type.toUpperCase(),
+                name: zone.name,
+                group: zone.area_group || zone.type,
+                cx: parseFloat(zone.coord_x) || 50,
+                cy: parseFloat(zone.coord_y) || 50,
+                capacity: zone.capacity || 'Sesuai Standar Ruangan',
+                facilities: zone.facilities_list || zone.description,
+                usage: zone.usage_info || zone.description,
+                book: zone.how_to_book || (zone.contact_person ? 'Hubungi ' + zone.contact_person : 'Via Portal / GA'),
+                image: zone.image_path || '/images/facilities-office.jpg',
+                contact_person: zone.contact_person,
+            };
+            this.selectedIsZone = true;
+            this.showRoute = true;
+        },
+        matchesSearch(item) {
+            const q = this.searchQuery.toLowerCase().trim();
+            const filterOk = this.activeFilter === 'all' || this.activeFilter === 'route' || this.activeFilter === 'here' || (item.group && item.group.toLowerCase().includes(this.activeFilter.toLowerCase()));
+            if (!q) return filterOk;
+            return filterOk && (
+                (item.name && item.name.toLowerCase().includes(q)) ||
+                (item.code && item.code.toLowerCase().includes(q)) ||
+                (item.group && item.group.toLowerCase().includes(q)) ||
+                (item.facilities && item.facilities.toLowerCase().includes(q))
+            );
+        },
+        get routePoints() {
+            if (!this.selectedItem) return '';
+            const sx = this.blueprint.start.x;
+            const sy = this.blueprint.start.y;
+            const tx = this.selectedItem.cx;
+            const ty = this.selectedItem.cy;
+            const cy = this.blueprint.corridor_y || 34;
+            const cx = this.blueprint.corridor_x || 39;
+
+            // Orthogonal architectural path via corridor spine
+            if (Math.abs(ty - sy) < 12) {
+                return `${sx},${sy} ${sx},${cy} ${tx},${cy} ${tx},${ty}`;
+            }
+            if (tx < cx && ty < cy) {
+                return `${sx},${sy} ${sx},${sy - 14} ${cx},${sy - 14} ${cx},${cy} ${tx},${cy} ${tx},${ty}`;
+            }
+            return `${sx},${sy} ${sx},${sy - 14} ${tx},${sy - 14} ${tx},${ty}`;
+        },
+        get distanceMeters() {
+            if (!this.selectedItem) return 0;
+            const dx = Math.abs(this.selectedItem.cx - this.blueprint.start.x);
+            const dy = Math.abs(this.selectedItem.cy - this.blueprint.start.y);
+            return Math.max(12, Math.round((dx * 0.72) + (dy * 0.55)));
+        },
+        get walkMinutes() {
+            return Math.max(1, Math.round(this.distanceMeters / 45));
         }
      }">
 
-    <!-- Header & Breadcrumb -->
-    <div>
-        <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
-            <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
-            <span>/</span>
-            <span class="text-[#0f2e54]">Denah Kantor (Office Map)</span>
-        </div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Denah Kantor & Pabrik Karawang</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Navigasi interaktif ruangan, ruang rapat, fasilitas, dan jalur evakuasi</p>
+    <!-- Header & Concept Map Toolbar (Slide 4 & Slide 7) -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div>
+            <div class="flex items-center gap-2 text-[11px] font-semibold text-slate-500 mb-1">
+                <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
+                <span>/</span>
+                <span class="text-[#0f2e54]">Interactive Map</span>
             </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] tracking-tight">Denah Kantor & Pabrik Karawang</h1>
+            <p class="text-xs text-slate-500 mt-0.5">{{ $blueprint['title'] }} — {{ $blueprint['subtitle'] }}</p>
+        </div>
+
+        <!-- Floor Switcher Tabs (1F / 2F / Plant) -->
+        <div class="bg-white rounded-2xl p-1 soft-shadow border border-slate-200/80 flex flex-wrap gap-1 w-full lg:w-auto">
+            @foreach($floors as $key => $title)
+                <a href="{{ route('guide.map', ['floor' => $key]) }}"
+                   class="flex-1 lg:flex-initial py-2 px-3 text-center text-xs font-bold rounded-xl transition whitespace-nowrap {{ $floorKey === $key ? 'bg-[#0084f8] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                    {{ $title }}
+                </a>
+            @endforeach
         </div>
     </div>
 
-    <!-- Floor Selector Tabs -->
-    <div class="bg-white rounded-2xl p-1.5 soft-shadow border border-slate-200/80 flex flex-wrap gap-1">
-        @foreach($floors as $key => $title)
-            <a href="{{ route('guide.map', ['floor' => $key]) }}" 
-               class="flex-1 min-w-[130px] py-2.5 px-3 text-center text-xs font-bold rounded-xl transition {{ $floor === $key ? 'bg-[#0084f8] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
-                {{ $title }}
-            </a>
-        @endforeach
-    </div>
-
-    <!-- Interactive Map Canvas Card -->
-    <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
-        
-        <!-- Map Canvas Controls -->
-        <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">{{ $floor }}</span>
-            </div>
-            <div class="flex items-center gap-3 text-xs text-slate-500">
-                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-[#0084f8]"></span> Pin Ruangan</span>
-                <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Evakuasi</span>
-            </div>
-        </div>
-
-        <!-- SVG Map Container -->
-        <div class="relative w-full h-[360px] sm:h-[420px] bg-[#f8fafc] overflow-hidden select-none border-b border-slate-100">
-            
-            <!-- Floor Plan SVG Grid & Architectural Floor -->
-            <svg class="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                        <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#e2e8f0" stroke-width="0.8"/>
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-
-                @if($floor === 'Lantai 1')
-                    <!-- Outline Building 1 -->
-                    <rect x="8%" y="15%" width="84%" height="70%" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.5" />
-                    <!-- Corridor -->
-                    <rect x="12%" y="46%" width="76%" height="10%" fill="#f1f5f9" stroke="#e2e8f0" stroke-dasharray="4" />
-                    <!-- Room Blocks -->
-                    <rect x="12%" y="18%" width="26%" height="25%" rx="8" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" />
-                    <text x="25%" y="31%" font-size="11" font-weight="bold" fill="#0369a1" text-anchor="middle">LOBI UTAMA</text>
-
-                    <rect x="62%" y="18%" width="26%" height="25%" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5" />
-                    <text x="75%" y="31%" font-size="11" font-weight="bold" fill="#b45309" text-anchor="middle">KANTIN UTAMA</text>
-
-                    <rect x="36%" y="58%" width="22%" height="24%" rx="8" fill="#f3e8ff" stroke="#c084fc" stroke-width="1.5" />
-                    <text x="47%" y="71%" font-size="11" font-weight="bold" fill="#7e22ce" text-anchor="middle">MUSHOLLA</text>
-
-                    <rect x="62%" y="58%" width="26%" height="24%" rx="8" fill="#ffe4e6" stroke="#fb7185" stroke-width="1.5" />
-                    <text x="75%" y="71%" font-size="11" font-weight="bold" fill="#be123c" text-anchor="middle">KLINIK / FIRST AID</text>
-
-                    <!-- Green Walkway -->
-                    <line x1="8%" y1="51%" x2="92%" y2="51%" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-dasharray="8,6" />
-                @elseif($floor === 'Lantai 2')
-                    <!-- Outline Building 2 -->
-                    <rect x="8%" y="15%" width="84%" height="70%" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2.5" />
-                    <rect x="12%" y="18%" width="32%" height="28%" rx="8" fill="#e0f2fe" stroke="#0084f8" stroke-width="1.5" />
-                    <text x="28%" y="33%" font-size="11" font-weight="bold" fill="#0369a1" text-anchor="middle">BOARDROOM SAKURA</text>
-
-                    <rect x="48%" y="18%" width="40%" height="45%" rx="8" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5" />
-                    <text x="68%" y="41%" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">OPEN WORKSPACE</text>
-
-                    <rect x="12%" y="52%" width="32%" height="30%" rx="8" fill="#fdf2f8" stroke="#f472b6" stroke-width="1.5" />
-                    <text x="28%" y="68%" font-size="11" font-weight="bold" fill="#be185d" text-anchor="middle">RUANG LAKTASI</text>
-
-                    <rect x="48%" y="68%" width="40%" height="15%" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" />
-                    <text x="68%" y="77%" font-size="10" font-weight="bold" fill="#b45309" text-anchor="middle">COLLAB LOUNGE</text>
-                @else
-                    <!-- Plant Floor -->
-                    <rect x="8%" y="15%" width="84%" height="70%" rx="16" fill="#ffffff" stroke="#94a3b8" stroke-width="2.5" />
-                    <rect x="12%" y="18%" width="36%" height="64%" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5" />
-                    <text x="30%" y="51%" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">PLANT 1: MACHINING</text>
-
-                    <rect x="52%" y="18%" width="40%" height="40%" rx="8" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" />
-                    <text x="72%" y="39%" font-size="12" font-weight="bold" fill="#4338ca" text-anchor="middle">PLANT 2: ASSEMBLY</text>
-
-                    <rect x="52%" y="62%" width="40%" height="20%" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1.5" />
-                    <text x="72%" y="73%" font-size="11" font-weight="bold" fill="#854d0e" text-anchor="middle">LOGISTICS & LOADING</text>
-
-                    <line x1="12%" y1="84%" x2="92%" y2="84%" stroke="#22c55e" stroke-width="4" stroke-dasharray="10,6" />
-                @endif
+    <!-- Search + View Switcher Bar (Floor Plan / 3D View / List View + Compass) -->
+    <div class="bg-white rounded-2xl p-2.5 sm:p-3 soft-shadow border border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5">
+        <div class="relative flex-1 min-w-[200px]">
+            <input type="text"
+                   x-model="searchQuery"
+                   placeholder="Search room, facility, or department..."
+                   class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-hidden focus:border-[#0084f8] transition">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
-
-            <!-- Interactive Pin Markers -->
-            @foreach($zones as $zone)
-                <div class="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform hover:scale-125 z-20 group"
-                     style="left: {{ $zone->coord_x }}%; top: {{ $zone->coord_y }}%;"
-                     @click="selectZone({{ json_encode($zone) }})">
-                    
-                    <div class="relative flex items-center justify-center">
-                        <span class="animate-ping absolute inline-flex h-7 w-7 rounded-full opacity-75"
-                              :class="selectedZone && selectedZone.id === {{ $zone->id }} ? 'bg-[#0084f8]' : 'bg-slate-400'"></span>
-                        
-                        <div class="w-8 h-8 rounded-full shadow-lg flex items-center justify-center border-2 border-white transition-all text-white text-xs font-bold"
-                             :class="selectedZone && selectedZone.id === {{ $zone->id }} ? 'bg-[#0084f8] scale-110 ring-4 ring-sky-300' : '{{ $zone->type === 'emergency' ? 'bg-rose-500' : 'bg-slate-800 hover:bg-[#0084f8]' }}'">
-                            @if($zone->type === 'emergency')
-                                ⚠️
-                            @elseif($zone->type === 'meeting')
-                                👥
-                            @elseif($zone->type === 'canteen')
-                                ☕
-                            @elseif($zone->type === 'clinic')
-                                🏥
-                            @elseif($zone->type === 'musholla')
-                                🕌
-                            @else
-                                📍
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Tooltip label -->
-                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover:block whitespace-nowrap bg-slate-900 text-white text-[10px] font-semibold px-2 py-1 rounded shadow-md pointer-events-none z-30">
-                        {{ $zone->name }}
-                    </div>
-                </div>
-            @endforeach
-
         </div>
 
-        <!-- Selected Room Detail Box -->
-        <template x-if="selectedZone">
-            <div class="p-5 sm:p-6 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-md bg-sky-100 text-[#0084f8] font-bold text-xs" x-text="selectedZone.code || selectedZone.type.toUpperCase()"></span>
-                        <span class="text-xs text-slate-400 font-medium" x-text="selectedZone.floor + ' • ' + selectedZone.building"></span>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-[#0f2e54] mt-1" x-text="selectedZone.name"></h3>
-                    <p class="text-xs text-slate-500 mt-1 max-w-xl" x-text="selectedZone.description"></p>
+        <div class="flex items-center gap-1.5">
+            <div class="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200/70 text-[11px] font-bold">
+                <button type="button" @click="viewMode = 'floor'"
+                        :class="viewMode === 'floor' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]'"
+                        class="px-3 py-1.5 rounded-lg transition cursor-pointer">Floor Plan</button>
+                <button type="button" @click="viewMode = '3d'"
+                        :class="viewMode === '3d' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]'"
+                        class="px-3 py-1.5 rounded-lg transition cursor-pointer">3D View</button>
+                <button type="button" @click="viewMode = 'list'"
+                        :class="viewMode === 'list' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]'"
+                        class="px-3 py-1.5 rounded-lg transition cursor-pointer">List View</button>
+            </div>
+            <!-- North Compass Badge -->
+            <div class="hidden sm:flex w-9 h-9 rounded-full border border-slate-200 bg-slate-50 items-center justify-center text-[10px] font-extrabold text-[#0f2e54]" title="North Orientation">
+                ▲ N
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Interactive Grid: Architectural Map (Left 8) + Selected Room Detail Drawer (Right 4) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+        <!-- Left Canvas Column -->
+        <div class="lg:col-span-8 bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
+            <!-- Canvas Status Strip -->
+            <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2 font-bold text-[#0f2e54]">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#0084f8] animate-pulse"></span>
+                    <span>{{ $blueprint['building'] }} • {{ $blueprint['code'] }}</span>
                 </div>
-                <div class="flex items-center gap-3 shrink-0">
-                    <template x-if="selectedZone.contact_person">
-                        <span class="text-xs font-semibold px-3 py-1.5 bg-slate-100 rounded-xl text-slate-700" x-text="'📞 ' + selectedZone.contact_person"></span>
-                    </template>
+                <div class="flex items-center gap-3 text-[11px]">
+                    <button type="button" @click="showRoute = !showRoute"
+                            class="px-2.5 py-1 rounded-lg border font-bold transition cursor-pointer"
+                            :class="showRoute ? 'bg-sky-50 border-sky-300 text-[#0084f8]' : 'bg-white border-slate-200 text-slate-500'">
+                        <span x-text="showRoute ? '✓ Route Shown' : 'Show Route'"></span>
+                    </button>
                 </div>
             </div>
-        </template>
-    </div>
 
-    <!-- Room List for this Floor -->
-    <div class="bg-white rounded-3xl p-5 sm:p-6 soft-shadow border border-slate-200/80">
-        <h3 class="text-base font-extrabold text-[#0f2e54] mb-4">Daftar Titik & Ruangan di {{ $floor }}</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            @foreach($zones as $z)
-                <div @click="selectZone({{ json_encode($z) }})" 
-                     class="p-3.5 rounded-2xl border border-slate-100 hover:border-sky-300 hover:bg-sky-50/50 cursor-pointer transition flex items-center justify-between group"
-                     :class="selectedZone && selectedZone.id === {{ $z->id }} ? 'bg-sky-50 border-sky-400' : 'bg-slate-50'">
-                    <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-xl bg-white text-slate-700 font-bold flex items-center justify-center text-xs shadow-xs">
-                            {{ $loop->iteration }}
-                        </span>
-                        <div>
-                            <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">{{ $z->name }}</div>
-                            <div class="text-[11px] text-slate-400">{{ $z->code }} • {{ $z->contact_person }}</div>
+            <!-- Floor Plan & 3D Architectural View -->
+            <div x-show="viewMode !== 'list'" class="p-3 sm:p-4 bg-[#e9eff6]">
+                <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] min-h-[290px] bg-[#f8fafc] rounded-2xl border-2 border-slate-300 overflow-hidden shadow-inner transition-transform duration-500 select-none"
+                     :style="viewMode === '3d' ? 'transform: perspective(1100px) rotateX(28deg) rotateZ(-4deg) scale(0.95); box-shadow: 0 24px 40px -12px rgba(15,46,84,0.28);' : ''">
+
+                    <!-- Architectural CAD Grid & Corridors -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <defs>
+                            <pattern id="archGrid" width="5" height="5" patternUnits="userSpaceOnUse">
+                                <path d="M 5 0 L 0 0 0 5" fill="none" stroke="#e2e8f0" stroke-width="0.2" />
+                            </pattern>
+                        </defs>
+                        <rect width="100" height="100" fill="url(#archGrid)" />
+                        <!-- Perimeter Greenery Strip -->
+                        <rect x="2" y="91" width="96" height="7" rx="2" fill="#dcfce7" opacity="0.7" />
+                        <!-- Building Outer Wall -->
+                        <rect x="6" y="6" width="88" height="88" rx="2" fill="#ffffff" stroke="#64748b" stroke-width="0.6" />
+                        <!-- Inner Hallway Spine -->
+                        <rect x="22" y="30" width="66" height="5" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.25" stroke-dasharray="1,1" />
+                        <rect x="22" y="71" width="66" height="5" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.25" stroke-dasharray="1,1" />
+                    </svg>
+
+                    <!-- Architectural Color-Coded Rooms -->
+                    <template x-for="room in blueprint.rooms" :key="room.code">
+                        <button type="button"
+                                @click="selectRoom(room)"
+                                x-show="matchesSearch(room)"
+                                :style="`left: ${room.x}%; top: ${room.y}%; width: ${room.w}%; height: ${room.h}%;`"
+                                :class="[
+                                    room.color,
+                                    selectedItem && selectedItem.code === room.code ? 'ring-3 ring-[#0084f8] shadow-lg scale-[1.02] z-20' : 'opacity-95 hover:opacity-100 hover:ring-2 hover:ring-sky-400 z-10'
+                                ]"
+                                class="absolute rounded-md border flex flex-col items-center justify-center p-1 text-center transition cursor-pointer overflow-hidden">
+                            <span class="text-[8px] sm:text-[10px] font-extrabold leading-tight whitespace-pre-line tracking-tight" x-text="room.label"></span>
+                            <template x-if="room.group === 'Office Area'">
+                                <span class="hidden sm:inline-block mt-1 px-1.5 py-0.2 rounded bg-white/80 text-[7px] font-bold text-slate-600" x-text="room.capacity"></span>
+                            </template>
+                        </button>
+                    </template>
+
+                    <!-- Safety & Facility Overlay Icons (Exit, APAR, Restroom, Stairs, Elevator) -->
+                    <template x-for="(ic, i) in blueprint.icons" :key="i">
+                        <div class="absolute -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto"
+                             :style="`left: ${ic.x}%; top: ${ic.y}%;`"
+                             :title="ic.label">
+                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center text-[9px] sm:text-[10px] font-bold shadow-xs border border-white"
+                                  :class="{
+                                    'bg-emerald-600 text-white': ic.type === 'exit',
+                                    'bg-rose-600 text-white': ic.type === 'apar',
+                                    'bg-sky-600 text-white': ic.type === 'restroom',
+                                    'bg-purple-600 text-white': ic.type === 'stairs',
+                                    'bg-slate-600 text-white': ic.type === 'elevator',
+                                  }">
+                                <span x-text="ic.type === 'exit' ? '🏃' : (ic.type === 'apar' ? '🧯' : (ic.type === 'restroom' ? '🚻' : (ic.type === 'stairs' ? '🪜' : '🛗')))"></span>
+                            </span>
+                        </div>
+                    </template>
+
+                    <!-- SVG Animated Route Wayfinding Overlay (Concept Slide 7 Dotted Blue Route) -->
+                    <svg x-show="showRoute && selectedItem" class="absolute inset-0 w-full h-full pointer-events-none z-[25]" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <polyline :points="routePoints"
+                                  fill="none"
+                                  stroke="#0084f8"
+                                  stroke-width="1.15"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-dasharray="2.2,1.6" />
+                        <!-- Start Circle -->
+                        <circle :cx="blueprint.start.x" :cy="blueprint.start.y" r="1.8" fill="#0084f8" stroke="#ffffff" stroke-width="0.6" />
+                        <!-- Destination Pin Dot -->
+                        <circle x-show="selectedItem" :cx="selectedItem ? selectedItem.cx : 50" :cy="selectedItem ? selectedItem.cy : 50" r="2.1" fill="#e11d48" stroke="#ffffff" stroke-width="0.6" />
+                    </svg>
+
+                    <!-- "YOU ARE HERE" Pin Badge -->
+                    <div class="absolute -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
+                         :style="`left: ${blueprint.start.x}%; top: ${blueprint.start.y}%;`">
+                        <div class="flex flex-col items-center">
+                            <span class="px-2 py-0.5 rounded-full bg-[#0f2e54] text-white text-[8px] sm:text-[9px] font-extrabold tracking-wide shadow-md border border-white whitespace-nowrap">
+                                ● YOU ARE HERE
+                            </span>
                         </div>
                     </div>
-                    <span class="text-xs font-bold text-[#0084f8] opacity-0 group-hover:opacity-100 transition">Pilih →</span>
+
+                    <!-- Database Zones Overlay Markers -->
+                    @foreach($zones as $zone)
+                        <button type="button"
+                                @click="selectDbZone({{ Js::from($zone) }})"
+                                style="left: {{ $zone->coord_x }}%; top: {{ $zone->coord_y }}%;"
+                                class="absolute -translate-x-1/2 -translate-y-1/2 z-30 group cursor-pointer"
+                                title="{{ $zone->name }}">
+                            <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] border-2 border-white shadow-md transition group-hover:scale-125 {{ $zone->type === 'emergency' ? 'bg-rose-600 text-white' : 'bg-[#0f2e54] text-white' }}">
+                                {{ $zone->type === 'emergency' ? '⚠️' : ($zone->type === 'meeting' ? '👥' : ($zone->type === 'canteen' ? '☕' : '📍')) }}
+                            </span>
+                        </button>
+                    @endforeach
+
+                    <!-- Main Entrance Bottom Pill (Slide 4 & 7) -->
+                    <div class="absolute bottom-1 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-t-lg bg-[#0084f8] text-white text-[8px] sm:text-[9px] font-extrabold tracking-wider uppercase shadow-sm pointer-events-none z-20">
+                        ▲ MAIN ENTRANCE
+                    </div>
                 </div>
-            @endforeach
+            </div>
+
+            <!-- List View Mode -->
+            <div x-show="viewMode === 'list'" x-cloak class="p-4 sm:p-5 space-y-2.5 max-h-[450px] overflow-y-auto">
+                <template x-for="room in blueprint.rooms" :key="room.code">
+                    <div x-show="matchesSearch(room)"
+                         @click="selectRoom(room); viewMode = 'floor';"
+                         class="p-3.5 rounded-2xl border border-slate-200 hover:border-[#0084f8] hover:bg-sky-50/40 cursor-pointer transition flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="px-2 py-1 rounded-lg bg-slate-100 text-[10px] font-extrabold text-[#0f2e54]" x-text="room.code"></span>
+                            <div class="min-w-0">
+                                <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54] truncate" x-text="room.name"></div>
+                                <div class="text-[11px] text-slate-500 truncate" x-text="room.group + ' • ' + room.capacity"></div>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-xl bg-sky-50 text-[#0084f8] text-[11px] font-bold shrink-0">Get Direction →</span>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Interactive Legend & Area Filter Strip (Slide 4 & 7 Bottom Bar) -->
+            <div class="px-3 sm:px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+                @php
+                    $legendFilters = [
+                        ['key' => 'all', 'label' => 'All Areas', 'dot' => 'bg-[#0084f8]'],
+                        ['key' => 'Executive Room', 'label' => 'Executive Room', 'dot' => 'bg-amber-400'],
+                        ['key' => 'Meeting Room', 'label' => 'Meeting Room', 'dot' => 'bg-pink-400'],
+                        ['key' => 'Office Area', 'label' => 'Office Area', 'dot' => 'bg-slate-400'],
+                        ['key' => 'Pantry / Lounge', 'label' => 'Pantry / Lounge', 'dot' => 'bg-amber-500'],
+                        ['key' => 'Support Room', 'label' => 'Support Room', 'dot' => 'bg-cyan-500'],
+                        ['key' => 'Emergency Exit', 'label' => 'Emergency Exit', 'dot' => 'bg-emerald-500'],
+                    ];
+                @endphp
+                @foreach($legendFilters as $lf)
+                    <button type="button" @click="activeFilter = '{{ $lf['key'] }}'"
+                            :class="activeFilter === '{{ $lf['key'] }}' ? 'bg-[#0f2e54] text-white border-[#0f2e54]' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[10px] font-bold whitespace-nowrap transition cursor-pointer shrink-0">
+                        <span class="w-2 h-2 rounded-full {{ $lf['dot'] }}"></span>
+                        <span>{{ $lf['label'] }}</span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Right Selected Room Detail Card (Concept Slide 4 & Slide 7) -->
+        <div class="lg:col-span-4">
+            <template x-if="selectedItem">
+                <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden sticky top-22">
+                    <!-- Room Photo -->
+                    <div class="relative h-36 sm:h-40 bg-slate-100 overflow-hidden">
+                        <img :src="selectedItem.image" :alt="selectedItem.name" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent"></div>
+                        <button type="button" @click="selectedItem = null"
+                                class="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-slate-700 flex items-center justify-center text-xs font-bold shadow cursor-pointer">
+                            ✕
+                        </button>
+                        <div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between gap-2 text-white">
+                            <span class="px-2 py-0.5 rounded-md bg-[#0084f8] text-[10px] font-extrabold" x-text="selectedItem.code"></span>
+                            <span class="px-2 py-0.5 rounded-md bg-slate-900/70 text-[10px] font-bold" x-text="walkMinutes + ' min walk • ' + distanceMeters + ' m'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Room Specs Body -->
+                    <div class="p-4 sm:p-5 space-y-3.5">
+                        <div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]" x-text="blueprint.code + ' • ' + selectedItem.group"></div>
+                            <h3 class="text-lg font-extrabold text-[#0f2e54] leading-snug mt-0.5" x-text="selectedItem.name"></h3>
+                        </div>
+
+                        <div class="space-y-2.5 pt-2 border-t border-slate-100 text-xs">
+                            <div class="flex items-start gap-2.5">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">👥</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Capacity</div>
+                                    <div class="text-slate-500" x-text="selectedItem.capacity"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">🖥️</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Facilities</div>
+                                    <div class="text-slate-500 leading-snug" x-text="selectedItem.facilities"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">🧭</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Usage</div>
+                                    <div class="text-slate-500 leading-snug" x-text="selectedItem.usage"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-2.5">
+                                <span class="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">📅</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">How to Book / Access</div>
+                                    <div class="text-slate-500 leading-snug" x-text="selectedItem.book"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Get Direction Primary Button (Slide 7) -->
+                        <div class="pt-2 space-y-2">
+                            <button type="button" @click="showRoute = true; viewMode = 'floor';"
+                                    class="w-full py-2.5 px-4 bg-[#0084f8] hover:bg-[#0070d6] text-white rounded-xl text-xs font-extrabold shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
+                                <span>➤</span>
+                                <span>Get Direction (<span x-text="walkMinutes + ' min walk • ' + distanceMeters + ' m'"></span>)</span>
+                            </button>
+                            <template x-if="selectedItem.facility_slug">
+                                <a :href="'/facilities/' + selectedItem.facility_slug"
+                                   class="block w-full text-center py-2 px-4 bg-sky-50 hover:bg-sky-100 text-[#0084f8] rounded-xl text-xs font-bold border border-sky-200 transition">
+                                    View Equipment & 5-Step How-To →
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="!selectedItem">
+                <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-6 text-center space-y-2">
+                    <div class="text-2xl">🗺️</div>
+                    <h3 class="text-sm font-extrabold text-[#0f2e54]">Select a Room on the Map</h3>
+                    <p class="text-xs text-slate-500">Tap any colored room or pin on the floor plan to view photo, equipment, booking guide, and walking directions.</p>
+                </div>
+            </template>
         </div>
     </div>
+
+    <!-- Database Zones Quick List for this Floor -->
+    @if($zones->isNotEmpty())
+        <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80">
+            <h3 class="text-sm sm:text-base font-extrabold text-[#0f2e54] mb-3">Daftar Titik & Ruangan Terdaftar ({{ $floor }})</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                @foreach($zones as $z)
+                    <button type="button" @click="selectDbZone({{ Js::from($z) }})"
+                            class="text-left p-3 rounded-2xl border border-slate-100 hover:border-sky-300 hover:bg-sky-50/50 bg-slate-50 cursor-pointer transition flex items-center justify-between gap-2 group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-7 h-7 rounded-xl bg-white text-slate-700 font-bold flex items-center justify-center text-xs shadow-2xs shrink-0">
+                                {{ $loop->iteration }}
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8] truncate">{{ $z->name }}</div>
+                                <div class="text-[10px] text-slate-400 truncate">{{ $z->code }} • {{ $z->contact_person }}</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-[#0084f8] shrink-0">Rute →</span>
+                    </button>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
 </div>
 @endsection
-

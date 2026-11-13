@@ -48,23 +48,12 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production') || isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
 
-            // Auto-run pending migrations on Vercel deployment
+            // Auto-run pending migrations on Vercel deployment when schema has new tables/columns
             try {
                 static $autoMigrated = false;
-                if (!$autoMigrated && config('database.default') === 'pgsql') {
+                if (!$autoMigrated && (!Schema::hasTable('desk_cards') || !Schema::hasColumn('desk_cards', 'image_path'))) {
                     $autoMigrated = true;
                     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-
-                    try {
-                        $existingContacts = \App\Models\EmergencyContact::all();
-                        foreach ($existingContacts as $c) {
-                            if (str_contains($c->phone, '0267') || empty($c->whatsapp)) {
-                                $c->phone = '0812-8459-000' . $c->id;
-                                $c->whatsapp = $c->phone;
-                                $c->save();
-                            }
-                        }
-                    } catch (\Throwable $e) {}
                 }
             } catch (\Throwable $e) {
                 // Silently pass if database is not reachable yet

@@ -7,6 +7,7 @@ use App\Models\EmergencyContact;
 use App\Models\Facility;
 use App\Models\ManagementMessage;
 use App\Models\OfficeZone;
+use App\Support\OfficeConceptData;
 use Illuminate\Database\Seeder;
 
 class DigitalOfficeGuideSeeder extends Seeder
@@ -26,6 +27,9 @@ class DigitalOfficeGuideSeeder extends Seeder
                 'content' => "Selamat datang di Fasilitas Kantor & Pabrik Baru Akebono Karawang.\n\nPerjalanan baru ini menandai komitmen kami untuk menghadirkan lingkungan kerja berkelas dunia yang mengintegrasikan efisiensi manufaktur modern dengan kenyamanan dan kesejahteraan seluruh karyawan. Fasilitas Karawang dirancang dengan standar keselamatan tertinggi (Zero Accident Mindset), arsitektur ramah lingkungan, serta teknologi kolaboratif terkini.\n\nDi tempat baru ini, mari kita bersama-sama memperkuat budaya 5S (Seiri, Seiton, Seiso, Seiketsu, Shitsuke), menjunjung tinggi integritas, dan saling menghargai ruang kerja bersama. Ruang-ruang kerja terbuka, ruang rapat cerdas, dan fasilitas penunjang yang komprehensif ini didedikasikan untuk mendukung produktivitas dan inovasi kita bersama.\n\nMari kita jadikan setiap sudut kantor ini tempat di mana ide-ide terbaik lahir dan masa depan industri otomotif dibangun dengan rasa bangga.",
                 'quote' => 'Moving Together. Working Better. Growing Stronger.',
                 'image_path' => '/images/management-office.jpg',
+                'japanese_tagline' => '新しい職場で、ともに次の未来へ',
+                'video_duration' => '1:18',
+                'video_chapters' => OfficeConceptData::defaultVideoChapters(),
                 'is_active' => true,
             ]);
         }

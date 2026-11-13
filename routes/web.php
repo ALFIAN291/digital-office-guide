@@ -16,6 +16,11 @@ Route::get('/map', [GuideController::class, 'map'])->name('guide.map');
 Route::get('/dos-and-donts', [GuideController::class, 'dosAndDonts'])->name('guide.dos-and-donts');
 Route::get('/office-and-plant', [GuideController::class, 'officeAndPlant'])->name('guide.office-and-plant');
 Route::get('/emergency', [GuideController::class, 'emergency'])->name('guide.emergency');
+Route::get('/onboarding', [GuideController::class, 'onboarding'])->name('guide.onboarding');
+Route::get('/canteen', [GuideController::class, 'canteen'])->name('guide.canteen');
+Route::get('/visitor-guide', [GuideController::class, 'visitorGuide'])->name('guide.visitor');
+Route::get('/attendance', [GuideController::class, 'attendance'])->name('guide.attendance');
+Route::get('/support', [GuideController::class, 'support'])->name('guide.support');
 Route::get('/api/search', [GuideController::class, 'search'])->name('guide.api.search');
 
 // ==========================================
@@ -132,6 +137,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Emergency Contacts Management
     Route::get('/emergency', [AdminController::class, 'emergencyContacts'])->name('emergency.index');
     Route::put('/emergency/{id}', [AdminController::class, 'updateEmergencyContact'])->name('emergency.update');
+
+    // QR Desk Onboarding & Tent Card Management
+    Route::get('/desks', [AdminController::class, 'desks'])->name('desks.index');
+    Route::post('/desks', [AdminController::class, 'storeDesk'])->name('desks.store');
+    Route::put('/desks/{id}', [AdminController::class, 'updateDesk'])->name('desks.update');
+    Route::delete('/desks/{id}', [AdminController::class, 'deleteDesk'])->name('desks.delete');
+    Route::get('/desks/{id}/print', [AdminController::class, 'printDesk'])->name('desks.print');
 
     // Change Password
     Route::get('/password', [AdminController::class, 'editPassword'])->name('password.edit');

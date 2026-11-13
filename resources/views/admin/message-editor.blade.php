@@ -78,6 +78,25 @@
                 <input type="text" name="sender_role" value="{{ old('sender_role', $message->sender_role ?? 'President Director & Executive Committee') }}" required
                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
             </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Tagline Jepang (Video Player):</label>
+                <input type="text" name="japanese_tagline" value="{{ old('japanese_tagline', $message->japanese_tagline ?? '新しい職場で、ともに次の未来へ') }}"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Durasi Video (Label):</label>
+                <input type="text" name="video_duration" value="{{ old('video_duration', $message->video_duration ?? '1:18') }}" placeholder="1:18"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
+
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Link Video Sambutan Opsional (YouTube / URL MP4):</label>
+                <input type="text" name="video_url" value="{{ old('video_url', $message->video_url) }}"
+                       placeholder="Kosongkan untuk menggunakan Interactive Chapter Storyboard Player, atau isi link YouTube/MP4"
+                       class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm focus:border-[#0084f8] focus:outline-hidden">
+            </div>
         </div>
 
         <!-- Summary (Displayed on Home Card) -->
