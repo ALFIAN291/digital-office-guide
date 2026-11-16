@@ -531,7 +531,7 @@
             <!-- Card 3: Denah Kantor -->
             <a href="{{ route('guide.map') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_media($settings ?? null, 'card_map_image', 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Denah Kantor' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_media($settings ?? null, 'card_map_image', 'images/office-map-3d.jpg') }}" alt="{{ $settings->card_map_title ?? 'Denah Kantor' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">

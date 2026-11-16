@@ -6,7 +6,10 @@
     /** @var array<string, mixed> $blueprints */
     $floorKey = is_string($floor ?? null) ? $floor : 'Lantai 2';
     $blueprint = $blueprints[$floorKey] ?? $blueprints['Lantai 2'];
-    $defaultRoom = collect($blueprint['rooms'])->firstWhere('code', 'MR-05') ?? ($blueprint['rooms'][0] ?? null);
+    $hasVisualMap = !empty($blueprint['map_image']);
+    $defaultRoom = collect($blueprint['rooms'])->firstWhere('code', 'MO-205')
+        ?? collect($blueprint['rooms'])->firstWhere('code', 'MR-05')
+        ?? ($blueprint['rooms'][0] ?? null);
 
     $floorPills = [
         ['key' => 'Lantai 1', 'short' => 'Lt. 1', 'building' => 'Gedung Utama'],
@@ -31,6 +34,7 @@
      x-data="{
         currentFloor: {{ Js::from($floorKey) }},
         viewMode: 'floor',
+        showLabels: false,
         searchQuery: '',
         activeFilter: 'all',
         showRoute: false,
@@ -39,13 +43,23 @@
         selectedItem: {{ Js::from($defaultRoom) }},
         selectedIsZone: false,
 
+        get activeRooms() {
+            return this.blueprint.rooms || [];
+        },
+
+        switchViewMode(mode) {
+            this.viewMode = mode;
+        },
+
         selectRoom(room) {
             this.selectedItem = room;
             this.selectedIsZone = false;
         },
         triggerDirection() {
             this.showRoute = true;
-            this.viewMode = 'floor';
+            if (this.viewMode === 'list') {
+                this.viewMode = 'floor';
+            }
         },
         selectDbZone(zone) {
             this.selectedItem = {
@@ -79,12 +93,22 @@
         },
         get routePoints() {
             if (!this.selectedItem) return '';
-            const sx = this.blueprint.start.x;
-            const sy = this.blueprint.start.y;
             const tx = this.selectedItem.cx;
             const ty = this.selectedItem.cy;
+            const sx = this.blueprint.start.x;
+            const sy = this.blueprint.start.y;
 
-            // Orthogonal corridor route from Main Entrance (44, 92)
+            if (this.blueprint.map_image) {
+                if (tx >= 78) {
+                    return `${sx},${sy} ${sx},50 ${tx},50 ${tx},${ty}`;
+                }
+                if (ty <= 35) {
+                    return `${sx},${sy} ${sx},46 64,46 64,37 ${tx},37 ${tx},${ty}`;
+                }
+                return `${sx},${sy} ${sx},58 ${tx},58 ${tx},${ty}`;
+            }
+
+            // Orthogonal corridor route for Plant schematic
             if (tx <= 20) {
                 return `${sx},${sy} ${sx},85 20,85 20,${ty} ${tx},${ty}`;
             }
@@ -95,8 +119,9 @@
         },
         get distanceMeters() {
             if (!this.selectedItem) return 0;
-            const dx = Math.abs(this.selectedItem.cx - this.blueprint.start.x);
-            const dy = Math.abs(this.selectedItem.cy - this.blueprint.start.y);
+            const origin = this.blueprint.start;
+            const dx = Math.abs(this.selectedItem.cx - origin.x);
+            const dy = Math.abs(this.selectedItem.cy - origin.y);
             return Math.max(12, Math.round((dx * 0.72) + (dy * 0.55)));
         },
         get walkMinutes() {
@@ -173,18 +198,19 @@
 
             <div class="flex items-center gap-2 self-start md:self-auto">
                 <div class="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80 text-xs font-extrabold">
-                    <button type="button" @click="viewMode = 'floor'"
+                    <button type="button" @click="switchViewMode('floor')"
                             :class="viewMode === 'floor' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
-                            class="px-3.5 py-1.5 rounded-lg transition cursor-pointer">
-                        Denah Lantai
+                            class="px-3.5 py-1.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5">
+                        <span>🗺️</span>
+                        <span>Denah Lantai</span>
                     </button>
-                    <button type="button" @click="viewMode = '3d'"
+                    <button type="button" @click="switchViewMode('3d')"
                             :class="viewMode === '3d' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
                             class="px-3.5 py-1.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5">
                         <span>🧊</span>
                         <span>Tampilan 3D</span>
                     </button>
-                    <button type="button" @click="viewMode = 'list'"
+                    <button type="button" @click="switchViewMode('list')"
                             :class="viewMode === 'list' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
                             class="px-3.5 py-1.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5">
                         <span>≣</span>
@@ -203,181 +229,140 @@
         <!-- Center Split: 2D Architectural Floor Plan (Left 8) + Room Detail Card (Right 4) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
 
-            <!-- Left 8 Cols: Architectural Floor Plan Canvas -->
+            <!-- Left 8 Cols: Real 3D Architectural Map (1F/2F) or Plant Schematic + List View -->
             <div class="lg:col-span-8 flex flex-col">
-                <div x-show="viewMode !== 'list'" class="relative w-full aspect-[16/10] min-h-[340px] sm:min-h-[430px] rounded-2xl overflow-hidden border-2 border-slate-300 shadow-md bg-[#4d5966] select-none transition-transform duration-500"
-                     :style="viewMode === '3d' ? 'transform: perspective(1100px) rotateX(24deg) rotateZ(-3deg) scale(0.96); box-shadow: 0 24px 40px -12px rgba(15,46,84,0.32);' : ''">
+                @if($hasVisualMap)
+                    <!-- Real Uploaded 1F / 2F Floor Map Stage (Both Denah Lantai & Tampilan 3D) -->
+                    <div x-show="viewMode !== 'list'"
+                         class="relative w-full sm:min-h-[430px] rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-white select-none flex items-center justify-center">
 
-                    <!-- Architectural SVG Floor Plan Base (Landscaping, Walls, Desks, Spiral Stairs, Restroom, Entrance) -->
-                    <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <defs>
-                            <pattern id="openOfficeGrid" width="2.5" height="2.5" patternUnits="userSpaceOnUse">
-                                <path d="M 2.5 0 L 0 0 0 2.5" fill="none" stroke="#e5dec9" stroke-width="0.18" />
-                            </pattern>
-                            <pattern id="stairTileGrid" width="2" height="2" patternUnits="userSpaceOnUse">
-                                <path d="M 2 0 L 0 0 0 2" fill="none" stroke="#94a3b8" stroke-width="0.25" />
-                            </pattern>
-                            <pattern id="woodFloor" width="1.5" height="4" patternUnits="userSpaceOnUse">
-                                <rect width="1.5" height="4" fill="#d89b52"/>
-                                <path d="M 0 0 L 0 4" stroke="#b97a32" stroke-width="0.25"/>
-                            </pattern>
-                        </defs>
-
-                        <!-- Exterior Pavement / Lot Background -->
-                        <rect x="0" y="0" width="100" height="100" fill="#64748b" />
-
-                        <!-- Perimeter Green Planter Strips & Trees (Matching Screenshot 1) -->
-                        <rect x="1" y="1" width="98" height="4.5" fill="#2e7d32" />
-                        <rect x="1" y="1" width="3.8" height="92" fill="#2e7d32" />
-                        <rect x="95.8" y="1" width="3.2" height="92" fill="#2e7d32" />
-                        <!-- Bottom Planters Left & Right of Main Entrance -->
-                        <rect x="12" y="88.5" width="26" height="9.5" rx="1" fill="#2e7d32" />
-                        <rect x="52" y="88.5" width="44" height="9.5" rx="1" fill="#2e7d32" />
-
-                        <!-- Decorative Lush Bushes / Trees Around Perimeter -->
-                        @foreach([6, 13, 21, 29, 37, 46, 55, 64, 73, 82, 91] as $tx)
-                            <circle cx="{{ $tx }}" cy="3" r="2.1" fill="#4caf50" />
-                            <circle cx="{{ $tx + 0.6 }}" cy="2.7" r="1.2" fill="#81c784" />
-                        @endforeach
-                        @foreach([10, 20, 32, 44, 56, 68, 80] as $ty)
-                            <circle cx="2.6" cy="{{ $ty }}" r="2.2" fill="#4caf50" />
-                            <circle cx="2.4" cy="{{ $ty - 0.5 }}" r="1.3" fill="#81c784" />
-                            <circle cx="97.4" cy="{{ $ty }}" r="2.1" fill="#4caf50" />
-                            <circle cx="97.2" cy="{{ $ty - 0.5 }}" r="1.2" fill="#81c784" />
-                        @endforeach
-                        @foreach([16, 22, 29, 35, 56, 63, 70, 77, 84, 91] as $bx)
-                            <circle cx="{{ $bx }}" cy="93.5" r="3.2" fill="#4caf50" />
-                            <circle cx="{{ $bx - 0.5 }}" cy="92.8" r="1.8" fill="#a5d6a7" />
-                        @endforeach
-
-                        <!-- Main Building Interior Floor Slab -->
-                        <rect x="4.5" y="5.5" width="91.3" height="83" rx="0.8" fill="#f3efe6" stroke="#334155" stroke-width="0.7" />
-                        <rect x="18" y="28" width="66.5" height="59.5" fill="url(#openOfficeGrid)" />
-
-                        @if($floorKey === 'Lantai 2')
-                            <!-- Left-Bottom Tiled Emergency Stairwell Box (Below Meeting 5) -->
-                            <rect x="5" y="72.5" width="13" height="15" fill="#cbd5e1" stroke="#475569" stroke-width="0.5" />
-                            <rect x="6" y="73.5" width="11" height="13" fill="url(#stairTileGrid)" />
-
-                            <!-- Open Office Workstation Pods: Top Row (5 Double Desk Pods) -->
-                            @foreach([23.5, 31, 38.5, 46, 53.5] as $dx)
-                                <!-- Chairs Left -->
-                                <rect x="{{ $dx - 1.1 }}" y="36.2" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="40.0" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="43.8" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="47.6" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <!-- Chairs Right -->
-                                <rect x="{{ $dx + 3.0 }}" y="36.2" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="40.0" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="43.8" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="47.6" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <!-- White Desk Cluster Table -->
-                                <rect x="{{ $dx }}" y="35.2" width="3.0" height="15.5" rx="0.4" fill="#ffffff" stroke="#94a3b8" stroke-width="0.3" />
-                                <line x1="{{ $dx + 1.5 }}" y1="35.5" x2="{{ $dx + 1.5 }}" y2="50.4" stroke="#cbd5e1" stroke-width="0.3" />
-                                <!-- Small Green Planter Dots on Desk Ends -->
-                                <circle cx="{{ $dx + 1.5 }}" cy="35.5" r="0.6" fill="#22c55e" />
-                                <circle cx="{{ $dx + 1.5 }}" cy="50.5" r="0.6" fill="#22c55e" />
-                            @endforeach
-
-                            <!-- Open Office Workstation Pods: Bottom Row (5 Double Desk Pods) -->
-                            @foreach([23.5, 31, 38.5, 46, 53.5] as $dx)
-                                <!-- Chairs Left -->
-                                <rect x="{{ $dx - 1.1 }}" y="63.2" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="67.0" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="70.8" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx - 1.1 }}" y="74.6" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <!-- Chairs Right -->
-                                <rect x="{{ $dx + 3.0 }}" y="63.2" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="67.0" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="70.8" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <rect x="{{ $dx + 3.0 }}" y="74.6" width="1.1" height="2.2" rx="0.3" fill="#334155" />
-                                <!-- White Desk Cluster Table -->
-                                <rect x="{{ $dx }}" y="62.2" width="3.0" height="15.5" rx="0.4" fill="#ffffff" stroke="#94a3b8" stroke-width="0.3" />
-                                <line x1="{{ $dx + 1.5 }}" y1="62.5" x2="{{ $dx + 1.5 }}" y2="77.4" stroke="#cbd5e1" stroke-width="0.3" />
-                                <circle cx="{{ $dx + 1.5 }}" cy="62.5" r="0.6" fill="#22c55e" />
-                                <circle cx="{{ $dx + 1.5 }}" cy="77.5" r="0.6" fill="#22c55e" />
-                            @endforeach
-
-                            <!-- East Wing Wooden Feature Floor & Spiral Staircase Area (x=68..84, y=56..86) -->
-                            <rect x="68" y="56" width="16" height="30" fill="url(#woodFloor)" stroke="#78350f" stroke-width="0.4" />
-                            <!-- Spiral Staircase Circle -->
-                            <circle cx="77" cy="67.5" r="6.2" fill="#f8fafc" stroke="#64748b" stroke-width="0.45" />
-                            @for($deg = 0; $deg < 360; $deg += 24)
-                                @php
-                                    $rad = deg2rad($deg);
-                                    $x2 = round(77 + 6.0 * cos($rad), 2);
-                                    $y2 = round(67.5 + 6.0 * sin($rad), 2);
-                                @endphp
-                                <line x1="77" y1="67.5" x2="{{ $x2 }}" y2="{{ $y2 }}" stroke="#94a3b8" stroke-width="0.3" />
-                            @endfor
-                            <circle cx="77" cy="67.5" r="1.8" fill="#d89b52" stroke="#64748b" stroke-width="0.4" />
-                            <!-- Lounge Sofa & Coffee Table under Spiral Staircase -->
-                            <rect x="69.2" y="79.5" width="6.5" height="4.2" rx="0.8" fill="#0f535c" />
-                            <circle cx="78.5" cy="81.5" r="1.8" fill="#fde68a" stroke="#b45309" stroke-width="0.3" />
-                        @endif
-
-                        <!-- Bottom Main Entrance Doorway & Blue Up Arrow -->
-                        <rect x="39" y="87.2" width="10" height="3.2" fill="#e2e8f0" stroke="#475569" stroke-width="0.35" />
-                        <rect x="41" y="88" width="6" height="1.5" fill="#0284c7" />
-                        <path d="M 44 93.5 L 44 90.2 M 42.6 91.5 L 44 89.8 L 45.4 91.5" stroke="#0066dc" stroke-width="0.7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-
-                    <!-- Interactive Color-Coded Rooms -->
-                    <template x-for="room in blueprint.rooms" :key="room.code">
-                        <button type="button"
-                                @click="selectRoom(room)"
-                                x-show="matchesSearch(room)"
-                                :style="`left: ${room.x}%; top: ${room.y}%; width: ${room.w}%; height: ${room.h}%;`"
-                                :class="[
-                                    room.color,
-                                    selectedItem && selectedItem.code === room.code
-                                        ? 'ring-3 ring-[#0066dc] shadow-xl scale-[1.015] z-20'
-                                        : 'opacity-95 hover:opacity-100 hover:ring-2 hover:ring-[#0066dc]/70 z-10'
-                                ]"
-                                class="absolute rounded-sm border-2 flex flex-col items-center justify-center p-1 text-center transition cursor-pointer overflow-hidden shadow-xs">
-                            <template x-if="room.icon">
-                                <span class="text-xs sm:text-base leading-none mb-0.5 drop-shadow-2xs" x-text="room.icon"></span>
-                            </template>
-                            <span class="text-[7px] sm:text-[9.5px] font-black leading-tight whitespace-pre-line tracking-tight uppercase" x-text="room.label"></span>
-                        </button>
-                    </template>
-
-                    <!-- Fire Extinguisher (🧯) & Emergency Exit (🏃) Badges on Floor Plan -->
-                    <template x-for="(ic, i) in blueprint.icons" :key="i">
-                        <div class="absolute -translate-x-1/2 -translate-y-1/2 z-25 pointer-events-auto"
-                             :style="`left: ${ic.x}%; top: ${ic.y}%;`"
-                             :title="ic.label">
-                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-md flex items-center justify-center text-[8px] sm:text-[10px] font-bold shadow-md border border-white"
-                                  :class="{
-                                    'bg-[#16a34a] text-white': ic.type === 'exit',
-                                    'bg-[#e11d48] text-white': ic.type === 'apar',
-                                    'bg-[#0284c7] text-white': ic.type === 'restroom',
-                                    'bg-[#7c3aed] text-white': ic.type === 'stairs',
-                                    'bg-[#475569] text-white': ic.type === 'elevator',
-                                  }">
-                                <span x-text="ic.type === 'exit' ? '🏃' : (ic.type === 'apar' ? '🧯' : (ic.type === 'restroom' ? '🚻' : (ic.type === 'stairs' ? '🪜' : '🛗')))"></span>
+                        <!-- Top-Left Controls (Only in interactive Denah Lantai mode) -->
+                        <div x-show="viewMode === 'floor'" class="absolute top-2.5 left-2.5 z-30 flex items-center gap-2">
+                            <button type="button" @click="showLabels = !showLabels"
+                                    class="px-2.5 py-1 rounded-full bg-white/95 hover:bg-white border border-slate-200 shadow-xs text-[10px] sm:text-xs font-extrabold text-[#0f2e54] cursor-pointer transition flex items-center gap-1">
+                                <span x-text="showLabels ? '🏷️ Sembunyikan Label' : '🏷️ Tampilkan Label'"></span>
+                            </button>
+                            <span class="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-[#0f2e54]/85 text-white text-[10px] font-bold shadow-xs">
+                                Ketuk ikon ruangan pada peta
                             </span>
                         </div>
-                    </template>
 
-                    <!-- Animated Walking Route Overlay (When Get Direction is clicked) -->
-                    <svg x-show="showRoute && selectedItem" x-cloak class="absolute inset-0 w-full h-full pointer-events-none z-30" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <polyline :points="routePoints"
-                                  fill="none"
-                                  stroke="#0066dc"
-                                  stroke-width="1.2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  stroke-dasharray="2,1.4" />
-                        <circle :cx="blueprint.start.x" :cy="blueprint.start.y" r="1.7" fill="#0066dc" stroke="#ffffff" stroke-width="0.6" />
-                        <circle x-show="selectedItem" :cx="selectedItem ? selectedItem.cx : 50" :cy="selectedItem ? selectedItem.cy : 50" r="2.0" fill="#e11d48" stroke="#ffffff" stroke-width="0.6" />
-                    </svg>
+                        <div x-show="viewMode === '3d'" x-cloak class="absolute top-2.5 left-2.5 z-30">
+                            <span class="inline-flex px-3 py-1 rounded-full bg-[#0f2e54]/85 text-white text-[10px] sm:text-xs font-bold shadow-xs">
+                                Mode Tampilan Bersih 3D — Klik "Denah Lantai" untuk pin ruangan
+                            </span>
+                        </div>
 
-                    <!-- Bottom Center "PINTU MASUK UTAMA" Blue Pill -->
-                    <div class="absolute bottom-1.5 left-[44%] -translate-x-1/2 px-3 py-1 rounded-lg bg-[#0066dc] text-white text-[8px] sm:text-[10px] font-black tracking-wider uppercase shadow-lg border border-white/80 pointer-events-none z-30">
-                        PINTU MASUK UTAMA
+                        <!-- Exact 1024x571 Stage so percentage hotspot coordinates never drift with screen height -->
+                        <div class="relative w-full aspect-[1024/571] transition-transform duration-500"
+                             :class="viewMode === '3d' ? 'scale-[1.03]' : ''">
+                            <img src="{{ asset($blueprint['map_image']) }}"
+                                 :src="blueprint.map_image"
+                                 :alt="blueprint.title"
+                                 class="w-full h-full object-fill pointer-events-none block">
+
+                            <!-- Animated Walking Route Overlay -->
+                            <svg x-show="showRoute && selectedItem" x-cloak
+                                 class="absolute inset-0 w-full h-full pointer-events-none z-20"
+                                 viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <polyline :points="routePoints"
+                                          fill="none"
+                                          stroke="#0066dc"
+                                          stroke-width="1.05"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-dasharray="2,1.3" />
+                                <circle :cx="blueprint.start.x"
+                                        :cy="blueprint.start.y"
+                                        r="1.5" fill="#0066dc" stroke="#ffffff" stroke-width="0.5" />
+                                <circle x-show="selectedItem"
+                                        :cx="selectedItem ? selectedItem.cx : 50"
+                                        :cy="selectedItem ? selectedItem.cy : 50"
+                                        r="1.8" fill="#e11d48" stroke="#ffffff" stroke-width="0.5" />
+                            </svg>
+
+                            <!-- Entrance Badge -->
+                            <div x-show="viewMode === 'floor' && blueprint.start"
+                                 :style="`left: ${blueprint.start ? blueprint.start.x : 70.5}%; top: ${blueprint.start ? blueprint.start.y : 66}%;`"
+                                 class="absolute -translate-x-1/2 translate-y-1.5 px-2.5 py-0.5 rounded-full bg-[#0066dc] text-white text-[8px] sm:text-[10px] font-black uppercase tracking-wide shadow-md border border-white pointer-events-none z-25 whitespace-nowrap">
+                                ⬆️ Pintu Masuk
+                            </div>
+
+                            <!-- Interactive Room Hotspot Pins Overlay (Interactive Denah Lantai) -->
+                            <template x-for="room in blueprint.rooms" :key="room.code">
+                                <button type="button"
+                                        x-show="viewMode === 'floor' && matchesSearch(room)"
+                                        @click="selectRoom(room)"
+                                        :style="`left: ${room.x}%; top: ${room.y}%;`"
+                                        :title="room.name"
+                                        class="group absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-150 focus:outline-hidden"
+                                        :class="selectedItem && selectedItem.code === room.code ? 'z-30 scale-110' : 'z-20 hover:z-30 hover:scale-110'">
+                                    <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center shadow-md border-2 transition-colors"
+                                          :class="selectedItem && selectedItem.code === room.code
+                                              ? 'bg-[#0066dc] text-white border-white ring-3 ring-[#0066dc]/35'
+                                              : 'bg-white/95 text-[#0f2e54] border-slate-300 group-hover:bg-[#0066dc] group-hover:text-white group-hover:border-white'">
+                                        <span class="text-[11px] sm:text-xs leading-none" x-text="room.icon || '📍'"></span>
+                                    </span>
+                                    <span x-show="showLabels || (selectedItem && selectedItem.code === room.code)"
+                                          x-cloak
+                                          class="absolute left-1/2 -translate-x-1/2 bottom-full mb-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold whitespace-nowrap shadow-md border pointer-events-none"
+                                          :class="selectedItem && selectedItem.code === room.code
+                                              ? 'bg-[#0f2e54] text-white border-white'
+                                              : 'bg-white/95 text-[#0f2e54] border-slate-200 hidden md:inline-block'"
+                                          x-text="room.label"></span>
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                </div>
+                @else
+                    <!-- Plant Complex Schematic View (Only when floor has no architectural image render) -->
+                    <div x-show="viewMode !== 'list'" x-cloak
+                         class="relative w-full aspect-[16/10] min-h-[340px] sm:min-h-[430px] rounded-2xl overflow-hidden border-2 border-slate-300 shadow-md bg-[#4d5966] select-none transition-transform duration-500"
+                         :style="viewMode === '3d' ? 'transform: perspective(1100px) rotateX(24deg) rotateZ(-3deg) scale(0.96); box-shadow: 0 24px 40px -12px rgba(15,46,84,0.32);' : ''">
+
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <rect x="0" y="0" width="100" height="100" fill="#64748b" />
+                            <rect x="4.5" y="5.5" width="91.3" height="83" rx="0.8" fill="#f3efe6" stroke="#334155" stroke-width="0.7" />
+                            <rect x="39" y="87.2" width="10" height="3.2" fill="#e2e8f0" stroke="#475569" stroke-width="0.35" />
+                            <rect x="41" y="88" width="6" height="1.5" fill="#0284c7" />
+                        </svg>
+
+                        <template x-for="room in blueprint.rooms" :key="room.code">
+                            <button type="button"
+                                    @click="selectRoom(room)"
+                                    x-show="matchesSearch(room)"
+                                    :style="`left: ${room.x}%; top: ${room.y}%; width: ${room.w}%; height: ${room.h}%;`"
+                                    :class="[
+                                        room.color,
+                                        selectedItem && selectedItem.code === room.code
+                                            ? 'ring-3 ring-[#0066dc] shadow-xl scale-[1.015] z-20'
+                                            : 'opacity-95 hover:opacity-100 hover:ring-2 hover:ring-[#0066dc]/70 z-10'
+                                    ]"
+                                    class="absolute rounded-sm border-2 flex flex-col items-center justify-center p-1 text-center transition cursor-pointer overflow-hidden shadow-xs">
+                                <template x-if="room.icon">
+                                    <span class="text-xs sm:text-base leading-none mb-0.5 drop-shadow-2xs" x-text="room.icon"></span>
+                                </template>
+                                <span class="text-[7px] sm:text-[9.5px] font-black leading-tight whitespace-pre-line tracking-tight uppercase" x-text="room.label"></span>
+                            </button>
+                        </template>
+
+                        <svg x-show="showRoute && selectedItem" x-cloak class="absolute inset-0 w-full h-full pointer-events-none z-30" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <polyline :points="routePoints"
+                                      fill="none"
+                                      stroke="#0066dc"
+                                      stroke-width="1.2"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-dasharray="2,1.4" />
+                            <circle :cx="blueprint.start.x" :cy="blueprint.start.y" r="1.7" fill="#0066dc" stroke="#ffffff" stroke-width="0.6" />
+                            <circle x-show="selectedItem" :cx="selectedItem ? selectedItem.cx : 50" :cy="selectedItem ? selectedItem.cy : 50" r="2.0" fill="#e11d48" stroke="#ffffff" stroke-width="0.6" />
+                        </svg>
+
+                        <div class="absolute bottom-1.5 left-[44%] -translate-x-1/2 px-3 py-1 rounded-lg bg-[#0066dc] text-white text-[8px] sm:text-[10px] font-black tracking-wider uppercase shadow-lg border border-white/80 pointer-events-none z-30">
+                            PINTU MASUK UTAMA
+                        </div>
+                    </div>
+                @endif
 
                 <!-- List View Mode -->
                 <div x-show="viewMode === 'list'" x-cloak class="p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 max-h-[430px] overflow-y-auto">
@@ -385,7 +370,7 @@
                         <input type="text" x-model="searchQuery" placeholder="Cari ruangan atau area..."
                                class="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-[#0066dc]">
                     </div>
-                    <template x-for="room in blueprint.rooms" :key="room.code">
+                    <template x-for="room in activeRooms" :key="room.code">
                         <div x-show="matchesSearch(room)"
                              @click="selectRoom(room); viewMode = 'floor';"
                              class="p-3 rounded-xl bg-white border border-slate-200 hover:border-[#0066dc] cursor-pointer transition flex items-center justify-between gap-3">

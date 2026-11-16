@@ -146,10 +146,19 @@ class OfficeGuideTest extends TestCase
 
     public function test_map_page_renders_architectural_floor_controls(): void
     {
-        $response = $this->get('/map?floor=Lantai+2');
-        $response->assertStatus(200);
-        $response->assertSeeText('Denah Lantai');
-        $response->assertSeeText('Petunjuk Arah');
+        $response2f = $this->get('/map?floor=Lantai+2');
+        $response2f->assertStatus(200);
+        $response2f->assertSeeText('Denah Lantai');
+        $response2f->assertSeeText('Tampilan 3D');
+        $response2f->assertSeeText('Petunjuk Arah');
+        $response2f->assertSee('office-map-2f.jpg');
+        $response2f->assertSee('Private Meet Room');
+
+        $response1f = $this->get('/map?floor=Lantai+1');
+        $response1f->assertStatus(200);
+        $response1f->assertSee('office-map-1f.jpg');
+        $response1f->assertDontSee('MUSHOLLA AL-IKHLAS');
+        $response1f->assertDontSee('TITIK KUMPUL EVAKUASI 1');
     }
 
     public function test_base64_db_images_are_served_via_media_endpoint_not_inlined(): void
