@@ -9,21 +9,21 @@
     $defaultRoom = collect($blueprint['rooms'])->firstWhere('code', 'MR-05') ?? ($blueprint['rooms'][0] ?? null);
 
     $floorPills = [
-        ['key' => 'Lantai 1', 'short' => '1F', 'building' => 'Main Office'],
-        ['key' => 'Lantai 2', 'short' => '2F', 'building' => 'Main Office'],
-        ['key' => 'Ground Floor', 'short' => '3F', 'building' => 'Plant & Complex'],
+        ['key' => 'Lantai 1', 'short' => 'Lt. 1', 'building' => 'Gedung Utama'],
+        ['key' => 'Lantai 2', 'short' => 'Lt. 2', 'building' => 'Gedung Utama'],
+        ['key' => 'Ground Floor', 'short' => 'Pabrik', 'building' => 'Pabrik 1 & 2'],
     ];
 
     $bottomLegends = [
-        ['key' => 'all', 'label' => 'Main Entrance', 'bg' => 'bg-[#2b7de9] text-white', 'icon' => '⬆️'],
-        ['key' => 'Emergency Exit', 'label' => 'Emergency Exit', 'bg' => 'bg-[#16a34a] text-white', 'icon' => '🏃'],
-        ['key' => 'all', 'label' => 'Fire Extinguisher', 'bg' => 'bg-[#e11d48] text-white', 'icon' => '🧯'],
-        ['key' => 'Executive Room', 'label' => 'Executive Room', 'bg' => 'bg-[#f8bbd0] text-[#9d174d]', 'icon' => '👤'],
-        ['key' => 'Meeting Room', 'label' => 'Meeting Room', 'bg' => 'bg-[#fed7aa] text-[#9a3412]', 'icon' => '👥'],
-        ['key' => 'Office Area', 'label' => 'Office Area', 'bg' => 'bg-[#bae6fd] text-[#0369a1]', 'icon' => '💺'],
-        ['key' => 'Pantry / Lounge', 'label' => 'Pantry / Lounge', 'bg' => 'bg-[#bbf7d0] text-[#15803d]', 'icon' => '☕'],
-        ['key' => 'Support Room', 'label' => 'Support Room', 'bg' => 'bg-[#e9d5ff] text-[#6b21a8]', 'icon' => '🖨️'],
-        ['key' => 'Restroom', 'label' => 'Restroom', 'bg' => 'bg-[#cbd5e1] text-[#1e293b]', 'icon' => '🚻'],
+        ['key' => 'all', 'label' => 'Pintu Masuk', 'bg' => 'bg-[#2b7de9] text-white', 'icon' => '⬆️'],
+        ['key' => 'Jalur Darurat', 'label' => 'Jalur Darurat', 'bg' => 'bg-[#16a34a] text-white', 'icon' => '🏃'],
+        ['key' => 'all', 'label' => 'APAR', 'bg' => 'bg-[#e11d48] text-white', 'icon' => '🧯'],
+        ['key' => 'Ruang Direksi', 'label' => 'Ruang Direksi', 'bg' => 'bg-[#f8bbd0] text-[#9d174d]', 'icon' => '👤'],
+        ['key' => 'Ruang Rapat', 'label' => 'Ruang Rapat', 'bg' => 'bg-[#fed7aa] text-[#9a3412]', 'icon' => '👥'],
+        ['key' => 'Area Kerja', 'label' => 'Area Kerja', 'bg' => 'bg-[#bae6fd] text-[#0369a1]', 'icon' => '💺'],
+        ['key' => 'Pantry / Santai', 'label' => 'Pantry / Santai', 'bg' => 'bg-[#bbf7d0] text-[#15803d]', 'icon' => '☕'],
+        ['key' => 'Ruang Penunjang', 'label' => 'Ruang Penunjang', 'bg' => 'bg-[#e9d5ff] text-[#6b21a8]', 'icon' => '🖨️'],
+        ['key' => 'Toilet', 'label' => 'Toilet', 'bg' => 'bg-[#cbd5e1] text-[#1e293b]', 'icon' => '🚻'],
     ];
 @endphp
 
@@ -54,10 +54,10 @@
                 group: zone.area_group || zone.type,
                 cx: parseFloat(zone.coord_x) || 50,
                 cy: parseFloat(zone.coord_y) || 50,
-                capacity: zone.capacity || '8–10 people',
+                capacity: zone.capacity || '8–10 orang',
                 facilities: zone.facilities_list || zone.description,
                 usage: zone.usage_info || zone.description,
-                book: zone.how_to_book || (zone.contact_person ? 'Hubungi ' + zone.contact_person : 'Via Meeting Room System (Outlook / Web Portal)'),
+                book: zone.how_to_book || (zone.contact_person ? 'Hubungi ' + zone.contact_person : 'Melalui Sistem Ruang Rapat (Outlook / Portal Web)'),
                 image: zone.image_path || '/images/meeting-room.jpg',
                 contact_person: zone.contact_person,
             };
@@ -102,16 +102,16 @@
         }
      }">
 
-    <!-- Top Context Bar: Breadcrumb + 1F/2F/3F Switcher + Main Office Selector -->
+    <!-- Top Context Bar: Breadcrumb + Lt.1/Lt.2/Pabrik Switcher + Building Selector -->
     <div class="flex flex-wrap items-center justify-between gap-2.5 bg-white/90 backdrop-blur-xs rounded-2xl px-3.5 py-2 soft-shadow border border-slate-200/80">
         <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <a href="{{ route('guide.index') }}" class="hover:text-[#0066dc] font-bold text-[#0f2e54]">KARAWANG OFFICE GUIDE 2026</a>
+            <a href="{{ route('guide.index') }}" class="hover:text-[#0066dc] font-bold text-[#0f2e54]">PANDUAN KANTOR KARAWANG 2026</a>
             <span class="text-slate-300">|</span>
             <span class="text-slate-500 hidden sm:inline">Denah Kantor & Pabrik Karawang</span>
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3 ml-auto">
-            <!-- 1F / 2F / 3F Pills (Matching Screenshot 1 Top Bar) -->
+            <!-- Lt. 1 / Lt. 2 / Pabrik Pills -->
             <div class="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80">
                 @foreach($floorPills as $fp)
                     <a href="{{ route('guide.map', ['floor' => $fp['key']]) }}"
@@ -121,7 +121,7 @@
                 @endforeach
             </div>
 
-            <!-- Building Dropdown Pill (🏢 Main Office ⌄) -->
+            <!-- Building Dropdown Pill -->
             <div class="relative" x-data="{ openBldg: false }">
                 <button type="button" @click="openBldg = !openBldg"
                         class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/90 text-xs font-extrabold text-[#0f2e54] cursor-pointer transition">
@@ -134,17 +134,17 @@
                     </svg>
                 </button>
                 <div x-show="openBldg" @click.outside="openBldg = false" x-cloak
-                     class="absolute right-0 mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-40">
+                     class="absolute right-0 mt-1.5 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-40">
                     <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="flex items-center justify-between px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-[#0066dc]">
-                        <span>🏢 Main Office (2F)</span>
+                        <span>🏢 Gedung Utama (Lt. 2)</span>
                         @if($floorKey === 'Lantai 2') <span class="text-[#0066dc]">✓</span> @endif
                     </a>
                     <a href="{{ route('guide.map', ['floor' => 'Lantai 1']) }}" class="flex items-center justify-between px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-[#0066dc]">
-                        <span>🏢 Main Office (1F)</span>
+                        <span>🏢 Gedung Utama (Lt. 1)</span>
                         @if($floorKey === 'Lantai 1') <span class="text-[#0066dc]">✓</span> @endif
                     </a>
                     <a href="{{ route('guide.map', ['floor' => 'Ground Floor']) }}" class="flex items-center justify-between px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-sky-50 hover:text-[#0066dc]">
-                        <span>🏭 Plant 1 & Plant 2 (3F)</span>
+                        <span>🏭 Pabrik 1 & Pabrik 2</span>
                         @if($floorKey === 'Ground Floor') <span class="text-[#0066dc]">✓</span> @endif
                     </a>
                 </div>
@@ -152,10 +152,10 @@
         </div>
     </div>
 
-    <!-- Main Interactive Container Card (Matching Screenshot 1) -->
+    <!-- Main Interactive Container Card -->
     <div class="bg-white/95 rounded-3xl p-3.5 sm:p-5 soft-shadow border border-slate-200/90 space-y-4">
 
-        <!-- Title Row + View Mode Switcher (Floor Plan | 3D View | List View + North Compass) -->
+        <!-- Title Row + View Mode Switcher -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-[#dbeafe] text-[#1d4ed8] flex items-center justify-center shrink-0 shadow-2xs border border-blue-200">
@@ -174,26 +174,26 @@
                     <button type="button" @click="viewMode = 'floor'"
                             :class="viewMode === 'floor' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
                             class="px-3.5 py-1.5 rounded-lg transition cursor-pointer">
-                        Floor Plan
+                        Denah Lantai
                     </button>
                     <button type="button" @click="viewMode = '3d'"
                             :class="viewMode === '3d' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
                             class="px-3.5 py-1.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5">
                         <span>🧊</span>
-                        <span>3D View</span>
+                        <span>Tampilan 3D</span>
                     </button>
                     <button type="button" @click="viewMode = 'list'"
                             :class="viewMode === 'list' ? 'bg-[#0066dc] text-white shadow-xs' : 'text-slate-600 hover:text-[#0f2e54]'"
                             class="px-3.5 py-1.5 rounded-lg transition cursor-pointer inline-flex items-center gap-1.5">
                         <span>≣</span>
-                        <span>List View</span>
+                        <span>Daftar Ruangan</span>
                     </button>
                 </div>
 
-                <!-- Circular North Compass (▲ N) -->
-                <div class="w-9 h-9 rounded-full border border-slate-200 bg-white shadow-2xs flex flex-col items-center justify-center leading-none text-[#0f2e54]" title="North Orientation">
+                <!-- Circular North Compass (▲ U) -->
+                <div class="w-9 h-9 rounded-full border border-slate-200 bg-white shadow-2xs flex flex-col items-center justify-center leading-none text-[#0f2e54]" title="Arah Utara">
                     <span class="text-[9px] text-[#0066dc] font-black">▲</span>
-                    <span class="text-[9px] font-black">N</span>
+                    <span class="text-[9px] font-black">U</span>
                 </div>
             </div>
         </div>
@@ -371,16 +371,16 @@
                         <circle x-show="selectedItem" :cx="selectedItem ? selectedItem.cx : 50" :cy="selectedItem ? selectedItem.cy : 50" r="2.0" fill="#e11d48" stroke="#ffffff" stroke-width="0.6" />
                     </svg>
 
-                    <!-- Bottom Center "MAIN ENTRANCE" Blue Pill (Matching Screenshot 1) -->
+                    <!-- Bottom Center "PINTU MASUK UTAMA" Blue Pill -->
                     <div class="absolute bottom-1.5 left-[44%] -translate-x-1/2 px-3 py-1 rounded-lg bg-[#0066dc] text-white text-[8px] sm:text-[10px] font-black tracking-wider uppercase shadow-lg border border-white/80 pointer-events-none z-30">
-                        MAIN ENTRANCE
+                        PINTU MASUK UTAMA
                     </div>
                 </div>
 
                 <!-- List View Mode -->
                 <div x-show="viewMode === 'list'" x-cloak class="p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 max-h-[430px] overflow-y-auto">
                     <div class="mb-2">
-                        <input type="text" x-model="searchQuery" placeholder="Search room or area..."
+                        <input type="text" x-model="searchQuery" placeholder="Cari ruangan atau area..."
                                class="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-hidden focus:border-[#0066dc]">
                     </div>
                     <template x-for="room in blueprint.rooms" :key="room.code">
@@ -394,13 +394,13 @@
                                     <div class="text-[11px] text-slate-500 truncate" x-text="room.group + ' • ' + room.capacity"></div>
                                 </div>
                             </div>
-                            <span class="px-3 py-1 rounded-lg bg-sky-50 text-[#0066dc] text-[11px] font-bold shrink-0">View on Map →</span>
+                            <span class="px-3 py-1 rounded-lg bg-sky-50 text-[#0066dc] text-[11px] font-bold shrink-0">Lihat di Denah →</span>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- Right 4 Cols: Selected Room Detail Card (Matching Screenshot 1) -->
+            <!-- Right 4 Cols: Selected Room Detail Card -->
             <div class="lg:col-span-4 flex flex-col">
                 <template x-if="selectedItem">
                     <div class="bg-white rounded-2xl soft-shadow border border-slate-200/90 overflow-hidden flex flex-col justify-between h-full">
@@ -415,20 +415,20 @@
                             </div>
 
                             <div class="p-3.5 sm:p-4 space-y-3.5">
-                                <!-- Soft Pink Room Header Banner (Matching Screenshot 1) -->
+                                <!-- Soft Pink Room Header Banner -->
                                 <div class="p-2.5 sm:p-3 rounded-2xl bg-rose-50/90 border border-rose-100 flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-rose-400 text-white flex items-center justify-center text-lg shadow-2xs shrink-0">
                                         <span x-text="selectedItem.icon || '👥'"></span>
                                     </div>
                                     <div class="min-w-0">
                                         <h3 class="text-sm sm:text-base font-extrabold text-[#0f2e54] leading-tight truncate" x-text="selectedItem.name"></h3>
-                                        <div class="text-[11px] font-semibold text-slate-500 mt-0.5" x-text="(blueprint.code === '2F' ? '2nd Floor' : blueprint.code) + ' • ' + selectedItem.group"></div>
+                                        <div class="text-[11px] font-semibold text-slate-500 mt-0.5" x-text="(blueprint.code === 'Lt. 2' ? 'Lantai 2' : (blueprint.code === 'Lt. 1' ? 'Lantai 1' : blueprint.code)) + ' • ' + selectedItem.group"></div>
                                     </div>
                                 </div>
 
-                                <!-- 4 Metadata Rows with Blue Icons (Capacity, Facilities, Usage, How to Book) -->
+                                <!-- 4 Metadata Rows with Blue Icons -->
                                 <div class="space-y-2.5 text-xs">
-                                    <!-- Capacity -->
+                                    <!-- Kapasitas -->
                                     <div class="flex items-start gap-3">
                                         <div class="w-7 h-7 rounded-lg bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0 mt-0.5">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -436,12 +436,12 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-extrabold text-[#0f2e54]">Capacity</div>
+                                            <div class="font-extrabold text-[#0f2e54]">Kapasitas</div>
                                             <div class="text-slate-600" x-text="selectedItem.capacity"></div>
                                         </div>
                                     </div>
 
-                                    <!-- Facilities -->
+                                    <!-- Fasilitas -->
                                     <div class="flex items-start gap-3">
                                         <div class="w-7 h-7 rounded-lg bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0 mt-0.5">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -451,12 +451,12 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-extrabold text-[#0f2e54]">Facilities</div>
+                                            <div class="font-extrabold text-[#0f2e54]">Fasilitas</div>
                                             <div class="text-slate-600 leading-snug" x-text="selectedItem.facilities"></div>
                                         </div>
                                     </div>
 
-                                    <!-- Usage -->
+                                    <!-- Kegunaan -->
                                     <div class="flex items-start gap-3">
                                         <div class="w-7 h-7 rounded-lg bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0 mt-0.5">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -464,12 +464,12 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-extrabold text-[#0f2e54]">Usage</div>
+                                            <div class="font-extrabold text-[#0f2e54]">Kegunaan</div>
                                             <div class="text-slate-600 leading-snug" x-text="selectedItem.usage"></div>
                                         </div>
                                     </div>
 
-                                    <!-- How to Book -->
+                                    <!-- Cara Pemesanan -->
                                     <div class="flex items-start gap-3">
                                         <div class="w-7 h-7 rounded-lg bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0 mt-0.5">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -480,7 +480,7 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <div class="font-extrabold text-[#0f2e54]">How to Book</div>
+                                            <div class="font-extrabold text-[#0f2e54]">Cara Pemesanan</div>
                                             <div class="text-slate-600 leading-snug" x-text="selectedItem.book"></div>
                                         </div>
                                     </div>
@@ -488,20 +488,20 @@
                             </div>
                         </div>
 
-                        <!-- Bottom CTA Button: Get Direction -->
+                        <!-- Bottom CTA Button: Petunjuk Arah -->
                         <div class="p-3.5 sm:p-4 pt-0 space-y-2">
                             <button type="button" @click="triggerDirection()"
                                     class="w-full py-2.5 px-4 rounded-full bg-gradient-to-r from-[#0055c4] to-[#0078f0] hover:from-[#0046a3] hover:to-[#0066d6] text-white text-xs sm:text-sm font-extrabold shadow-md flex items-center justify-center gap-2 transition cursor-pointer">
                                 <svg class="w-4 h-4 -rotate-45" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                                 </svg>
-                                <span>Get Direction</span>
+                                <span>Petunjuk Arah</span>
                             </button>
 
                             <template x-if="selectedItem.facility_slug">
                                 <a :href="'/facilities/' + selectedItem.facility_slug"
                                    class="block w-full text-center py-2 px-4 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0066dc] text-[11px] font-extrabold border border-sky-200 transition">
-                                    View Facility Details & Equipment →
+                                    Lihat Detail & Perlengkapan Ruangan →
                                 </a>
                             </template>
                         </div>
@@ -511,8 +511,8 @@
                 <template x-if="!selectedItem">
                     <div class="bg-white rounded-2xl soft-shadow border border-slate-200/80 p-6 text-center flex flex-col items-center justify-center h-full space-y-2">
                         <div class="text-3xl">🗺️</div>
-                        <h3 class="text-sm font-extrabold text-[#0f2e54]">Select an Area on the Floor Plan</h3>
-                        <p class="text-xs text-slate-500">Tap any colored room on the map to see its capacity, equipment, booking method, and walking directions.</p>
+                        <h3 class="text-sm font-extrabold text-[#0f2e54]">Pilih Area pada Denah</h3>
+                        <p class="text-xs text-slate-500">Ketuk ruangan berwarna di denah untuk melihat kapasitas, perlengkapan, cara pemesanan, dan petunjuk arah.</p>
                     </div>
                 </template>
             </div>

@@ -9,7 +9,7 @@
             window.location.replace(window.location.href.replace('127.0.0.1', 'localhost'));
         }
     </script>
-    <title>{{ $title ?? 'Akebono - ' . ($settings->office_title ?? 'Karawang') . ' Office Guide 2026' }}</title>
+    <title>{{ $title ?? 'Akebono - ' . ($settings->office_title ?? 'Karawang') . ' Panduan Kantor 2026' }}</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
@@ -56,11 +56,11 @@
         activeTab: '{{ Route::currentRouteName() }}',
         completedSteps: [],
         sidebarMilestones: [
-            { id: 'welcome', label: 'Welcome', route: '{{ route('guide.message') }}' },
-            { id: 'building', label: 'Explore Building', route: '{{ route('guide.office-and-plant') }}' },
-            { id: 'facilities', label: 'Facilities', route: '{{ route('guide.facilities') }}' },
-            { id: 'safety', label: 'Safety', route: '{{ route('guide.dos-and-donts') }}' },
-            { id: 'attendance', label: 'Attendance', route: '{{ route('guide.attendance') }}' },
+            { id: 'welcome', label: 'Sambutan', route: '{{ route('guide.message') }}' },
+            { id: 'building', label: 'Jelajah Gedung', route: '{{ route('guide.office-and-plant') }}' },
+            { id: 'facilities', label: 'Fasilitas', route: '{{ route('guide.facilities') }}' },
+            { id: 'safety', label: 'Keselamatan K3', route: '{{ route('guide.dos-and-donts') }}' },
+            { id: 'attendance', label: 'Absensi', route: '{{ route('guide.attendance') }}' },
         ],
         initPortal() {
             localStorage.removeItem('akebono_desk_profile');
@@ -68,11 +68,11 @@
             if (params.get('name')) {
                 const profile = {
                     name: params.get('name'),
-                    dept: params.get('dept') || 'Visitor',
+                    dept: params.get('dept') || 'Pengunjung',
                     team: params.get('team') || '',
                     desk: params.get('desk') || '-',
                     floor: params.get('floor') || '1',
-                    area: params.get('area') || 'Main Office',
+                    area: params.get('area') || 'Gedung Utama',
                 };
                 localStorage.setItem('akebono_scanned_desk_v2', JSON.stringify(profile));
             }
@@ -149,16 +149,16 @@
                 
                 <div class="flex flex-col text-left">
                     <span class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase leading-none">{{ $settings->office_title ?? 'KARAWANG' }}</span>
-                    <span class="text-xs sm:text-[13px] font-bold tracking-tight text-[#0f2e54] uppercase leading-tight mt-0.5">{{ $settings->office_subtitle ?? 'OFFICE GUIDE 2026' }}</span>
+                    <span class="text-xs sm:text-[13px] font-bold tracking-tight text-[#0f2e54] uppercase leading-tight mt-0.5">{{ $settings->office_subtitle ?? 'PANDUAN KANTOR 2026' }}</span>
                 </div>
             </a>
 
-            <!-- Desktop Quick Floor & Building Bar (Concept Slide 4 & 7) -->
+            <!-- Desktop Quick Floor & Building Bar -->
             <div class="hidden lg:flex items-center gap-2">
                 <div class="inline-flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/70 text-xs font-bold">
-                    <a href="{{ route('guide.map', ['floor' => 'Lantai 1']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Lantai 1' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">1F</a>
-                    <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="px-2.5 py-1 rounded-lg transition {{ (Route::is('guide.map') && request('floor', 'Lantai 2') === 'Lantai 2') ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">2F</a>
-                    <a href="{{ route('guide.map', ['floor' => 'Ground Floor']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Ground Floor' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">Plant</a>
+                    <a href="{{ route('guide.map', ['floor' => 'Lantai 1']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Lantai 1' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">Lt. 1</a>
+                    <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="px-2.5 py-1 rounded-lg transition {{ (Route::is('guide.map') && request('floor', 'Lantai 2') === 'Lantai 2') ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">Lt. 2</a>
+                    <a href="{{ route('guide.map', ['floor' => 'Ground Floor']) }}" class="px-2.5 py-1 rounded-lg transition {{ request('floor') === 'Ground Floor' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-600 hover:text-[#0f2e54]' }}">Pabrik</a>
                 </div>
                 @auth
                 <a href="{{ route('admin.desks.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-[#0f2e54] border border-sky-200 text-xs font-bold transition">
@@ -172,7 +172,7 @@
             <div class="flex items-center gap-2 sm:gap-2.5">
                 <button @click="sosModalOpen = true" type="button" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-full text-xs font-bold transition cursor-pointer">
                     <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                    <span>SOS Hotline</span>
+                    <span>Hotline Darurat (SOS)</span>
                 </button>
 
                 @auth
@@ -217,7 +217,7 @@
                 <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
                     <div class="flex items-center gap-2.5">
                         <img src="{{ asset('images/akebono.png') }}" alt="Akebono" style="max-height: 24px; width: auto;" class="h-6 w-auto">
-                        <span class="text-xs font-bold text-[#0f2e54] uppercase tracking-wider">Office Guide</span>
+                        <span class="text-xs font-bold text-[#0f2e54] uppercase tracking-wider">Panduan Kantor</span>
                     </div>
                     <button @click="mobileMenuOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200/60 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,7 +245,7 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                         </svg>
-                        <span>Beranda (Home)</span>
+                        <span>Beranda</span>
                     </a>
 
                     <a href="{{ route('guide.message') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.message') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
@@ -259,64 +259,64 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
-                        <span>Office & Plant</span>
+                        <span>Kantor & Pabrik</span>
                     </a>
 
                     <a href="{{ route('guide.facilities') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.facilities*') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                         </svg>
-                        <span>Fasilitas (Facilities)</span>
+                        <span>Fasilitas Kantor</span>
                     </a>
 
                     <a href="{{ route('guide.map') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.map') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
                         </svg>
-                        <span>Denah Kantor (Office Map)</span>
+                        <span>Denah Kantor</span>
                     </a>
 
                     <a href="{{ route('guide.dos-and-donts') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.dos-and-donts') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                         </svg>
-                        <span>Dos & Don'ts (Etiket & K3)</span>
+                        <span>Etiket & Aturan (K3)</span>
                     </a>
 
                     <div class="pt-2 pb-1 px-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Layanan & Onboarding
+                        Layanan & Orientasi
                     </div>
 
                     <a href="{{ route('guide.canteen') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.canteen') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <span class="w-5 text-center">🍽️</span>
-                        <span>Canteen & Services</span>
+                        <span>Kantin & Layanan</span>
                     </a>
 
                     <a href="{{ route('guide.visitor') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.visitor') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <span class="w-5 text-center">🪪</span>
-                        <span>Visitor Guide</span>
+                        <span>Panduan Tamu</span>
                     </a>
 
                     <a href="{{ route('guide.attendance') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.attendance') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <span class="w-5 text-center">🕒</span>
-                        <span>Attendance Guide</span>
+                        <span>Panduan Absensi</span>
                     </a>
 
                     <a href="{{ route('guide.onboarding') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.onboarding') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <span class="w-5 text-center">✅</span>
-                        <span>Onboarding Journey</span>
+                        <span>Panduan Orientasi</span>
                     </a>
 
                     @auth
                     <a href="{{ route('admin.desks.index') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold text-[#0084f8] bg-sky-50/70 hover:bg-sky-100">
                         <span class="w-5 text-center">🪪</span>
-                        <span>Kelola QR Desk (Admin)</span>
+                        <span>Kelola QR Meja (Admin)</span>
                     </a>
                     @endauth
 
                     <a href="{{ route('guide.support') }}" class="flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-semibold {{ Route::is('guide.support') ? 'bg-sky-50 text-[#0084f8]' : 'text-slate-700 hover:bg-slate-50' }}">
                         <span class="w-5 text-center">🎧</span>
-                        <span>Support & Contact</span>
+                        <span>Bantuan & Kontak</span>
                     </a>
 
                     <a href="{{ route('guide.emergency') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold {{ Route::is('guide.emergency') ? 'bg-rose-50 text-rose-600' : 'text-rose-700 hover:bg-rose-50' }}">
@@ -419,16 +419,16 @@
                 <nav class="space-y-1 text-[13px] font-semibold">
                     @php
                         $sidebarNav = [
-                            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Home', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
-                            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Interactive Map', 'icon' => 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'],
-                            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Building Guide', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
-                            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Facilities', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
-                            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Dos & Don\'ts', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
-                            ['route' => 'guide.emergency', 'match' => 'guide.emergency', 'label' => 'Safety & Emergency', 'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'],
-                            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Canteen', 'icon' => 'M12 6v6m0 0v6m0-6h6m-6 0H6'],
-                            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Visitor Guide', 'icon' => 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0'],
-                            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Attendance', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-                            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Support & Contact', 'icon' => 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'],
+                            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Beranda', 'icon' => 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'],
+                            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Denah Interaktif', 'icon' => 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'],
+                            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Kantor & Pabrik', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
+                            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Fasilitas', 'icon' => 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'],
+                            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Etiket & Aturan (K3)', 'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4'],
+                            ['route' => 'guide.emergency', 'match' => 'guide.emergency', 'label' => 'Keselamatan & Darurat', 'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'],
+                            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Kantin & Layanan', 'icon' => 'M12 6v6m0 0v6m0-6h6m-6 0H6'],
+                            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Panduan Tamu', 'icon' => 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0'],
+                            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Panduan Absensi', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Bantuan & Kontak', 'icon' => 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'],
                         ];
                     @endphp
                     @foreach($sidebarNav as $navItem)
@@ -442,10 +442,10 @@
                     @endforeach
                 </nav>
 
-                <!-- Onboarding Progress Tracker Widget (Concept Slide 4) -->
+                <!-- Onboarding Progress Tracker Widget -->
                 <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2.5">
                     <div class="flex items-center justify-between gap-2">
-                        <span class="text-[11px] font-extrabold text-[#0f2e54] leading-tight">Your Onboarding<br>Progress</span>
+                        <span class="text-[11px] font-extrabold text-[#0f2e54] leading-tight">Progres Orientasi<br>Anda</span>
                         <span class="text-xs font-extrabold text-[#0084f8]" x-text="sidebarPercent + '%'">40%</span>
                     </div>
                     <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
@@ -463,7 +463,7 @@
                         </template>
                     </div>
                     <a href="{{ route('guide.onboarding') }}" class="block text-center py-1.5 px-2 bg-white hover:bg-sky-50 border border-slate-200 rounded-lg text-[11px] font-bold text-[#0084f8] transition">
-                        Onboarding Journey →
+                        Panduan Orientasi →
                     </a>
                 </div>
             </div>
@@ -478,17 +478,17 @@
     <!-- Bottom Navigation Taskbar (Mobile & Small Tablet Only - Full Menu Items with Smooth Horizontal Scroll) -->
     @php
         $mobileTaskbarItems = [
-            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Home', 'icon' => '🏠'],
+            ['route' => 'guide.index', 'match' => 'guide.index', 'label' => 'Beranda', 'icon' => '🏠'],
             ['route' => 'guide.message', 'match' => 'guide.message', 'label' => 'Pesan', 'icon' => '💬'],
-            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Office & Plant', 'icon' => '🏢'],
-            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Facilities', 'icon' => '⊞'],
-            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Office Map', 'icon' => '🗺️'],
-            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Dos & Don\'ts', 'icon' => '📋'],
-            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Canteen', 'icon' => '🍽️'],
-            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Visitor', 'icon' => '🪪'],
-            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Attendance', 'icon' => '🕒'],
-            ['route' => 'guide.onboarding', 'match' => 'guide.onboarding', 'label' => 'Onboarding', 'icon' => '✅'],
-            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Support', 'icon' => '🎧'],
+            ['route' => 'guide.office-and-plant', 'match' => 'guide.office-and-plant', 'label' => 'Kantor & Pabrik', 'icon' => '🏢'],
+            ['route' => 'guide.facilities', 'match' => 'guide.facilities*', 'label' => 'Fasilitas', 'icon' => '⊞'],
+            ['route' => 'guide.map', 'match' => 'guide.map', 'label' => 'Denah', 'icon' => '🗺️'],
+            ['route' => 'guide.dos-and-donts', 'match' => 'guide.dos-and-donts', 'label' => 'Etiket & K3', 'icon' => '📋'],
+            ['route' => 'guide.canteen', 'match' => 'guide.canteen', 'label' => 'Kantin', 'icon' => '🍽️'],
+            ['route' => 'guide.visitor', 'match' => 'guide.visitor', 'label' => 'Tamu', 'icon' => '🪪'],
+            ['route' => 'guide.attendance', 'match' => 'guide.attendance', 'label' => 'Absensi', 'icon' => '🕒'],
+            ['route' => 'guide.onboarding', 'match' => 'guide.onboarding', 'label' => 'Orientasi', 'icon' => '✅'],
+            ['route' => 'guide.support', 'match' => 'guide.support', 'label' => 'Bantuan', 'icon' => '🎧'],
             ['route' => 'guide.emergency', 'match' => 'guide.emergency', 'label' => 'Darurat SOS', 'icon' => '🚨', 'danger' => true],
         ];
     @endphp

@@ -39,10 +39,10 @@
             <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
                 <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8] font-medium">Beranda</a>
                 <span>/</span>
-                <span class="text-slate-800 font-bold">Onboarding Journey</span>
+                <span class="text-slate-800 font-bold">Panduan Orientasi</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">
-                Your Onboarding Journey
+                Panduan Orientasi Karyawan Anda
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
                 Panduan orientasi karyawan & daftar periksa fasilitas kantor baru Akebono Karawang
@@ -66,18 +66,18 @@
             <div class="space-y-1">
                 <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 text-sky-200 text-[10px] font-extrabold uppercase tracking-wider">
                     <span>🪪</span>
-                    <span>Personalized Desk Pass</span>
+                    <span>Kartu Meja Pribadi</span>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-black" x-text="'Welcome, ' + deskProfile.name + ' 👋'"></h2>
+                <h2 class="text-xl sm:text-2xl font-black" x-text="'Selamat Datang, ' + deskProfile.name + ' 👋'"></h2>
                 <p class="text-xs sm:text-sm text-sky-100" x-text="deskProfile.dept + (deskProfile.team ? ' • ' + deskProfile.team : '')"></p>
             </div>
             <div class="grid grid-cols-3 gap-3 bg-white/10 backdrop-blur-xs rounded-2xl p-3.5 border border-white/15 text-center shrink-0">
                 <div class="px-2">
-                    <div class="text-[10px] text-sky-200 uppercase font-bold">Desk</div>
+                    <div class="text-[10px] text-sky-200 uppercase font-bold">Meja</div>
                     <div class="text-sm font-black" x-text="deskProfile.desk"></div>
                 </div>
                 <div class="px-2 border-x border-white/15">
-                    <div class="text-[10px] text-sky-200 uppercase font-bold">Floor</div>
+                    <div class="text-[10px] text-sky-200 uppercase font-bold">Lantai</div>
                     <div class="text-sm font-black" x-text="deskProfile.floor"></div>
                 </div>
                 <div class="px-2">
@@ -90,26 +90,26 @@
 
     <!-- 4-Step QR Onboarding Flow Explanation -->
     <div class="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-6 soft-shadow">
-        <h3 class="text-sm font-extrabold text-[#0f2e54] mb-3.5">Cara Kerja QR Desk Onboarding (4 Langkah)</h3>
+        <h3 class="text-sm font-extrabold text-[#0f2e54] mb-3.5">Cara Kerja QR Meja Kerja (4 Langkah)</h3>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="w-7 h-7 rounded-full bg-[#0084f8] text-white text-xs font-extrabold flex items-center justify-center mb-2">1</div>
-                <div class="text-xs font-extrabold text-[#0f2e54]">Scan QR Code</div>
-                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Scan QR Tent Card yang terpasang di meja kerja Anda.</p>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Pindai Kode QR</div>
+                <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Pindai QR Tent Card yang terpasang di meja kerja Anda.</p>
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="w-7 h-7 rounded-full bg-[#0084f8] text-white text-xs font-extrabold flex items-center justify-center mb-2">2</div>
-                <div class="text-xs font-extrabold text-[#0f2e54]">Personalized Page</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Halaman Pribadi</div>
                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Portal menyapa nama, nomor meja, lantai, & departemen Anda.</p>
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="w-7 h-7 rounded-full bg-[#0084f8] text-white text-xs font-extrabold flex items-center justify-center mb-2">3</div>
-                <div class="text-xs font-extrabold text-[#0f2e54]">Explore Content</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Jelajahi Panduan</div>
                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Checklist interaktif 01–06 melacak progres orientasi Anda.</p>
             </div>
             <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70">
                 <div class="w-7 h-7 rounded-full bg-[#0084f8] text-white text-xs font-extrabold flex items-center justify-center mb-2">4</div>
-                <div class="text-xs font-extrabold text-[#0f2e54]">Find Your Way</div>
+                <div class="text-xs font-extrabold text-[#0f2e54]">Temukan Arah</div>
                 <p class="text-[11px] text-slate-500 mt-0.5 leading-snug">Navigasi denah interaktif 2D, ruang rapat, kantin, & K3.</p>
             </div>
         </div>
@@ -143,7 +143,7 @@
                         <button type="button" @click="toggleStep('{{ $step['key'] }}')"
                                 class="px-2 py-1 rounded-lg text-[10px] font-bold border transition cursor-pointer shrink-0"
                                 :class="isMilestoneDone('{{ $step['key'] }}') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-white text-slate-500 border-slate-200'">
-                            <span x-text="isMilestoneDone('{{ $step['key'] }}') ? '✓ Done' : 'Tandai'"></span>
+                            <span x-text="isMilestoneDone('{{ $step['key'] }}') ? '✓ Selesai' : 'Tandai'"></span>
                         </button>
                     </div>
                     <a href="{{ route($step['route']) }}"

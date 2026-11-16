@@ -8,7 +8,7 @@
         <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
             <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
             <span>/</span>
-            <span class="text-[#0f2e54]">Office & Plant Karawang</span>
+            <span class="text-[#0f2e54]">Kantor & Pabrik Karawang</span>
         </div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Kawasan Kantor & Pabrik Karawang</h1>
         <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Integrasi fasilitas manufaktur komponen rem terdepan dan lingkungan kantor modern berstandar global</p>
@@ -117,23 +117,23 @@
         </div>
     </div>
 
-    <!-- Concept Slide 6: Building Layout & Movement (6 Key Movement Rules) -->
+    <!-- Tata Letak Gedung & Alur Pergerakan -->
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 sm:p-8 space-y-5">
         <div>
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Facility Socialization</div>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">Building Layout & Movement</h2>
-            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">Know where to enter, where to go and where not to go.</p>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Sosialisasi Fasilitas</div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">Tata Letak Gedung & Alur Pergerakan</h2>
+            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">Ketahui akses masuk, area tujuan, dan area terlarang.</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             @php
                 $movementPillars = [
-                    ['num' => 1, 'title' => 'Entrance / Exit', 'desc' => 'Main employee and visitor flow.', 'route' => route('guide.attendance')],
-                    ['num' => 2, 'title' => 'Office Areas', 'desc' => 'Department locations and common spaces.', 'route' => route('guide.map', ['floor' => 'Lantai 2'])],
-                    ['num' => 3, 'title' => 'Meeting Rooms', 'desc' => 'Room numbers, booking and equipment.', 'route' => route('guide.facilities', ['category' => 'meeting'])],
-                    ['num' => 4, 'title' => 'Canteen', 'desc' => 'Access, ordering and usage rules.', 'route' => route('guide.canteen')],
-                    ['num' => 5, 'title' => 'Emergency Route', 'desc' => 'Evacuation path and assembly point.', 'route' => route('guide.emergency')],
-                    ['num' => 6, 'title' => 'Visitor Area', 'desc' => 'Registration and visitor access flow.', 'route' => route('guide.visitor')],
+                    ['num' => 1, 'title' => 'Pintu Masuk / Keluar', 'desc' => 'Alur masuk & keluar utama karyawan serta tamu.', 'route' => route('guide.attendance')],
+                    ['num' => 2, 'title' => 'Area Kerja Kantor', 'desc' => 'Lokasi departemen dan ruang kerja bersama.', 'route' => route('guide.map', ['floor' => 'Lantai 2'])],
+                    ['num' => 3, 'title' => 'Ruang Rapat', 'desc' => 'Nomor ruangan, cara pemesanan & perlengkapan.', 'route' => route('guide.facilities', ['category' => 'meeting'])],
+                    ['num' => 4, 'title' => 'Kantin', 'desc' => 'Akses masuk, jadwal makan & aturan penggunaan.', 'route' => route('guide.canteen')],
+                    ['num' => 5, 'title' => 'Jalur Darurat', 'desc' => 'Jalur evakuasi & titik kumpul darurat.', 'route' => route('guide.emergency')],
+                    ['num' => 6, 'title' => 'Area Tamu', 'desc' => 'Alur registrasi dan akses kunjungan tamu.', 'route' => route('guide.visitor')],
                 ];
             @endphp
             @foreach($movementPillars as $mp)
@@ -151,23 +151,23 @@
         </div>
     </div>
 
-    <!-- Concept Slide 8: How to Use the New Facilities (6 Smart Systems) -->
+    <!-- Cara Menggunakan Fasilitas & Sistem Baru -->
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 sm:p-8 space-y-5">
         <div>
-            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Facility Socialization</div>
-            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">How to Use the New Facilities & Systems</h2>
+            <div class="text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">05 / Sosialisasi Fasilitas</div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[#0f2e54] mt-0.5">Cara Menggunakan Fasilitas & Sistem Baru</h2>
             <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Ringkasan pengoperasian teknologi gedung baru Akebono Karawang</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             @php
                 $smartSystems = [
-                    ['num' => 1, 'title' => 'Meeting Room Multimedia', 'desc' => 'Display • camera • microphone • room control', 'link' => route('guide.facility.detail', 'ruang-rapat-sakura')],
-                    ['num' => 2, 'title' => 'Building Management System', 'desc' => 'Building systems, smart HVAC, lighting & access doors', 'link' => route('guide.map', ['floor' => 'Lantai 2'])],
-                    ['num' => 3, 'title' => 'Visitor Management', 'desc' => 'Registration • host notification • visitor access', 'link' => route('guide.visitor')],
-                    ['num' => 4, 'title' => 'Virtual Reception', 'desc' => 'Visitor assistance and digital self-check-in flow', 'link' => route('guide.visitor') . '#virtual-reception'],
-                    ['num' => 5, 'title' => 'Auditorium Multimedia', 'desc' => 'Presentation • audio • wireless microphone', 'link' => route('guide.facility.detail', 'lobi-utama-dan-resepsionis')],
-                    ['num' => 6, 'title' => 'Canteen System', 'desc' => 'Ordering • cashless Tap ID payment • 5S tray rules', 'link' => route('guide.canteen')],
+                    ['num' => 1, 'title' => 'Multimedia Ruang Rapat', 'desc' => 'Layar • kamera • mikrofon • kontrol ruangan', 'link' => route('guide.facility.detail', 'ruang-rapat-sakura')],
+                    ['num' => 2, 'title' => 'Sistem Manajemen Gedung', 'desc' => 'Sistem gedung, AC pintar, pencahayaan & akses pintu', 'link' => route('guide.map', ['floor' => 'Lantai 2'])],
+                    ['num' => 3, 'title' => 'Manajemen Pengunjung', 'desc' => 'Registrasi • notifikasi tuan rumah • akses tamu', 'link' => route('guide.visitor')],
+                    ['num' => 4, 'title' => 'Resepsionis Virtual', 'desc' => 'Bantuan tamu dan alur registrasi mandiri digital', 'link' => route('guide.visitor') . '#virtual-reception'],
+                    ['num' => 5, 'title' => 'Multimedia Auditorium', 'desc' => 'Presentasi • sistem audio • mikrofon nirkabel', 'link' => route('guide.facility.detail', 'lobi-utama-dan-resepsionis')],
+                    ['num' => 6, 'title' => 'Sistem Kantin', 'desc' => 'Pembayaran non-tunai Tap ID • aturan baki 5R', 'link' => route('guide.canteen')],
                 ];
             @endphp
             @foreach($smartSystems as $sys)
@@ -182,7 +182,7 @@
                             <div class="text-xs text-slate-500 truncate mt-0.5">{{ $sys['desc'] }}</div>
                         </div>
                     </div>
-                    <span class="text-xs font-bold text-[#0084f8] shrink-0">Guide →</span>
+                    <span class="text-xs font-bold text-[#0084f8] shrink-0">Panduan →</span>
                 </a>
             @endforeach
         </div>

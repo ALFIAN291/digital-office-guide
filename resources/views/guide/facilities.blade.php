@@ -159,7 +159,7 @@
                         <!-- Category, Floor & Popular Tag (Ramping & Simple di Mobile) -->
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#0084f8]">
-                                {{ strtoupper($facility->category) }}
+                                {{ $categories[$facility->category] ?? strtoupper($facility->category) }}
                             </span>
                             <span class="sm:hidden text-slate-300 text-[10px]">•</span>
                             <span class="sm:hidden text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded">

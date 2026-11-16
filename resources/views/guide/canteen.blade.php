@@ -8,10 +8,10 @@
         <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
             <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
             <span>/</span>
-            <span class="text-[#0f2e54]">Canteen & Services</span>
+            <span class="text-[#0f2e54]">Kantin & Layanan</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Canteen & Dining Services Guide</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Panduan jadwal makan shift, transaksi Tap Kartu Pegawai (Cashless), dan aturan kebersihan 5S di Kantin Karawang</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Panduan Kantin & Layanan Makan</h1>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Panduan jadwal makan shift, transaksi Tap Kartu Pegawai (Non-Tunai), dan aturan kebersihan 5R di Kantin Karawang</p>
     </div>
 
     <!-- Hero Banner -->
@@ -24,7 +24,7 @@
                     Gedung Utama • Lantai 1
                 </span>
                 <h2 class="text-xl sm:text-2xl font-extrabold">Kantin Utama & Cafeteria Akebono Karawang</h2>
-                <p class="text-xs text-sky-100 mt-1">Kapasitas 350 kursi ber-AC • Sistem Cashless Tap ID • Higienis & Bergizi</p>
+                <p class="text-xs text-sky-100 mt-1">Kapasitas 350 kursi ber-AC • Sistem Non-Tunai Tap ID • Higienis & Bergizi</p>
             </div>
         </div>
 
@@ -34,9 +34,9 @@
                 <h3 class="text-base font-extrabold text-[#0f2e54] mb-3">Jadwal Operasional & Pembagian Shift Makan</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100">
-                        <div class="text-xs font-extrabold text-[#0084f8] uppercase">Shift 1 / Office</div>
+                        <div class="text-xs font-extrabold text-[#0084f8] uppercase">Shift 1 / Karyawan Kantor</div>
                         <div class="text-lg font-black text-[#0f2e54] mt-1">11:30 - 13:30 WIB</div>
-                        <p class="text-[11px] text-slate-600 mt-1">Produksi 11:30–12:15 • Staff Office 12:15–13:15</p>
+                        <p class="text-[11px] text-slate-600 mt-1">Produksi 11:30–12:15 • Staf Kantor 12:15–13:15</p>
                     </div>
                     <div class="p-4 rounded-2xl bg-amber-50 border border-amber-100">
                         <div class="text-xs font-extrabold text-amber-700 uppercase">Shift 2 (Sore/Malam)</div>
@@ -46,12 +46,12 @@
                     <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-100">
                         <div class="text-xs font-extrabold text-indigo-700 uppercase">Shift 3 (Dini Hari)</div>
                         <div class="text-lg font-black text-[#0f2e54] mt-1">01:30 - 03:00 WIB</div>
-                        <p class="text-[11px] text-slate-600 mt-1">Menu hangat shift malam + coffee & tea corner 24 jam</p>
+                        <p class="text-[11px] text-slate-600 mt-1">Menu hangat shift malam + sudut kopi & teh 24 jam</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 5-Step How to Use Canteen System (Concept Slide 8 & 10) -->
+            <!-- 5-Step How to Use Canteen System -->
             <div>
                 <h3 class="text-base font-extrabold text-[#0f2e54] mb-3">5 Langkah Menggunakan Sistem Kantin Baru</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -67,21 +67,21 @@
                 </div>
             </div>
 
-            <!-- 5S Canteen Etiquette -->
+            <!-- 5R Canteen Etiquette -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-1.5">
-                    <div class="text-xs font-extrabold text-emerald-800">✔ DO — Budaya Tertib Kantin</div>
+                    <div class="text-xs font-extrabold text-emerald-800">✔ LAKUKAN — Budaya Tertib Kantin</div>
                     <ul class="text-xs text-emerald-900 space-y-1 list-disc list-inside">
                         <li>Cuci tangan sebelum dan sesudah makan di wastafel sensor.</li>
-                        <li>Antre dengan tertib di counter sesuai lajur lantai.</li>
+                        <li>Antre dengan tertib di konter sesuai lajur lantai.</li>
                         <li>Kembalikan baki dan pilah sisa makanan (Organik vs Anorganik).</li>
                     </ul>
                 </div>
                 <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-1.5">
-                    <div class="text-xs font-extrabold text-rose-800">✕ DON'T — Hal yang Dihindari</div>
+                    <div class="text-xs font-extrabold text-rose-800">✕ HINDARI — Hal yang Tidak Diperbolehkan</div>
                     <ul class="text-xs text-rose-900 space-y-1 list-disc list-inside">
                         <li>Dilarang membawa makanan berat atau berbau menyengat ke meja kerja.</li>
-                        <li>Jangan menandai (booking) kursi dengan barang sebelum mengambil makan.</li>
+                        <li>Jangan menandai kursi kosong dengan barang sebelum mengambil makanan.</li>
                         <li>Jangan meninggalkan alat makan kotor di atas meja makan.</li>
                     </ul>
                 </div>
@@ -89,7 +89,7 @@
 
             <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
                 <a href="{{ route('guide.map', ['floor' => 'Lantai 1']) }}" class="px-5 py-2.5 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs font-bold rounded-full shadow-sm transition">
-                    Lihat Lokasi Kantin di Denah 1F →
+                    Lihat Lokasi Kantin di Denah Lt. 1 →
                 </a>
                 @if($diningFacility)
                     <a href="{{ route('guide.facility.detail', $diningFacility->slug) }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-full transition">

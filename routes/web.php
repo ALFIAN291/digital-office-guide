@@ -64,7 +64,7 @@ Route::get('/admin/setup-db', function () {
             \Illuminate\Support\Facades\DB::table('management_messages')
                 ->whereNull('subtitle')
                 ->orWhere('subtitle', 'like', '%Campus%')
-                ->update(['subtitle' => 'Karawang Office 2026', 'badge_label' => 'Official Announcement']);
+                ->update(['subtitle' => 'Kantor Karawang 2026', 'badge_label' => 'Pengumuman Resmi']);
 
             $existingContacts = \App\Models\EmergencyContact::all();
             foreach ($existingContacts as $c) {

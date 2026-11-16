@@ -11,16 +11,16 @@
             <span class="text-[#0f2e54]">Pesan Manajemen & Video</span>
         </div>
         <span class="px-2.5 py-1 rounded-full bg-sky-100 text-[#0084f8] text-[11px] font-bold">
-            🎬 Video Onboarding
+            🎬 Video Orientasi
         </span>
     </div>
 
-    <!-- Video Message from Management (Concept Slide 2 Full Interactive Player) -->
+    <!-- Video Message from Management -->
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-4 sm:p-6 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-                <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54]">Video Message from Management</h2>
-                <p class="text-xs text-slate-500">Pilih chapter atau klik play untuk menyaksikan pengenalan fasilitas baru Akebono Karawang</p>
+                <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54]">Video Sambutan Manajemen</h2>
+                <p class="text-xs text-slate-500">Pilih video atau klik putar untuk menyaksikan pengenalan fasilitas baru Akebono Karawang</p>
             </div>
         </div>
         <x-video-message-player :message="$message" :chapters="$videoChapters" :scenes="$videoScenes" />
@@ -30,11 +30,11 @@
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
         <!-- Hero Header -->
         <div class="relative h-56 sm:h-72 w-full overflow-hidden">
-            <img src="{{ office_image($message->image_path, 'images/management-office.jpg') }}" alt="Karawang Office" class="w-full h-full object-cover">
+            <img src="{{ office_image($message->image_path, 'images/management-office.jpg') }}" alt="Kantor Karawang" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent"></div>
             <div class="absolute bottom-6 left-6 right-6 text-white">
                 <span class="px-3 py-1 rounded-full bg-[#0084f8] text-xs font-bold text-white uppercase tracking-wider mb-2 inline-block">
-                    Official Statement
+                    Pernyataan Resmi
                 </span>
                 <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
                     {{ $message->title }}
@@ -73,7 +73,7 @@
                         <div class="w-10 h-10 rounded-xl bg-sky-100 text-[#0084f8] flex items-center justify-center font-bold text-lg mb-3">
                             🛡️
                         </div>
-                        <h4 class="font-bold text-slate-800 text-sm">Zero Accident Safety</h4>
+                        <h4 class="font-bold text-slate-800 text-sm">Keselamatan Tanpa Kecelakaan</h4>
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">
                             Keselamatan tanpa kompromi melalui kepatuhan APD dan jalur hijau.
                         </p>
@@ -83,7 +83,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-3">
                             🤝
                         </div>
-                        <h4 class="font-bold text-slate-800 text-sm">Collaborative Culture</h4>
+                        <h4 class="font-bold text-slate-800 text-sm">Budaya Kolaboratif</h4>
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">
                             Kerjasama lintas divisi yang terbuka dan saling mendukung inovasi.
                         </p>
@@ -93,7 +93,7 @@
                         <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-3">
                             🌱
                         </div>
-                        <h4 class="font-bold text-slate-800 text-sm">Green & 5S Workplace</h4>
+                        <h4 class="font-bold text-slate-800 text-sm">Kantor Hijau & Budaya 5R</h4>
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">
                             Penerapan 5R secara konsisten, efisiensi energi, dan pelestarian lingkungan.
                         </p>

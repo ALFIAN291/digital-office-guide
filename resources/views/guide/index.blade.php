@@ -117,38 +117,38 @@
         };
     @endphp
 
-    <!-- 1. Personalized Landing Header + Hero Workplace Card (Concept Slide 1 - Screen 2) -->
+    <!-- 1. Personalized Landing Header + Hero Workplace Card -->
     <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-3.5">
         <div class="flex items-start justify-between gap-3">
             <div>
-                <div class="text-xs sm:text-sm font-semibold text-slate-500">Welcome,</div>
+                <div class="text-xs sm:text-sm font-semibold text-slate-500">Selamat Datang,</div>
                 <div class="text-2xl sm:text-3xl font-black text-[#0f2e54] tracking-tight flex items-center gap-1.5 mt-0.5">
-                    <span x-text="deskProfile && deskProfile.name ? deskProfile.name : 'Visitor'">{{ $scannedDesk?->name ?? 'Visitor' }}</span>
+                    <span x-text="deskProfile && deskProfile.name ? deskProfile.name : 'Pengunjung'">{{ $scannedDesk?->name ?? 'Pengunjung' }}</span>
                     <span>👋</span>
                     <template x-if="deskProfile && deskProfile.name">
                         <button type="button" @click="resetVisitor()"
                                 class="ml-1.5 px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 text-[10px] font-bold transition cursor-pointer"
-                                title="Reset ke Visitor">
+                                title="Reset ke Pengunjung">
                             Reset
                         </button>
                     </template>
                 </div>
                 <template x-if="deskProfile && deskProfile.desk">
                     <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
-                        <span x-text="'Floor ' + deskProfile.floor"></span>
+                        <span x-text="'Lantai ' + deskProfile.floor"></span>
                         <span>•</span>
                         <span x-text="deskProfile.dept"></span>
                         <span>•</span>
-                        <span class="font-bold text-[#0f2e54]" x-text="'Desk ' + deskProfile.desk"></span>
+                        <span class="font-bold text-[#0f2e54]" x-text="'Meja ' + deskProfile.desk"></span>
                     </div>
                 </template>
                 <template x-if="!deskProfile || !deskProfile.desk">
                     <div class="text-xs sm:text-sm font-medium text-slate-500 mt-1 flex items-center flex-wrap gap-x-2 gap-y-0.5">
-                        <span>Main Office & Plant</span>
+                        <span>Gedung Utama & Pabrik</span>
                         <span>•</span>
-                        <span>Guest & Employee Portal</span>
+                        <span>Portal Tamu & Karyawan</span>
                         <span>•</span>
-                        <span class="font-bold text-[#0084f8]">Scan Desk QR for Personal Desk</span>
+                        <span class="font-bold text-[#0084f8]">Pindai QR Meja untuk Info Meja Anda</span>
                     </div>
                 </template>
             </div>
@@ -171,11 +171,11 @@
             <div class="relative z-10 p-4 sm:p-6 text-white w-full flex items-end justify-between gap-3">
                 <div>
                     <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-tight drop-shadow-xs">
-                        {{ $settings->hero_title_line1 ?? 'Welcome to' }}<br>
-                        <span>{{ $settings->hero_title_line2 ?? 'Our New Workplace' }}</span>
+                        {{ $settings->hero_title_line1 ?? 'Selamat Datang di' }}<br>
+                        <span>{{ $settings->hero_title_line2 ?? 'Lingkungan Kerja Baru Anda' }}</span>
                     </h1>
                     <p class="text-white/85 text-xs sm:text-sm font-medium mt-1 max-w-xl drop-shadow-xs line-clamp-1">
-                        {{ $settings->hero_tagline ?? 'Moving Together. Working Better. Growing Stronger.' }}
+                        {{ $settings->hero_tagline ?? 'Melangkah Bersama. Bekerja Lebih Baik. Tumbuh Lebih Kuat.' }}
                     </p>
                 </div>
 
@@ -207,7 +207,7 @@
                 <div class="min-w-0">
                     <div class="flex items-center gap-1.5">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#0084f8] bg-sky-100 px-2 py-0.5 rounded-full">
-                            {{ $message->badge_label ?? 'Official Announcement' }}
+                            {{ $message->badge_label ?? 'Pengumuman Resmi' }}
                         </span>
                         @if(!empty($message->subtitle))
                             <span class="text-[10px] text-slate-500 hidden sm:inline">• {{ $message->subtitle }}</span>
@@ -216,7 +216,7 @@
                         @endif
                     </div>
                     <p class="text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5 group-hover:text-[#0084f8] transition">
-                        {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative workplace.' }}
+                        {{ $message->summary ?? 'Saat kita memulai babak baru di kantor Karawang, mari bersama membangun tempat kerja yang lebih aman dan kolaboratif.' }}
                     </p>
                 </div>
             </div>
@@ -250,26 +250,26 @@
                 
                 <!-- Left Image (Workstation interior) -->
                 <div class="relative {{ $msgImgClass }} overflow-hidden">
-                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Karawang Workplace Interior" class="w-full h-full object-cover">
+                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Interior Kantor Karawang" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
                 </div>
 
                 <!-- Right Message Content -->
                 <div class="{{ $msgPaddingClass }} flex flex-col justify-center">
                     <h2 class="{{ $msgTitleClass }} font-extrabold text-[#0f2e54] tracking-tight leading-snug">
-                        {{ $message->title ?? 'A Message from Management' }}
+                        {{ $message->title ?? 'Pesan dari Manajemen' }}
                     </h2>
                     
                     <div class="w-8 sm:w-10 h-0.75 bg-[#0084f8] rounded-full mt-1 mb-2"></div>
                     
                     <p class="text-slate-600 text-xs sm:text-sm leading-relaxed {{ $msgMarginClass }} {{ $msgClampClass }} font-normal">
-                        {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
+                        {{ $message->summary ?? 'Saat kita memulai babak baru di kantor Karawang, mari bersama membangun tempat kerja yang lebih aman, kolaboratif, dan siap menghadapi masa depan.' }}
                     </p>
 
                     <div>
                         <button type="button"
                                 class="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#0084f8] hover:bg-[#0070d6] text-white text-xs sm:text-sm font-semibold rounded-full shadow-xs hover:shadow-md transition-all transform active:scale-95 cursor-pointer">
-                            <span>Read Message</span>
+                            <span>Baca Pesan</span>
                             <span class="text-sm leading-none">→</span>
                         </button>
                     </div>
@@ -279,11 +279,11 @@
         </div>
     @endif
 
-    <!-- 2B. Your Onboarding Journey (Concept Slide 1 - Screen 3: Always Visible on Both Mobile & Desktop) -->
+    <!-- 2B. Panduan Orientasi Anda -->
     <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-4">
         <div class="flex items-center justify-between gap-2">
             <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54] tracking-tight">
-                Your Onboarding Journey
+                Panduan Orientasi Anda
             </h2>
             <span class="text-xs sm:text-sm font-extrabold text-slate-500"
                   x-text="Math.min(100, Math.round((completedSteps.length / 6) * 100)) + '%'">60%</span>
@@ -342,34 +342,34 @@
         </div>
     </div>
 
-    <!-- 2C. Building Guide Interactive Preview Card (Concept Slide 1 - Screen 4: Find Your Way on Both Mobile & Desktop) -->
+    <!-- 2C. Panduan Gedung Preview Card -->
     <div class="bg-white rounded-3xl p-4 sm:p-6 soft-shadow border border-slate-200/80 space-y-4" x-data="{ bgTab: 'map' }">
         <div class="flex items-center justify-between gap-2">
             <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54] tracking-tight">
-                Building Guide
+                Panduan Gedung
             </h2>
             <a href="{{ route('guide.map') }}" class="text-xs font-extrabold text-[#0084f8] hover:underline flex items-center gap-1">
-                <span>Buka Peta Penuh</span>
+                <span>Buka Denah Penuh</span>
                 <span>↗</span>
             </a>
         </div>
 
-        <!-- 3 Pill Tabs (Floor Map | Key Locations | Emergency) -->
+        <!-- 3 Pill Tabs -->
         <div class="flex items-center gap-2 overflow-x-auto pb-0.5">
             <button type="button" @click="bgTab = 'map'"
                     :class="bgTab === 'map' ? 'bg-[#0f2e54] text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                     class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
-                Floor Map
+                Denah Lantai
             </button>
             <button type="button" @click="bgTab = 'locations'"
                     :class="bgTab === 'locations' ? 'bg-[#0f2e54] text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                     class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
-                Key Locations
+                Lokasi Penting
             </button>
             <button type="button" @click="bgTab = 'emergency'"
                     :class="bgTab === 'emergency' ? 'bg-rose-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                     class="px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer shrink-0">
-                Emergency
+                Darurat (SOS)
             </button>
         </div>
 
@@ -377,52 +377,52 @@
         <div x-show="bgTab === 'map'" class="space-y-3.5">
             <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}"
                class="group block relative rounded-2xl overflow-hidden border border-slate-200/90 bg-gradient-to-br from-sky-50 via-white to-slate-100 h-48 sm:h-60">
-                <img src="{{ asset('images/facilities-office.jpg') }}" alt="Floor Plan Preview" class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500">
+                <img src="{{ asset('images/facilities-office.jpg') }}" alt="Pratinjau Denah Lantai" class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-900/15 to-transparent"></div>
 
                 <!-- Simulated Interactive Map Pins -->
                 <div class="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 bg-[#0084f8] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md border-2 border-white flex items-center gap-1">
                     <span>📍</span>
-                    <span x-text="'Desk ' + (deskProfile ? deskProfile.desk : 'A-023')">Desk A-023</span>
+                    <span x-text="deskProfile && deskProfile.desk ? 'Meja ' + deskProfile.desk : 'Area Kerja Lt. 2'">Area Kerja Lt. 2</span>
                 </div>
                 <div class="absolute top-1/2 right-1/4 bg-emerald-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md border-2 border-white hidden sm:flex items-center gap-1">
                     <span>🚪</span>
-                    <span>Sakura Room</span>
+                    <span>Ruang Rapat 5</span>
                 </div>
 
-                <!-- Bottom-Left 2F Office Area Badge (Matching Screen 4) -->
+                <!-- Bottom-Left Lt. 2 Office Area Badge -->
                 <div class="absolute bottom-3 left-3 bg-[#0f2e54] text-white px-3.5 py-1.5 rounded-2xl shadow-lg flex items-center gap-2 border border-white/15">
-                    <span class="text-lg font-black leading-none" x-text="deskProfile ? deskProfile.floor : '2'">2</span>
+                    <span class="text-lg font-black leading-none" x-text="deskProfile && deskProfile.floor ? deskProfile.floor : '2'">2</span>
                     <div class="leading-tight text-left">
-                        <div class="text-[10px] font-extrabold text-sky-300" x-text="(deskProfile ? deskProfile.floor : '2') + 'F'">2F</div>
-                        <div class="text-[11px] font-bold" x-text="deskProfile ? deskProfile.area : 'Office Area'">Office Area</div>
+                        <div class="text-[10px] font-extrabold text-sky-300" x-text="'Lantai ' + (deskProfile && deskProfile.floor ? deskProfile.floor : '2')">Lantai 2</div>
+                        <div class="text-[11px] font-bold" x-text="deskProfile && deskProfile.area ? deskProfile.area : 'Area Kantor'">Area Kantor</div>
                     </div>
                 </div>
 
                 <div class="absolute bottom-3 right-3 bg-white/95 text-[#0f2e54] px-3 py-1.5 rounded-xl text-xs font-extrabold shadow-md">
-                    Interaktif 2D Map →
+                    Denah Interaktif 2D →
                 </div>
             </a>
 
-            <!-- 3 Bottom Thumbnail Cards (Your Desk | Meeting Room | Canteen) -->
+            <!-- 3 Bottom Thumbnail Cards -->
             <div class="grid grid-cols-3 gap-2.5 sm:gap-4">
                 <a href="{{ route('guide.map', ['floor' => 'Lantai 2']) }}" class="group text-center space-y-1.5">
                     <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
-                        <img src="{{ asset('images/facilities-office.jpg') }}" alt="Your Desk" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <img src="{{ asset('images/facilities-office.jpg') }}" alt="Meja Kerja" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
-                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Your Desk</div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Area Meja Kerja</div>
                 </a>
                 <a href="{{ route('guide.facilities', ['category' => 'meeting']) }}" class="group text-center space-y-1.5">
                     <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
-                        <img src="{{ asset('images/meeting-room.jpg') }}" alt="Meeting Room" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <img src="{{ asset('images/meeting-room.jpg') }}" alt="Ruang Rapat" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
-                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Meeting Room</div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Ruang Rapat</div>
                 </a>
                 <a href="{{ route('guide.canteen') }}" class="group text-center space-y-1.5">
                     <div class="h-20 sm:h-28 rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-100 shadow-2xs">
-                        <img src="{{ asset('images/hero-office.jpg') }}" alt="Canteen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                        <img src="{{ asset('images/hero-office.jpg') }}" alt="Kantin" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
-                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Canteen</div>
+                    <div class="text-xs font-extrabold text-[#0f2e54] group-hover:text-[#0084f8]">Kantin</div>
                 </a>
             </div>
         </div>
@@ -458,11 +458,11 @@
         </div>
     </div>
 
-    <!-- 3. Explore Your Workplace Section (Matching Mockup) -->
+    <!-- 3. Jelajahi Lingkungan Kerja Section -->
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <h2 class="text-2xl sm:text-[26px] font-extrabold text-[#0f2e54] tracking-tight">
-                {{ $settings->explore_title ?? 'Explore Your Workplace' }}
+                {{ $settings->explore_title ?? 'Jelajahi Lingkungan Kerja Anda' }}
             </h2>
             @auth
                 <a href="{{ route('admin.home.edit') }}" class="text-xs font-bold text-[#0084f8] hover:underline">
@@ -474,10 +474,10 @@
         <!-- 4 Grid Cards (Horizontal Compact Media Cards di Mobile, 2-Kolom Grid di Desktop) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-5">
             
-            <!-- Card 1: Office & Plant -->
+            <!-- Card 1: Kantor & Pabrik -->
             <a href="{{ route('guide.office-and-plant') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_office_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Office & Plant' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_office_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Kantor & Pabrik' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -488,7 +488,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
-                                {{ $settings->card_office_title ?? 'Office & Plant' }}
+                                {{ $settings->card_office_title ?? 'Kantor & Pabrik' }}
                             </span>
                             <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
                                 Panduan gedung & area pabrik
@@ -501,10 +501,10 @@
                 </div>
             </a>
 
-            <!-- Card 2: Facilities -->
+            <!-- Card 2: Fasilitas -->
             <a href="{{ route('guide.facilities') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_facilities_image ?? null, 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Facilities' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_facilities_image ?? null, 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Fasilitas' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -515,7 +515,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
-                                {{ $settings->card_facilities_title ?? 'Facilities' }}
+                                {{ $settings->card_facilities_title ?? 'Fasilitas' }}
                             </span>
                             <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
                                 Ruangan, kapasitas & jam kerja
@@ -528,10 +528,10 @@
                 </div>
             </a>
 
-            <!-- Card 3: Office Map -->
+            <!-- Card 3: Denah Kantor -->
             <a href="{{ route('guide.map') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_map_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Office Map' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_map_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Denah Kantor' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -543,7 +543,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
-                                {{ $settings->card_map_title ?? 'Office Map' }}
+                                {{ $settings->card_map_title ?? 'Denah Kantor' }}
                             </span>
                             <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
                                 Denah interaktif & titik lokasi
@@ -556,10 +556,10 @@
                 </div>
             </a>
 
-            <!-- Card 4: Dos & Don'ts -->
+            <!-- Card 4: Etiket & Aturan (K3) -->
             <a href="{{ route('guide.dos-and-donts') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_rules_image ?? null, 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? "Dos & Don'ts" }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_image($settings->card_rules_image ?? null, 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? 'Etiket & Aturan (K3)' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -570,7 +570,7 @@
                         </div>
                         <div class="min-w-0">
                             <span class="text-sm sm:text-lg font-bold text-[#0f2e54] group-hover:text-[#0084f8] transition-colors truncate block">
-                                {{ $settings->card_rules_title ?? "Dos & Don'ts" }}
+                                {{ $settings->card_rules_title ?? 'Etiket & Aturan (K3)' }}
                             </span>
                             <span class="text-[11px] text-slate-400 font-medium sm:hidden block truncate">
                                 Tata tertib & keselamatan kerja
@@ -651,7 +651,7 @@
 
                 <div class="mt-1 sm:mt-1.5">
                     <h3 class="text-lg sm:text-xl font-black text-[#0f2e54] tracking-tight">
-                        {{ $message->title ?? 'A Message from Management' }}
+                        {{ $message->title ?? 'Pesan dari Manajemen' }}
                     </h3>
                     <div class="w-8 h-1 bg-[#0084f8] rounded-full mt-1"></div>
                 </div>
@@ -659,17 +659,17 @@
 
             <!-- Scrollable Modal Body (Teks & Foto Terstruktur Rapi - Mepet & Hemat Tempat) -->
             <div class="px-5 sm:px-6 pt-2.5 sm:pt-3 pb-5 sm:pb-6 overflow-y-auto space-y-3 sm:space-y-3.5 text-slate-700 flex-1 custom-modal-scroll">
-                <!-- Concept Slide 2 Switcher: Official Letter vs Interactive Video Message -->
+                <!-- Switcher: Surat Resmi vs Video Sambutan -->
                 <div class="flex items-center justify-between gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200/70">
                     <button type="button" @click="modalTab = 'letter'"
                             class="flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer"
                             :class="modalTab === 'letter' ? 'bg-white text-[#0f2e54] shadow-2xs' : 'text-slate-500 hover:text-slate-800'">
-                        📝 Official Message & Photo
+                        📝 Pesan & Foto Resmi
                     </button>
                     <button type="button" @click="modalTab = 'video'"
                             class="flex-1 py-1.5 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer flex items-center justify-center gap-1.5"
                             :class="modalTab === 'video' ? 'bg-[#0084f8] text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'">
-                        <span>🎬 Video Message</span>
+                        <span>🎬 Video Sambutan</span>
                     </button>
                 </div>
 
@@ -686,7 +686,7 @@
                 <!-- 1. Foto Tim Langsung di Bawah Judul (Lebih Ringkas & Tidak Kegedean) -->
                 <div class="relative h-28 sm:h-36 w-full rounded-xl sm:rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
                     <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
-                         alt="Management & Team" 
+                         alt="Manajemen & Tim" 
                          class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
                     
                     <!-- Caption Strip with Pulse Dot (Ringkas & Proporsional) -->
@@ -699,12 +699,12 @@
                     </div>
                 </div>
 
-                <!-- 2. Kotak Quote ("As we begin...") dengan Border Biru -->
+                <!-- 2. Kotak Quote dengan Border Biru -->
                 <div class="bg-gradient-to-r from-sky-50 via-blue-50/40 to-white border-l-4 border-[#0084f8] border border-sky-200 p-3 sm:p-3.5 rounded-2xl shadow-xs">
                     <div class="flex items-start gap-2.5">
                         <span class="text-xl sm:text-2xl text-[#0084f8] font-serif leading-none select-none">“</span>
                         <p class="text-xs sm:text-sm font-semibold text-[#0b3c6d] leading-relaxed italic text-justify">
-                            {{ $message->summary ?? 'As we begin a new chapter at our Karawang office, let us build a safer, more collaborative, and future-ready workplace — together.' }}
+                            {{ $message->summary ?? 'Saat kita memulai babak baru di kantor Karawang, mari bersama membangun tempat kerja yang lebih aman, kolaboratif, dan siap menghadapi masa depan.' }}
                         </p>
                     </div>
                 </div>
@@ -716,7 +716,7 @@
                     <!-- Sign-off Section di Dalam Kotak Ber-border -->
                     <div class="pt-3 border-t border-slate-300/80 flex items-center justify-between gap-3">
                         <div>
-                            <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Management Board' }}</div>
+                            <div class="text-xs font-extrabold text-slate-900">{{ $message->sender_name ?? 'Jajaran Direksi & Manajemen' }}</div>
                             <div class="text-[10px] text-slate-500">{{ $message->sender_role ?? 'PT Akebono Brake Astra Indonesia' }}</div>
                         </div>
                         <div class="text-right">
@@ -736,7 +736,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                             <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
                                 <div class="text-sm mb-0.5">🛡️</div>
-                                <div class="text-xs font-bold text-slate-900">{{ $message->val_1_title ?? 'Safety First' }}</div>
+                                <div class="text-xs font-bold text-slate-900">{{ $message->val_1_title ?? 'Utamakan Keselamatan' }}</div>
                                 <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_1_desc ?? 'Prioritas keselamatan tanpa kompromi.' }}</div>
                             </div>
                             <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
@@ -746,8 +746,8 @@
                             </div>
                             <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5">
                                 <div class="text-sm mb-0.5">🌿</div>
-                                <div class="text-xs font-bold text-slate-900">{{ $message->val_3_title ?? '5S & Green' }}</div>
-                                <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_3_desc ?? 'Disiplin 5S & ramah lingkungan.' }}</div>
+                                <div class="text-xs font-bold text-slate-900">{{ $message->val_3_title ?? 'Budaya 5R & Hijau' }}</div>
+                                <div class="text-[10px] text-slate-500 leading-snug mt-0.5">{{ $message->val_3_desc ?? 'Disiplin 5R & ramah lingkungan.' }}</div>
                             </div>
                         </div>
                     </div>

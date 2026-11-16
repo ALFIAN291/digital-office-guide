@@ -20,21 +20,21 @@ class OfficeGuideTest extends TestCase
     {
         $response = $this->get('/');
         $response->assertStatus(200);
-        $response->assertSeeText('Welcome to');
-        $response->assertSeeText('Your New Workplace');
-        $response->assertSeeText('A Message from');
-        $response->assertSeeText('Explore Your Workplace');
-        $response->assertSeeText('Office & Plant');
-        $response->assertSeeText('Facilities');
-        $response->assertSeeText('Office Map');
-        $response->assertSeeText('Dos & Don\'ts');
+        $response->assertSeeText('Selamat Datang di');
+        $response->assertSeeText('Lingkungan Kerja Baru Anda');
+        $response->assertSeeText('Pesan dari Manajemen');
+        $response->assertSeeText('Jelajahi Lingkungan Kerja Anda');
+        $response->assertSeeText('Kantor & Pabrik');
+        $response->assertSeeText('Fasilitas');
+        $response->assertSeeText('Denah Kantor');
+        $response->assertSeeText('Etiket & Aturan (K3)');
     }
 
     public function test_message_page_returns_successful_response(): void
     {
         $response = $this->get('/message');
         $response->assertStatus(200);
-        $response->assertSeeText('A Message from Management');
+        $response->assertSeeText('Pesan dari Manajemen');
     }
 
     public function test_facilities_page_returns_successful_response(): void
@@ -62,7 +62,7 @@ class OfficeGuideTest extends TestCase
     {
         $response = $this->get('/dos-and-donts');
         $response->assertStatus(200);
-        $response->assertSeeText('Office Dos & Don\'ts');
+        $response->assertSeeText('Etiket & Tata Tertib Kantor');
     }
 
     public function test_office_and_plant_page_returns_successful_response(): void
@@ -88,11 +88,11 @@ class OfficeGuideTest extends TestCase
 
     public function test_concept_routes_return_successful_responses(): void
     {
-        $this->get('/onboarding')->assertStatus(200)->assertSeeText('Your Onboarding Journey');
-        $this->get('/canteen')->assertStatus(200)->assertSeeText('Canteen');
-        $this->get('/visitor-guide')->assertStatus(200)->assertSeeText('Visitor Management');
-        $this->get('/attendance')->assertStatus(200)->assertSeeText('Attendance');
-        $this->get('/support')->assertStatus(200)->assertSeeText('Support');
+        $this->get('/onboarding')->assertStatus(200)->assertSeeText('Panduan Orientasi Karyawan Anda');
+        $this->get('/canteen')->assertStatus(200)->assertSeeText('Panduan Kantin');
+        $this->get('/visitor-guide')->assertStatus(200)->assertSeeText('Manajemen Tamu & Resepsionis Virtual');
+        $this->get('/attendance')->assertStatus(200)->assertSeeText('Panduan Absensi & Jam Kerja');
+        $this->get('/support')->assertStatus(200)->assertSeeText('Pusat Bantuan & Kontak Internal');
     }
 
     public function test_admin_can_save_edit_and_print_desk_cards(): void
@@ -140,15 +140,15 @@ class OfficeGuideTest extends TestCase
     {
         $response = $this->get('/facilities/ruang-rapat-sakura');
         $response->assertStatus(200);
-        $response->assertSeeText('How to Use');
-        $response->assertSeeText('Book via SSO Portal');
+        $response->assertSeeText('Cara Menggunakan');
+        $response->assertSeeText('Portal SSO');
     }
 
     public function test_map_page_renders_architectural_floor_controls(): void
     {
         $response = $this->get('/map?floor=Lantai+2');
         $response->assertStatus(200);
-        $response->assertSeeText('Floor Plan');
-        $response->assertSeeText('Get Direction');
+        $response->assertSeeText('Denah Lantai');
+        $response->assertSeeText('Petunjuk Arah');
     }
 }

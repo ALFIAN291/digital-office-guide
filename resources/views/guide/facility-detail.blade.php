@@ -10,36 +10,36 @@
         ->values();
 
     $floorLabel = match ($facility->floor) {
-        'Lantai 2' => '2nd Floor',
-        'Lantai 1' => '1st Floor',
+        'Lantai 2' => 'Lantai 2',
+        'Lantai 1' => 'Lantai 1',
         default => $facility->floor,
     };
 
     $categoryLabel = match ($facility->category) {
-        'meeting' => 'Meeting Room',
-        'workspace' => 'Office Area',
-        'dining' => 'Canteen & Dining',
-        'wellness' => 'Wellness & Prayer',
-        'safety' => 'Safety & Medical',
-        default => ucfirst((string) $facility->category),
+        'meeting' => 'Ruang Rapat',
+        'workspace' => 'Area Kerja',
+        'dining' => 'Kantin & Makan',
+        'wellness' => 'Kesehatan & Ibadah',
+        'safety' => 'Keselamatan & Medis',
+        default => 'Layanan & Fasilitas',
     };
 
     $defaultMeetingEquipments = [
-        ['title' => 'Display', 'sub' => '(4K)', 'type' => 'display'],
-        ['title' => 'Camera', 'sub' => '(VC)', 'type' => 'camera'],
-        ['title' => 'Microphone', 'sub' => '(Beamforming)', 'type' => 'mic'],
+        ['title' => 'Layar', 'sub' => '(4K)', 'type' => 'display'],
+        ['title' => 'Kamera', 'sub' => '(VC)', 'type' => 'camera'],
+        ['title' => 'Mikrofon', 'sub' => '(Beamforming)', 'type' => 'mic'],
         ['title' => 'Speaker', 'sub' => '(Audio)', 'type' => 'speaker'],
-        ['title' => 'Video', 'sub' => 'Conference', 'type' => 'vc'],
+        ['title' => 'Konferensi', 'sub' => 'Video', 'type' => 'vc'],
     ];
 
     $sidebarCategories = [
-        ['label' => 'Meeting Room', 'icon' => '👥', 'cat' => 'meeting'],
-        ['label' => 'Executive Meeting', 'icon' => '🏛️', 'cat' => 'meeting'],
-        ['label' => 'Auditorium & Hall', 'icon' => '📽️', 'cat' => 'service'],
-        ['label' => 'Visitor & Reception', 'icon' => '🪪', 'cat' => 'service'],
-        ['label' => 'Canteen & Dining', 'icon' => '🍽️', 'cat' => 'dining'],
-        ['label' => 'Office & Common', 'icon' => '💻', 'cat' => 'workspace'],
-        ['label' => 'Building & Safety', 'icon' => '🛡️', 'cat' => 'safety'],
+        ['label' => 'Ruang Rapat', 'icon' => '👥', 'cat' => 'meeting'],
+        ['label' => 'Rapat Eksekutif', 'icon' => '🏛️', 'cat' => 'meeting'],
+        ['label' => 'Auditorium & Aula', 'icon' => '📽️', 'cat' => 'service'],
+        ['label' => 'Tamu & Resepsionis', 'icon' => '🪪', 'cat' => 'service'],
+        ['label' => 'Kantin & Makan', 'icon' => '🍽️', 'cat' => 'dining'],
+        ['label' => 'Area Kerja & Umum', 'icon' => '💻', 'cat' => 'workspace'],
+        ['label' => 'Gedung & Keselamatan', 'icon' => '🛡️', 'cat' => 'safety'],
     ];
 @endphp
 
@@ -56,14 +56,14 @@
         }
      }">
 
-    <!-- Top Breadcrumb (< Facilities > Meeting Room 5) Matching Screenshot 2 -->
+    <!-- Top Breadcrumb (< Fasilitas > Ruang Rapat) -->
     <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500">
             <a href="{{ route('guide.facilities') }}" class="inline-flex items-center gap-1.5 text-[#0066dc] hover:underline font-bold">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
                 </svg>
-                <span class="text-slate-600">Facilities</span>
+                <span class="text-slate-600">Fasilitas</span>
             </a>
             <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
@@ -72,7 +72,7 @@
         </div>
 
         <a href="{{ route('guide.map', ['floor' => $facility->floor]) }}" class="hidden sm:inline-flex items-center gap-1 text-xs font-extrabold text-[#0066dc] hover:underline">
-            <span>📍 View on Floor Plan</span>
+            <span>📍 Lihat di Denah Lantai</span>
             <span>→</span>
         </a>
     </div>
@@ -128,9 +128,9 @@
             </div>
         </div>
 
-        <!-- 3. Two-Column Divided Metadata Box (Capacity | Location) Matching Screenshot 2 -->
+        <!-- 3. Two-Column Divided Metadata Box (Kapasitas | Lokasi) -->
         <div class="grid grid-cols-2 divide-x divide-slate-200/90 bg-slate-50/70 border border-slate-200/80 rounded-2xl p-3.5 sm:p-4">
-            <!-- Left: Capacity -->
+            <!-- Left: Kapasitas -->
             <div class="flex items-center gap-3 pr-2">
                 <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -138,12 +138,12 @@
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">Capacity</div>
-                    <div class="text-xs sm:text-sm font-semibold text-slate-600 truncate">{{ $facility->capacity ?? '8 – 10 people' }}</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">Kapasitas</div>
+                    <div class="text-xs sm:text-sm font-semibold text-slate-600 truncate">{{ $facility->capacity ?? '8 – 10 orang' }}</div>
                 </div>
             </div>
 
-            <!-- Right: Location -->
+            <!-- Right: Lokasi -->
             <div class="flex items-center gap-3 pl-3 sm:pl-5">
                 <div class="w-9 h-9 rounded-xl bg-sky-50 text-[#0066dc] flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -151,15 +151,15 @@
                     </svg>
                 </div>
                 <div class="min-w-0">
-                    <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">Location</div>
-                    <div class="text-xs sm:text-sm font-semibold text-slate-600 truncate">{{ $facility->location_detail ?? '2nd Floor (East Wing)' }}</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-[#0f2e54]">Lokasi</div>
+                    <div class="text-xs sm:text-sm font-semibold text-slate-600 truncate">{{ $facility->location_detail ?? 'Lantai 2 (Sayap Timur)' }}</div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Facilities & Equipment (5 Vertical Icon Cards in a 5-Column Grid Matching Screenshot 2) -->
+        <!-- 4. Fasilitas & Perlengkapan -->
         <div class="space-y-3">
-            <h2 class="text-base sm:text-lg font-extrabold text-[#0f2e54]">Facilities & Equipment</h2>
+            <h2 class="text-base sm:text-lg font-extrabold text-[#0f2e54]">Fasilitas & Perlengkapan</h2>
 
             <div class="grid grid-cols-5 gap-1.5 sm:gap-3">
                 @foreach($defaultMeetingEquipments as $eq)
@@ -201,7 +201,7 @@
             </div>
         </div>
 
-        <!-- 5. Two Full-Width Pill Action Buttons Matching Screenshot 2 -->
+        <!-- 5. Two Full-Width Pill Action Buttons -->
         <div class="space-y-2.5 pt-1">
             @if($facility->booking_url)
                 <a href="{{ $facility->booking_url }}" target="_blank" rel="noopener noreferrer"
@@ -215,8 +215,8 @@
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                         <span class="leading-tight text-left">
-                            <span class="block text-xs sm:text-sm font-extrabold">Book This Room</span>
-                            <span class="block text-[10px] sm:text-xs font-semibold text-sky-100">(via SSO Portal)</span>
+                            <span class="block text-xs sm:text-sm font-extrabold">Pesan Ruangan Ini</span>
+                            <span class="block text-[10px] sm:text-xs font-semibold text-sky-100">(melalui Portal SSO)</span>
                         </span>
                     </span>
                     <svg class="w-4 h-4 shrink-0 text-white/90" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -235,8 +235,8 @@
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
                         <span class="leading-tight text-left">
-                            <span class="block text-xs sm:text-sm font-extrabold">Book This Room</span>
-                            <span class="block text-[10px] sm:text-xs font-semibold text-sky-100">(via SSO Portal) • Book via SSO Portal</span>
+                            <span class="block text-xs sm:text-sm font-extrabold">Pesan Ruangan Ini</span>
+                            <span class="block text-[10px] sm:text-xs font-semibold text-sky-100">(melalui Portal SSO) • Booking via Portal SSO</span>
                         </span>
                     </span>
                     <svg class="w-4 h-4 shrink-0 text-white/90" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -245,27 +245,27 @@
                 </button>
             @endif
 
-            <!-- Outlined Pill Button: View How to Use -->
+            <!-- Outlined Pill Button: Lihat Cara Penggunaan -->
             <a href="#how-to-use"
                class="w-full py-3 px-5 rounded-full bg-white hover:bg-sky-50 text-[#0066dc] border-2 border-[#0066dc]/35 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition">
                 <svg class="w-5 h-5 text-[#0066dc]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9"></circle>
                     <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
                 </svg>
-                <span>View How to Use</span>
+                <span>Lihat Cara Penggunaan</span>
             </a>
         </div>
     </div>
 
-    <!-- How to Use 5-Step Guide & Rules Section (Below Main Card) -->
+    <!-- Panduan Cara Penggunaan 5 Langkah & Aturan -->
     <div id="how-to-use" class="bg-white/95 rounded-3xl soft-shadow border border-slate-200/80 p-5 sm:p-6 space-y-5 max-w-2xl mx-auto lg:max-w-none">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
                 <h3 class="text-base sm:text-lg font-extrabold text-[#0f2e54] flex items-center gap-2">
                     <span class="w-6 h-6 rounded-full bg-sky-100 text-[#0066dc] flex items-center justify-center text-xs">▶</span>
-                    <span>How to Use the {{ $facility->name }}</span>
+                    <span>Cara Menggunakan {{ $facility->name }}</span>
                 </h3>
-                <p class="text-xs text-slate-500 mt-0.5">Step-by-step guide to booking, connecting, and using this facility properly.</p>
+                <p class="text-xs text-slate-500 mt-0.5">Panduan langkah demi langkah untuk memesan, menghubungkan perangkat, dan menggunakan fasilitas ini dengan tertib.</p>
             </div>
         </div>
 
@@ -286,7 +286,7 @@
                             <div class="text-[9px] font-bold text-sky-200 uppercase tracking-wider">{{ $s['badge'] ?? '' }}</div>
                             <div class="text-xs font-extrabold leading-tight">{{ $s['preview_title'] ?? $s['title'] }}</div>
                             <span class="inline-block px-2 py-0.5 rounded bg-white/15 text-[9px] font-bold">
-                                {{ $s['preview_status'] ?? 'Ready' }}
+                                {{ $s['preview_status'] ?? 'Siap' }}
                             </span>
                         </div>
 
@@ -298,9 +298,9 @@
             @endforeach
         </div>
 
-        <!-- Rules & Guidelines Checklist -->
+        <!-- Aturan & Pedoman Penggunaan -->
         <div class="pt-4 border-t border-slate-100 space-y-2.5">
-            <h4 class="text-sm font-extrabold text-[#0f2e54]">Rules & Guidelines</h4>
+            <h4 class="text-sm font-extrabold text-[#0f2e54]">Aturan & Pedoman Penggunaan</h4>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 @forelse($guidelineItems as $ruleText)
                     <div class="flex items-start gap-2.5 text-xs font-semibold text-slate-700">
@@ -310,29 +310,29 @@
                 @empty
                     <div class="flex items-start gap-2.5 text-xs font-semibold text-slate-700">
                         <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-bold shrink-0">✓</span>
-                        <span>Terapkan budaya 5S dan jaga kebersihan fasilitas.</span>
+                        <span>Terapkan budaya 5R dan jaga kebersihan fasilitas.</span>
                     </div>
                 @endforelse
             </div>
         </div>
     </div>
 
-    <!-- SSO Portal Booking Helper Modal -->
+    <!-- Modal Bantuan Pemesanan Portal SSO -->
     <div x-show="bookingModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
         <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" @click="bookingModalOpen = false"></div>
         <div class="relative bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
             <div class="flex items-center justify-between">
-                <h3 class="text-base font-extrabold text-[#0f2e54]">Book via Company SSO Portal</h3>
+                <h3 class="text-base font-extrabold text-[#0f2e54]">Pesan via Portal SSO Perusahaan</h3>
                 <button type="button" @click="bookingModalOpen = false" class="text-slate-400 hover:text-slate-700 font-bold cursor-pointer">✕</button>
             </div>
             <div class="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-xs text-slate-700 space-y-2">
-                <p><strong>Facility:</strong> {{ $facility->name }} ({{ $floorLabel }})</p>
-                <p><strong>Location:</strong> {{ $facility->location_detail ?? '2nd Floor (East Wing)' }}</p>
-                <p class="text-slate-600">Sign in with your Akebono SSO / Microsoft Outlook Calendar account to reserve <strong>{{ $facility->name }}</strong>.</p>
+                <p><strong>Fasilitas:</strong> {{ $facility->name }} ({{ $floorLabel }})</p>
+                <p><strong>Lokasi:</strong> {{ $facility->location_detail ?? 'Lantai 2 (Sayap Timur)' }}</p>
+                <p class="text-slate-600">Silakan login dengan akun Akebono SSO / kalender Microsoft Outlook Anda untuk memesan <strong>{{ $facility->name }}</strong>.</p>
             </div>
             <div class="flex items-center justify-end gap-2">
                 <button type="button" @click="bookingModalOpen = false" class="px-4 py-2 rounded-xl bg-[#0066dc] text-white text-xs font-bold cursor-pointer">
-                    Got It
+                    Mengerti
                 </button>
             </div>
         </div>

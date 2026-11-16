@@ -56,12 +56,12 @@
         
         <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             <div>
-                <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight drop-shadow-xs">Office Dos & Don'ts</h1>
-                <p class="text-white/90 text-xs sm:text-sm font-medium mt-0.5">Simple habits for a better workplace.</p>
+                <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight drop-shadow-xs">Etiket & Tata Tertib Kantor</h1>
+                <p class="text-white/90 text-xs sm:text-sm font-medium mt-0.5">Kebiasaan sederhana untuk tempat kerja yang lebih nyaman, aman, dan produktif.</p>
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] sm:text-xs font-bold text-white border border-white/30 w-fit">
                 <span class="text-emerald-300">✓</span>
-                <span>Respect · Safety · 5S</span>
+                <span>Saling Menghormati · Keselamatan · 5R</span>
             </span>
         </div>
     </div>
@@ -76,7 +76,7 @@
         <input type="text" 
                x-model="searchQuery" 
                @input.debounce.200ms="updateUrl()"
-               placeholder="Search guidelines..." 
+               placeholder="Cari pedoman atau aturan..." 
                class="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-white text-slate-800 rounded-full text-xs sm:text-sm border border-slate-200/90 shadow-2xs focus:outline-hidden focus:ring-2 focus:ring-[#0084f8] focus:border-[#0084f8] placeholder-slate-400 transition-all">
         
         <button x-show="searchQuery" 
@@ -89,14 +89,23 @@
         </button>
     </div>
 
-    <!-- Category Tabs Filter Pills (Matching Mockup) -->
+    <!-- Category Tabs Filter Pills -->
+    @php
+        $tabLabels = [
+            'General' => 'Umum',
+            'Meeting Room' => 'Ruang Rapat',
+            'Workspace' => 'Area Kerja',
+            'Canteen' => 'Kantin',
+            'Safety' => 'Keselamatan K3',
+        ];
+    @endphp
     <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-0.5 scrollbar-none">
         @foreach($categories as $catKey => $catTitle)
             <button type="button"
                     @click="setTab('{{ $catKey }}')"
                     :class="activeTab === '{{ $catKey }}' ? 'bg-[#0084f8] text-white shadow-xs font-bold' : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200/80 font-medium'"
                     class="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition cursor-pointer select-none">
-                {{ $catKey }}
+                {{ $tabLabels[$catKey] ?? $catKey }}
             </button>
         @endforeach
     </div>
@@ -104,12 +113,12 @@
     <!-- Dynamic Section Title -->
     <div class="pt-1">
         <h2 class="text-lg sm:text-xl font-extrabold text-[#0f2e54] tracking-tight"
-            x-text="searchQuery ? ('Hasil Pencarian (' + visibleCount + ')') : (categoryTitles[activeTab] || (activeTab + ' Etiquette'))">
-            {{ $categories[$initialCategory ?? 'General'] ?? 'General Etiquette' }}
+            x-text="searchQuery ? ('Hasil Pencarian (' + visibleCount + ')') : (categoryTitles[activeTab] || ('Etiket ' + activeTab))">
+            {{ $categories[$initialCategory ?? 'General'] ?? 'Etiket Umum' }}
         </h2>
     </div>
 
-    <!-- Guideline Cards (Layout: [ Gambar di Kiri ] | [ DO (Atas) & DON'T (Bawah) di Kanan ]) -->
+    <!-- Guideline Cards -->
     <div class="space-y-3 sm:space-y-4">
         @foreach($pairs as $item)
             <div x-show="matches({{ Js::from($item) }})"
@@ -118,21 +127,21 @@
                  x-transition:enter-end="opacity-100 transform translate-y-0"
                  class="bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-xs border border-slate-200/80 hover:border-sky-300 flex flex-row items-stretch gap-2.5 sm:gap-4 transition-all hover:shadow-md">
                 
-                <!-- 1. Gambar di Kiri (Proporsional & Mengikuti Tinggi Isi) -->
+                <!-- 1. Gambar di Kiri -->
                 <div class="w-24 sm:w-44 md:w-52 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 bg-slate-100 relative self-stretch">
                     <img src="{{ $item['image'] }}" 
                          alt="{{ $item['category'] }}" 
                          class="w-full h-full object-cover">
                 </div>
 
-                <!-- 2. DO & DON'T di Kanan (Atas-Bawah Rapi & Terstruktur) -->
+                <!-- 2. ANJURAN & LARANGAN di Kanan -->
                 <div class="flex-1 flex flex-col justify-between gap-2 sm:gap-2.5 min-w-0">
                     
                     <!-- Atas: DO Box (Pastel Green) -->
                     <div class="bg-[#eaf8ee] rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-center border border-emerald-100/80 flex-1">
                         <div class="flex items-center gap-1.5 text-emerald-700 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase mb-0.5 sm:mb-1">
                             <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-600 text-white text-[9px] font-black">✓</span>
-                            <span>DO</span>
+                            <span>LAKUKAN (DO)</span>
                         </div>
                         <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
                             {{ $item['do'] }}
@@ -148,7 +157,7 @@
                     <div class="bg-[#feeff0] rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 flex flex-col justify-center border border-rose-100/80 flex-1">
                         <div class="flex items-center gap-1.5 text-rose-600 font-extrabold text-[11px] sm:text-xs tracking-wider uppercase mb-0.5 sm:mb-1">
                             <span class="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-rose-600 text-white text-[9px] font-black">✕</span>
-                            <span>DON'T</span>
+                            <span>HINDARI (DON'T)</span>
                         </div>
                         <p class="text-slate-800 text-xs sm:text-sm font-bold leading-snug">
                             {{ $item['dont'] }}
@@ -176,7 +185,7 @@
             <button type="button" 
                     @click="activeTab = 'General'; searchQuery = ''; updateUrl()" 
                     class="mt-4 inline-block px-5 py-2 bg-[#008ef7] hover:bg-[#007cdb] text-white text-xs font-bold rounded-full transition shadow-xs cursor-pointer">
-                Reset ke General
+                Reset ke Umum
             </button>
         </div>
     </div>

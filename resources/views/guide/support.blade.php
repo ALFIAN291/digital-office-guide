@@ -8,10 +8,10 @@
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
                 <a href="{{ route('guide.index') }}" class="hover:text-[#0084f8]">Beranda</a>
                 <span>/</span>
-                <span class="text-[#0f2e54]">Support & Contact</span>
+                <span class="text-[#0f2e54]">Bantuan & Kontak</span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Support & Internal Contact Center</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Bantuan cepat IT Helpdesk, General Affairs (Fasilitas Gedung), HR Services, dan Layanan Darurat Karawang</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0f2e54] tracking-tight">Pusat Bantuan & Kontak Internal</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Bantuan cepat Helpdesk IT, Bagian Umum (Fasilitas Gedung / GA), Layanan HR, dan Layanan Darurat Karawang</p>
         </div>
         <a href="{{ route('guide.emergency') }}" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold rounded-xl shadow-xs transition w-fit">
             🚨 Mode Darurat (SOS)
@@ -22,21 +22,21 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 space-y-2.5">
             <div class="w-10 h-10 rounded-2xl bg-sky-100 text-[#0084f8] flex items-center justify-center text-lg font-bold">💻</div>
-            <h3 class="text-base font-extrabold text-[#0f2e54]">IT Helpdesk & Network</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Kendala Wi-Fi, koneksi ruang meeting (HDMI/VC), akun SSO, printer lantai 2, atau perangkat desk baru.</p>
+            <h3 class="text-base font-extrabold text-[#0f2e54]">Helpdesk IT & Jaringan</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Kendala Wi-Fi, koneksi ruang rapat (HDMI/VC), akun SSO, printer lantai 2, atau perangkat kerja baru.</p>
             <div class="text-xs font-bold text-[#0084f8] pt-1">Lokasi: R. Server Lt. 2 • Ext. 200</div>
         </div>
         <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 space-y-2.5">
             <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg font-bold">🛠️</div>
-            <h3 class="text-base font-extrabold text-[#0f2e54]">General Affairs (GA)</h3>
+            <h3 class="text-base font-extrabold text-[#0f2e54]">Bagian Umum (General Affairs)</h3>
             <p class="text-xs text-slate-500 leading-relaxed">Loker, kantin, kebersihan pantry, AC/lampu gedung, kendaraan dinas, dan reservasi auditorium.</p>
-            <div class="text-xs font-bold text-amber-700 pt-1">Lokasi: GA Office Lt. 1 • Ext. 104</div>
+            <div class="text-xs font-bold text-amber-700 pt-1">Lokasi: Kantor GA Lt. 1 • Ext. 104</div>
         </div>
         <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 p-5 space-y-2.5">
             <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">🪪</div>
-            <h3 class="text-base font-extrabold text-[#0f2e54]">HR & Onboarding Desk</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Kartu akses RFID karyawan baru, QR Desk Tent Card, panduan absensi, serta layanan kesehatan klinik.</p>
-            <div class="text-xs font-bold text-emerald-700 pt-1">Lokasi: HR Wing Lt. 1 • Ext. 108</div>
+            <h3 class="text-base font-extrabold text-[#0f2e54]">HRD & Meja Orientasi</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">Kartu akses RFID karyawan baru, QR Tent Card meja, panduan absensi, serta layanan kesehatan klinik.</p>
+            <div class="text-xs font-bold text-emerald-700 pt-1">Lokasi: Sayap HR Lt. 1 • Ext. 108</div>
         </div>
     </div>
 
