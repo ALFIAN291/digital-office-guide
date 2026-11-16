@@ -151,4 +151,37 @@ class OfficeGuideTest extends TestCase
         $response->assertSeeText('Denah Lantai');
         $response->assertSeeText('Petunjuk Arah');
     }
+
+    public function test_base64_db_images_are_served_via_media_endpoint_not_inlined(): void
+    {
+        $pngBytes = base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+            true
+        );
+        $dataUri = 'data:image/png;base64,' . base64_encode($pngBytes);
+
+        $message = \App\Models\ManagementMessage::firstOrFail();
+        $message->update(['image_path' => $dataUri]);
+
+        $homeSettings = \App\Models\HomeSetting::current();
+        $homeSettings->update(['hero_image' => $dataUri]);
+
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertDontSee('data:image/png;base64,');
+        $homeResponse->assertSee('/media/message/' . $message->id . '/image_path');
+        $homeResponse->assertSee('/media/home/' . $homeSettings->id . '/hero_image');
+
+        $mediaResponse = $this->get('/media/message/' . $message->id . '/image_path');
+        $mediaResponse->assertStatus(200);
+        $mediaResponse->assertHeader('Content-Type', 'image/png');
+        $this->assertSame($pngBytes, $mediaResponse->getContent());
+
+        $this->get('/media/home/' . $homeSettings->id . '/hero_image')
+            ->assertStatus(200)
+            ->assertHeader('Content-Type', 'image/png');
+
+        $this->get('/media/unknown/' . $message->id . '/image_path')->assertStatus(404);
+        $this->get('/media/message/' . $message->id . '/title')->assertStatus(404);
+    }
 }

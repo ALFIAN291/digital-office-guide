@@ -57,7 +57,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-1">Foto Ilustrasi / Situasi (Thumbnail Kiri Kartu):</label>
             <div class="flex items-center gap-4 mb-2">
                 <div class="w-24 h-16 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                    <img src="{{ office_image($rule->image_path, 'images/hero-office.jpg') }}" 
+                    <img src="{{ office_media($rule, 'image_path', 'images/hero-office.jpg') }}" 
                          alt="Foto Saat Ini" 
                          class="w-full h-full object-cover">
                 </div>

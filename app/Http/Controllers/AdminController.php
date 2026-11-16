@@ -697,11 +697,10 @@ class AdminController extends Controller
 
         $isVercel = isset($_SERVER['VERCEL']) || isset($_ENV['VERCEL']) || getenv('VERCEL');
 
-        // On Vercel serverless, store directly as base64 Data URI into database
+        // On Vercel serverless, store compressed base64 Data URI in database
         if ($isVercel) {
             $mime = $file->getMimeType() ?: 'image/jpeg';
-            $data = base64_encode(file_get_contents($file->getRealPath()));
-            return "data:{$mime};base64,{$data}";
+            return $this->encodeCompressedDataUri($file->getRealPath(), $mime);
         }
 
         // On local, try saving to public/images/uploads
@@ -716,9 +715,21 @@ class AdminController extends Controller
         } catch (\Throwable $e) {
             // Fallback to base64 if filesystem is read-only or permission denied
             $mime = $file->getMimeType() ?: 'image/jpeg';
-            $data = base64_encode(file_get_contents($file->getRealPath()));
-            return "data:{$mime};base64,{$data}";
+            return $this->encodeCompressedDataUri($file->getRealPath(), $mime);
         }
+    }
+
+    /**
+     * Resize and re-encode large raster uploads via GD before persisting as a Data URI.
+     */
+    protected function encodeCompressedDataUri(string $realPath, string $mime): string
+    {
+        $binary = (string) file_get_contents($realPath);
+        if (strlen($binary) > 350000) {
+            [$binary, $mime] = office_compress_raster_image($binary, $mime, 1400, 82);
+        }
+
+        return "data:{$mime};base64," . base64_encode($binary);
     }
 }
 

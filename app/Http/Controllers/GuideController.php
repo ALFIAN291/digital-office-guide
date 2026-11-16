@@ -6,6 +6,7 @@ use App\Models\DeskCard;
 use App\Models\DosAndDont;
 use App\Models\EmergencyContact;
 use App\Models\Facility;
+use App\Models\HomeSetting;
 use App\Models\ManagementMessage;
 use App\Models\OfficeZone;
 use App\Support\OfficeConceptData;
@@ -285,7 +286,7 @@ class GuideController extends Controller
             return [
                 'id' => (string) $rule->id,
                 'category' => $rule->category,
-                'image' => office_image($rule->image_path, 'images/hero-office.jpg'),
+                'image' => office_media($rule, 'image_path', 'images/hero-office.jpg'),
                 'do' => $rule->do_text ?: ($rule->title ?: ''),
                 'do_sub' => $rule->do_sub ?: ($rule->description ?: ''),
                 'dont' => $rule->dont_text ?: '',
@@ -648,6 +649,74 @@ class GuideController extends Controller
             'facilities' => $facilities,
             'rules' => $rules,
             'zones' => $zones,
+        ]);
+    }
+
+    /**
+     * Serve database-stored base64 images as cacheable binary responses so HTML/JSON stays small.
+     */
+    public function media(string $type, int $id, string $column)
+    {
+        $config = [
+            'home' => [HomeSetting::class, ['hero_image', 'card_office_image', 'card_facilities_image', 'card_map_image', 'card_rules_image']],
+            'message' => [ManagementMessage::class, ['image_path']],
+            'facility' => [Facility::class, ['image_path']],
+            'rule' => [DosAndDont::class, ['image_path']],
+            'desk' => [DeskCard::class, ['image_path']],
+            'zone' => [OfficeZone::class, ['image_path']],
+        ];
+
+        if (!isset($config[$type])) {
+            abort(404);
+        }
+
+        [$modelClass, $allowedColumns] = $config[$type];
+        if (!in_array($column, $allowedColumns, true)) {
+            abort(404);
+        }
+
+        $record = $modelClass::query()->select(['id', $column])->find($id);
+        if (!$record) {
+            abort(404);
+        }
+
+        $raw = $record->{$column} ?? null;
+        if (!is_string($raw) || $raw === '') {
+            abort(404);
+        }
+
+        if (!str_starts_with($raw, 'data:')) {
+            return redirect()->to(office_image($raw));
+        }
+
+        if (!preg_match('/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/s', $raw, $matches)) {
+            abort(404);
+        }
+
+        $mime = strtolower($matches[1]);
+        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+        if (!in_array($mime, $allowedMimes, true)) {
+            abort(404);
+        }
+        if ($mime === 'image/jpg') {
+            $mime = 'image/jpeg';
+        }
+
+        $binary = base64_decode(preg_replace('/\s+/', '', $matches[2]), true);
+        if ($binary === false || $binary === '') {
+            abort(404);
+        }
+
+        // Keep decoded binary safely under Vercel's 4.5 MB function response limit.
+        if (strlen($binary) > 3500000 && function_exists('imagecreatefromstring')) {
+            [$binary, $mime] = office_compress_raster_image($binary, $mime, 1400, 82);
+        }
+
+        return response($binary, 200, [
+            'Content-Type' => $mime,
+            'Content-Length' => (string) strlen($binary),
+            'Cache-Control' => 'public, max-age=86400, s-maxage=604800',
+            'X-Content-Type-Options' => 'nosniff',
         ]);
     }
 }

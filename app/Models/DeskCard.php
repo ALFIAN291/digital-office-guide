@@ -31,6 +31,6 @@ class DeskCard extends Model
      */
     public function getCardImageUrlAttribute(): string
     {
-        return office_image($this->image_path, 'images/hero-office.jpg');
+        return office_media($this, 'image_path', 'images/hero-office.jpg');
     }
 }

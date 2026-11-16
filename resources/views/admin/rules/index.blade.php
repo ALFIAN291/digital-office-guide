@@ -55,7 +55,7 @@
                             <!-- Foto Thumbnail -->
                             <td class="py-3.5 px-4 text-center">
                                 <div class="w-14 h-10 rounded-lg overflow-hidden bg-slate-100 mx-auto border border-slate-200/70 shadow-xs">
-                                    <img src="{{ office_image($rule->image_path, 'images/hero-office.jpg') }}" 
+                                    <img src="{{ office_media($rule, 'image_path', 'images/hero-office.jpg') }}" 
                                          alt="Foto Pedoman" 
                                          class="w-full h-full object-cover">
                                 </div>

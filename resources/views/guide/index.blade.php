@@ -165,7 +165,7 @@
         <!-- Hero Workplace Banner Card inside Personalized Landing -->
         <div @click="showMessageModal = true"
              class="group relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xs h-44 sm:h-56 md:h-64 flex items-end cursor-pointer">
-            <img src="{{ office_image($settings->hero_image ?? null, 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <img src="{{ office_media($settings ?? null, 'hero_image', 'images/hero-office.jpg') }}" alt="Akebono Karawang Workplace" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-900/30 to-transparent"></div>
 
             <div class="relative z-10 p-4 sm:p-6 text-white w-full flex items-end justify-between gap-3">
@@ -201,7 +201,7 @@
             <div class="flex items-center gap-3 sm:gap-3.5 min-w-0">
                 <!-- Avatar Thumbnail -->
                 <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-sky-500 shrink-0 border border-sky-200 shadow-xs relative">
-                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Management" class="w-full h-full object-cover">
+                    <img src="{{ office_media($message ?? null, 'image_path', 'images/management-office.jpg') }}" alt="Management" class="w-full h-full object-cover">
                 </div>
 
                 <div class="min-w-0">
@@ -250,7 +250,7 @@
                 
                 <!-- Left Image (Workstation interior) -->
                 <div class="relative {{ $msgImgClass }} overflow-hidden">
-                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" alt="Interior Kantor Karawang" class="w-full h-full object-cover">
+                    <img src="{{ office_media($message ?? null, 'image_path', 'images/management-office.jpg') }}" alt="Interior Kantor Karawang" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/25 via-transparent to-transparent md:hidden"></div>
                 </div>
 
@@ -477,7 +477,7 @@
             <!-- Card 1: Kantor & Pabrik -->
             <a href="{{ route('guide.office-and-plant') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_office_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Kantor & Pabrik' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_media($settings ?? null, 'card_office_image', 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_office_title ?? 'Kantor & Pabrik' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -504,7 +504,7 @@
             <!-- Card 2: Fasilitas -->
             <a href="{{ route('guide.facilities') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_facilities_image ?? null, 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Fasilitas' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_media($settings ?? null, 'card_facilities_image', 'images/facilities-office.jpg') }}" alt="{{ $settings->card_facilities_title ?? 'Fasilitas' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -531,7 +531,7 @@
             <!-- Card 3: Denah Kantor -->
             <a href="{{ route('guide.map') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_map_image ?? null, 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Denah Kantor' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_media($settings ?? null, 'card_map_image', 'images/plant-exterior.jpg') }}" alt="{{ $settings->card_map_title ?? 'Denah Kantor' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -559,7 +559,7 @@
             <!-- Card 4: Etiket & Aturan (K3) -->
             <a href="{{ route('guide.dos-and-donts') }}" class="group bg-white rounded-2xl sm:rounded-3xl soft-shadow border border-slate-200/80 hover:border-sky-300 p-2 sm:p-0 overflow-hidden card-hover flex flex-row sm:flex-col justify-between cursor-pointer transition-all duration-200">
                 <div class="relative w-20 h-20 sm:w-full sm:h-52 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($settings->card_rules_image ?? null, 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? 'Etiket & Aturan (K3)' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ office_media($settings ?? null, 'card_rules_image', 'images/meeting-room.jpg') }}" alt="{{ $settings->card_rules_title ?? 'Etiket & Aturan (K3)' }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="p-0 sm:p-5 pl-3 sm:pl-5 flex-1 flex items-center justify-between min-w-0">
                     <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -685,7 +685,7 @@
                 
                 <!-- 1. Foto Tim Langsung di Bawah Judul (Lebih Ringkas & Tidak Kegedean) -->
                 <div class="relative h-28 sm:h-36 w-full rounded-xl sm:rounded-2xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100 group">
-                    <img src="{{ office_image($message->image_path ?? null, 'images/management-office.jpg') }}" 
+                    <img src="{{ office_media($message ?? null, 'image_path', 'images/management-office.jpg') }}" 
                          alt="Manajemen & Tim" 
                          class="w-full h-full object-cover object-[center_20%] group-hover:scale-102 transition-transform duration-300">
                     

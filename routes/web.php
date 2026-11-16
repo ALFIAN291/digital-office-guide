@@ -22,6 +22,10 @@ Route::get('/visitor-guide', [GuideController::class, 'visitorGuide'])->name('gu
 Route::get('/attendance', [GuideController::class, 'attendance'])->name('guide.attendance');
 Route::get('/support', [GuideController::class, 'support'])->name('guide.support');
 Route::get('/api/search', [GuideController::class, 'search'])->name('guide.api.search');
+Route::get('/media/{type}/{id}/{column}', [GuideController::class, 'media'])
+    ->whereNumber('id')
+    ->where('column', '[a-z_]+')
+    ->name('guide.media');
 
 // ==========================================
 // Authentication Routes

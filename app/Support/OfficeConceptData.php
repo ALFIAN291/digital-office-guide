@@ -224,7 +224,7 @@ class OfficeConceptData
             return $facility->gallery_images;
         }
 
-        $primary = $facility->image_path ?: '/images/facilities-office.jpg';
+        $primary = office_media($facility, 'image_path', 'images/facilities-office.jpg');
         $fallbacks = match ($facility->category) {
             'meeting' => ['/images/meeting-room.jpg', '/images/facilities-office.jpg', '/images/hero-office.jpg', '/images/floorplan-preview.jpg'],
             'dining' => ['/images/management-office.jpg', '/images/hero-office.jpg', '/images/facilities-office.jpg'],

@@ -14,8 +14,10 @@
         'desk_number' => old('desk_number', $selectedDesk?->desk_number ?? 'A-023'),
         'floor' => old('floor', $selectedDesk?->floor ?? '2'),
         'area' => old('area', $selectedDesk?->area ?? 'Office Building'),
-        'image_path' => $initialImagePath,
-        'image_preview' => office_image($initialImagePath, 'images/hero-office.jpg'),
+        'image_path' => (is_string($initialImagePath) && str_starts_with($initialImagePath, 'data:')) ? '' : $initialImagePath,
+        'image_preview' => old('image_path')
+            ? office_image(old('image_path'), 'images/hero-office.jpg')
+            : ($selectedDesk ? office_media($selectedDesk, 'image_path', 'images/hero-office.jpg') : asset('images/hero-office.jpg')),
     ];
     $presetImages = [
         ['label' => 'Gedung Utama', 'path' => 'images/hero-office.jpg', 'url' => asset('images/hero-office.jpg')],
@@ -152,8 +154,10 @@
                 this.desk_number = desk.desk_number;
                 this.floor = desk.floor;
                 this.area = desk.area;
-                this.image_path = desk.image_path || 'images/hero-office.jpg';
-                if (desk.image_path && (desk.image_path.startsWith('http') || desk.image_path.startsWith('data:'))) {
+                this.image_path = desk.image_path || '';
+                if (desk.image_preview) {
+                    this.imagePreview = desk.image_preview;
+                } else if (desk.image_path && (desk.image_path.startsWith('http') || desk.image_path.startsWith('data:'))) {
                     this.imagePreview = desk.image_path;
                 } else {
                     this.imagePreview = window.__DESK_BASE_URL__ + '/' + (desk.image_path || 'images/hero-office.jpg').replace(/^\/+/, '');
@@ -585,8 +589,21 @@
                                     </td>
                                     <td class="py-3 px-3 text-right whitespace-nowrap">
                                         <div class="inline-flex items-center gap-1.5">
+                                            @php
+                                                $deskPayload = [
+                                                    'id' => $desk->id,
+                                                    'name' => $desk->name,
+                                                    'department' => $desk->department,
+                                                    'sub_team' => $desk->sub_team,
+                                                    'desk_number' => $desk->desk_number,
+                                                    'floor' => $desk->floor,
+                                                    'area' => $desk->area,
+                                                    'image_path' => (is_string($desk->image_path) && str_starts_with($desk->image_path, 'data:')) ? '' : $desk->image_path,
+                                                    'image_preview' => $desk->card_image_url,
+                                                ];
+                                            @endphp
                                             <button type="button"
-                                                    @click="selectDesk({{ Js::from($desk) }})"
+                                                    @click="selectDesk({{ Js::from($deskPayload) }})"
                                                     class="px-2.5 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-[#0084f8] border border-sky-200 font-bold text-[11px] transition cursor-pointer">
                                                 ✏️ Edit / Preview
                                             </button>

@@ -35,6 +35,6 @@ class DosAndDont extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        return office_image($this->image_path, 'images/hero-office.jpg');
+        return office_media($this, 'image_path', 'images/hero-office.jpg');
     }
 }

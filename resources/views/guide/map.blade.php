@@ -58,7 +58,9 @@
                 facilities: zone.facilities_list || zone.description,
                 usage: zone.usage_info || zone.description,
                 book: zone.how_to_book || (zone.contact_person ? 'Hubungi ' + zone.contact_person : 'Melalui Sistem Ruang Rapat (Outlook / Portal Web)'),
-                image: zone.image_path || '/images/meeting-room.jpg',
+                image: (zone.image_path && zone.image_path.startsWith('data:'))
+                    ? '/media/zone/' + zone.id + '/image_path'
+                    : (zone.image_path || '/images/meeting-room.jpg'),
                 contact_person: zone.contact_person,
             };
             this.selectedIsZone = true;

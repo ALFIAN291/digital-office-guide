@@ -138,7 +138,7 @@
                 
                 <!-- Photo: Thumbnail Kotak di Mobile (w-24 h-24), Hero Banner di Desktop (sm:h-48) -->
                 <div class="relative w-24 h-24 sm:w-full sm:h-48 rounded-xl sm:rounded-none shrink-0 overflow-hidden bg-slate-100">
-                    <img src="{{ office_image($facility->image_path, 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    <img src="{{ office_media($facility, 'image_path', 'images/facilities-office.jpg') }}" alt="{{ $facility->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     
                     <!-- Desktop Badges on Photo -->
                     <div class="hidden sm:flex absolute top-3 left-3 items-center gap-1.5">

@@ -30,7 +30,7 @@
     <div class="bg-white rounded-3xl soft-shadow border border-slate-200/80 overflow-hidden">
         <!-- Hero Header -->
         <div class="relative h-56 sm:h-72 w-full overflow-hidden">
-            <img src="{{ office_image($message->image_path, 'images/management-office.jpg') }}" alt="Kantor Karawang" class="w-full h-full object-cover">
+            <img src="{{ office_media($message, 'image_path', 'images/management-office.jpg') }}" alt="Kantor Karawang" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent"></div>
             <div class="absolute bottom-6 left-6 right-6 text-white">
                 <span class="px-3 py-1 rounded-full bg-[#0084f8] text-xs font-bold text-white uppercase tracking-wider mb-2 inline-block">
