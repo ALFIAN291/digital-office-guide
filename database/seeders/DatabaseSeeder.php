@@ -2,27 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Seed public office guide reference data.
+     * Administrator credentials are never hardcoded or seeded from repository files.
      */
     public function run(): void
     {
-        // Admin User
-        User::updateOrCreate(
-            ['email' => 'admin@akebono.co.id'],
-            [
-                'name' => 'Akebono Admin',
-                'password' => Hash::make('password123'),
-                'email_verified_at' => now(),
-            ]
-        );
-
         $this->call(DigitalOfficeGuideSeeder::class);
     }
 }

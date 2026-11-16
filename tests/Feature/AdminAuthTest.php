@@ -17,13 +17,13 @@ class AdminAuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(DigitalOfficeGuideSeeder::class);
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
 
         User::updateOrCreate(
-            ['email' => 'admin@akebono.co.id'],
+            ['email' => 'test-admin@example.com'],
             [
-                'name' => 'Akebono Admin',
-                'password' => Hash::make('password123'),
+                'name' => 'Test Administrator',
+                'password' => Hash::make('test-fixture-secret'),
                 'email_verified_at' => now(),
             ]
         );
@@ -38,6 +38,17 @@ class AdminAuthTest extends TestCase
         $responseHome->assertRedirect('/admin/login');
     }
 
+    public function test_guest_cannot_access_setup_db_or_see_credentials(): void
+    {
+        $this->get('/admin/setup-db')->assertRedirect('/admin/login');
+
+        $loginPage = $this->get('/admin/login');
+        $loginPage->assertStatus(200);
+        $loginPage->assertDontSee('pass' . 'word123');
+        $loginPage->assertDontSee('admin@' . 'akebono.co.id');
+        $loginPage->assertDontSee('setup-db');
+    }
+
     public function test_login_page_renders_successfully(): void
     {
         $response = $this->get('/admin/login');
@@ -48,7 +59,7 @@ class AdminAuthTest extends TestCase
     public function test_login_fails_with_invalid_credentials(): void
     {
         $response = $this->post('/admin/login', [
-            'email' => 'admin@akebono.co.id',
+            'email' => 'test-admin@example.com',
             'password' => 'wrongpassword',
         ]);
 
@@ -59,8 +70,8 @@ class AdminAuthTest extends TestCase
     public function test_login_succeeds_with_valid_credentials(): void
     {
         $response = $this->post('/admin/login', [
-            'email' => 'admin@akebono.co.id',
-            'password' => 'password123',
+            'email' => 'test-admin@example.com',
+            'password' => 'test-fixture-secret',
         ]);
 
         $response->assertRedirect('/admin');
@@ -69,7 +80,7 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_can_access_dashboard_and_home_editor(): void
     {
-        $user = User::where('email', 'admin@akebono.co.id')->first();
+        $user = User::where('email', 'test-admin@example.com')->first();
 
         $response = $this->actingAs($user)->get('/admin/dashboard');
         $response->assertStatus(200);
@@ -82,7 +93,7 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_can_update_home_content(): void
     {
-        $user = User::where('email', 'admin@akebono.co.id')->first();
+        $user = User::where('email', 'test-admin@example.com')->first();
         HomeSetting::current();
 
         $response = $this->actingAs($user)->post('/admin/home', [
@@ -126,7 +137,7 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_can_update_management_message(): void
     {
-        $user = User::where('email', 'admin@akebono.co.id')->first();
+        $user = User::where('email', 'test-admin@example.com')->first();
 
         $response = $this->actingAs($user)->post('/admin/message', [
             'title' => 'Pesan Khusus Dewan Direksi',
@@ -153,11 +164,19 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_can_logout(): void
     {
-        $user = User::where('email', 'admin@akebono.co.id')->first();
+        $user = User::where('email', 'test-admin@example.com')->first();
 
         $response = $this->actingAs($user)->post('/admin/logout');
         $response->assertRedirect('/');
         $this->assertGuest();
+    }
+
+    public function test_database_seeder_does_not_create_users(): void
+    {
+        User::query()->delete();
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $this->assertSame(0, User::count());
     }
 }
 

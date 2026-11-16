@@ -44,23 +44,12 @@ class AuthController extends Controller
                     ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
             }
         } catch (\Illuminate\Database\QueryException $e) {
-            $msg = $e->getMessage();
-            if (str_contains($msg, '127.0.0.1') || str_contains($msg, 'Connection refused')) {
-                throw ValidationException::withMessages([
-                    'email' => 'Database Neon belum tersambung ke project ini di Vercel. Buka Vercel > Storage > akebono-db > Connect Project, lalu Redeploy.',
-                ]);
-            }
-            if (str_contains($msg, 'users') && (str_contains($msg, 'does not exist') || str_contains($msg, 'relation'))) {
-                throw ValidationException::withMessages([
-                    'email' => 'Tabel database belum dibuat. Silakan buka /admin/setup-db untuk membuat tabel dan akun admin secara otomatis.',
-                ]);
-            }
             throw ValidationException::withMessages([
-                'email' => 'Gagal terhubung ke database: ' . $e->getMessage(),
+                'email' => 'Koneksi database sedang bermasalah. Silakan coba beberapa saat lagi.',
             ]);
         } catch (\PDOException $e) {
             throw ValidationException::withMessages([
-                'email' => 'Koneksi database gagal (' . $e->getMessage() . '). Pastikan database Neon sudah dihubungkan ke project Vercel.',
+                'email' => 'Koneksi database sedang bermasalah. Silakan coba beberapa saat lagi.',
             ]);
         }
 

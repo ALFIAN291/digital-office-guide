@@ -36,13 +36,6 @@
         @if($errors->any())
             <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold space-y-1.5">
                 <div>{{ $errors->first() }}</div>
-                @if(str_contains($errors->first(), 'setup-db') || str_contains($errors->first(), 'belum'))
-                    <div class="pt-1">
-                        <a href="{{ route('admin.setup-db') }}" class="inline-block text-[#0084f8] underline font-bold">
-                            👉 Klik di sini untuk Cek Status & Setup Database
-                        </a>
-                    </div>
-                @endif
             </div>
         @endif
 
@@ -62,7 +55,7 @@
                     Alamat Email
                 </label>
                 <div class="relative">
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="admin@akebono.co.id" required autofocus
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="nama@perusahaan.co.id" required autofocus
                            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-[#0084f8] focus:ring-2 focus:ring-sky-100 focus:outline-hidden transition text-slate-800 font-medium placeholder:text-slate-400">
                 </div>
             </div>

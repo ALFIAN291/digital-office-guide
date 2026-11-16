@@ -31,85 +31,53 @@ Route::get('/media/{type}/{id}/{column}', [GuideController::class, 'media'])
 // Authentication Routes
 // ==========================================
 Route::get('/admin/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('admin.login.submit');
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
-// ==========================================
-// Setup & Diagnostic Database Route (Vercel One-Click Setup)
-// ==========================================
-Route::get('/admin/setup-db', function () {
-    $dbHost = config('database.connections.pgsql.host');
-    $dbName = config('database.connections.pgsql.database');
-    $dbUser = config('database.connections.pgsql.username');
-
-    $envInfo = [
-        'DB_CONNECTION' => config('database.default'),
-        'PG_HOST' => $dbHost,
-        'PG_DATABASE' => $dbName,
-        'PG_USER' => $dbUser,
-    ];
-
-    if ($dbHost === '127.0.0.1' || empty($dbHost)) {
-        return response()->view('admin.setup-db', [
-            'status' => 'error',
-            'title' => 'Database Belum Terhubung ke Vercel',
-            'message' => 'Project Vercel belum mendeteksi environment variable dari database Neon (akebono-db).',
-            'details' => "Langkah menghubungkan di Vercel Dashboard:\n1. Buka Vercel Dashboard > tab Storage (atau menu Storage).\n2. Klik database 'akebono-db' yang sudah Anda buat.\n3. Masuk ke tab 'Settings' atau cari tombol 'Connect Project'.\n4. Pilih project 'digital-office-guide' lalu klik Connect.\n5. Setelah itu, buka tab 'Deployments' di Vercel > klik titik tiga (...) di deployment paling atas > klik 'Redeploy'.",
-            'envInfo' => $envInfo,
-        ]);
-    }
-
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
-
-        try {
-            \Illuminate\Support\Facades\DB::table('home_settings')->update(['message_auto_popup' => true]);
-            \Illuminate\Support\Facades\DB::table('management_messages')
-                ->whereNull('subtitle')
-                ->orWhere('subtitle', 'like', '%Campus%')
-                ->update(['subtitle' => 'Kantor Karawang 2026', 'badge_label' => 'Pengumuman Resmi']);
-
-            $existingContacts = \App\Models\EmergencyContact::all();
-            foreach ($existingContacts as $c) {
-                if (str_contains($c->phone, '0267') || empty($c->whatsapp)) {
-                    $c->phone = '0812-8459-000' . $c->id;
-                    $c->whatsapp = $c->phone;
-                    $c->save();
-                }
-            }
-        } catch (\Throwable $e) {}
-
-        $seedOutput = '';
-        if (\App\Models\User::count() === 0 || \App\Models\Facility::count() === 0) {
-            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-            $seedOutput = \Illuminate\Support\Facades\Artisan::output();
-        } else {
-            $seedOutput = 'Database sudah aktif dan terisi data. Data yang Anda buat tetap aman dan terjaga.';
-        }
-
-        return response()->view('admin.setup-db', [
-            'status' => 'success',
-            'title' => 'Database Berhasil Disetup & Diisi Data Awal!',
-            'message' => 'Semua tabel panduan kantor dan akun Administrator default telah berhasil dibuat.',
-            'details' => $migrateOutput . "\n" . $seedOutput,
-            'envInfo' => $envInfo,
-        ]);
-    } catch (\Throwable $e) {
-        return response()->view('admin.setup-db', [
-            'status' => 'error',
-            'title' => 'Koneksi ke Database Gagal',
-            'message' => $e->getMessage(),
-            'details' => $e->getTraceAsString(),
-            'envInfo' => $envInfo,
-        ]);
-    }
-})->name('admin.setup-db');
 
 // ==========================================
 // Admin Protected CMS Routes
 // ==========================================
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Database migration & reference content check (authenticated admins only)
+    Route::get('/setup-db', function () {
+        $dbHost = config('database.connections.pgsql.host');
+        $envInfo = [
+            'DB_CONNECTION' => config('database.default'),
+            'STATUS' => ($dbHost && $dbHost !== '127.0.0.1') ? 'Terhubung (Remote)' : 'Lokal',
+        ];
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+
+            if (\App\Models\Facility::count() === 0) {
+                \Illuminate\Support\Facades\Artisan::call('db:seed', [
+                    '--class' => \Database\Seeders\DigitalOfficeGuideSeeder::class,
+                    '--force' => true,
+                ]);
+                $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+            } else {
+                $seedOutput = 'Database sudah aktif dan terisi data.';
+            }
+
+            return response()->view('admin.setup-db', [
+                'status' => 'success',
+                'title' => 'Status & Migrasi Database Berhasil',
+                'message' => 'Seluruh tabel panduan kantor telah diperiksa dan siap digunakan.',
+                'details' => $migrateOutput . "\n" . $seedOutput,
+                'envInfo' => $envInfo,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->view('admin.setup-db', [
+                'status' => 'error',
+                'title' => 'Operasi Database Gagal',
+                'message' => 'Gagal menjalankan pemeriksaan atau migrasi database.',
+                'details' => 'Silakan periksa konfigurasi koneksi database pada environment server.',
+                'envInfo' => $envInfo,
+            ], 500);
+        }
+    })->name('setup-db');
+
     // Dashboard
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard.index');

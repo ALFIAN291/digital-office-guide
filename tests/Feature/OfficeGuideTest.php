@@ -98,7 +98,7 @@ class OfficeGuideTest extends TestCase
     public function test_admin_can_save_edit_and_print_desk_cards(): void
     {
         $admin = \App\Models\User::first() ?? \App\Models\User::factory()->create([
-            'email' => 'admin@akebono-astra.co.id',
+            'email' => 'test-admin@example.com',
         ]);
 
         $this->actingAs($admin)

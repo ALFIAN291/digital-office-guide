@@ -38,19 +38,13 @@
                 </div>
             </div>
 
-            <!-- Credentials Reminder -->
-            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2">
-                <div class="font-bold text-slate-800">Akun Login Administrator Tersedia:</div>
-                <div class="font-mono text-slate-700 bg-white p-3 rounded-xl border border-slate-200">
-                    <div>Email: <strong class="text-blue-600">admin@akebono.co.id</strong></div>
-                    <div>Password: <strong class="text-blue-600">password123</strong></div>
-                </div>
-            </div>
-
             <!-- Action -->
-            <div class="pt-2">
-                <a href="{{ route('login') }}" class="block text-center w-full py-3 bg-[#0084f8] hover:bg-[#0070d6] text-white text-sm font-bold rounded-xl shadow-md transition">
-                    Buka Halaman Login Admin →
+            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                <a href="{{ route('admin.dashboard') }}" class="flex-1 text-center py-3 bg-[#0084f8] hover:bg-[#0070d6] text-white text-sm font-bold rounded-xl shadow-md transition">
+                    Kembali ke Dashboard Admin →
+                </a>
+                <a href="{{ route('admin.password.edit') }}" class="text-center px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition">
+                    🔒 Ganti Password
                 </a>
             </div>
         @else
